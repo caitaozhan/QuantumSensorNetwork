@@ -21,9 +21,6 @@ class QuantumState:
             np.random.seed(seed)
         self.psi = random_state(self.number)
 
-    def init_state(self, psi):
-        self.psi = psi
-
     def __str__(self):
         string = 'Quantum state is:\n'
         index = 0
@@ -48,7 +45,7 @@ def test1():
     fig.savefig('tmp.png')
 
 def test2():
-    qs = QuantumState(number=2)
+    qs = QuantumState(number_detector=2)
     qs.init_random_state()
     print(qs)
 
