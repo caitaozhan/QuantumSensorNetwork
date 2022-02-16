@@ -1,2 +1,4 @@
 # QuantumSensorNetwork
-Quantum Sensor Network
+
+TODO: 
+1. simulate quantum measurement
