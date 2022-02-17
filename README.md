@@ -1,4 +1,4 @@
 # QuantumSensorNetwork
 
 TODO: 
-1. simulate quantum measurement
+1. two states unambiguous
