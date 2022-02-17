@@ -25,7 +25,7 @@ def test1():
     quantum_measurement.preparation(quantum_states, priors)
     quantum_measurement.povm = povm
     error = quantum_measurement.simulate(seed=0, repeat=10_000)
-    print(f'error of discriminating |0> and |1> in computational basis through simulation is {error}')
+    print(f'simulate: error of discriminating |0> and |1> in computational basis is {error}')
 
 
 def test2():
@@ -43,8 +43,8 @@ def test2():
     quantum_measurement = QuantumMeasurement()
     quantum_measurement.preparation(quantum_states, priors)
     quantum_measurement.povm = povm
-    error = quantum_measurement.simulate(seed=1, repeat=10_000)
-    print(f'error of discriminating |0> and |+> in computational basis through simulation is {error}')
+    error = quantum_measurement.simulate(seed=1, repeat=20_000)
+    print(f'simulate: error of discriminating |0> and |+> in computational basis is {error}')
 
 def test3():
     '''discriminate |0> and |+> in computational basis
@@ -61,11 +61,11 @@ def test3():
     quantum_measurement = QuantumMeasurement()
     quantum_measurement.preparation(quantum_states, priors)
     quantum_measurement.povm = povm
-    error = quantum_measurement.simulate(seed=1, repeat=10_000)
-    print(f'error of discriminating |0> and |+> in computational basis through simulation is {error}')
+    error = quantum_measurement.simulate(seed=1, repeat=50_000)
+    print(f'simulate: error of discriminating |0> and |+> in the optimal basis is {error}')
 
 
 if __name__ == '__main__':
     test1()
     test2()
-    # test3()
+    test3()

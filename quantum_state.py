@@ -8,7 +8,7 @@ from utility import Utility
 
 
 class QuantumState:
-    '''Encapsulate a quantum state, i.e. a complex vector in the Hilbert space.
+    '''Encapsulate a (pure) quantum state, i.e. a complex vector in the Hilbert space.
        Currently using two-level quantum state, i.e., qubits
        One quantum detector is represented by a single qubit quantum state
        N quantum detector are represented by a N qubit quantum state
@@ -21,6 +21,7 @@ class QuantumState:
         '''
         self._num_detector = num_detector
         self._psi = psi
+        self._density_matrix = np.outer(psi, psi)
 
     @property
     def num_detector(self):
@@ -29,6 +30,10 @@ class QuantumState:
     @property
     def psi(self):
         return self._psi
+
+    @property
+    def density_matrix(self):
+        return self._density_matrix
 
     def init_random_state(self, seed: int = None):
         '''init a random quantum state'''

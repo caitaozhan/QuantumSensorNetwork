@@ -24,7 +24,14 @@ class Povm:
     def two_state_minerror(self, quantum_states: list, priors: list):
         '''for two state discrimination and minimum error, the optimal measurement is known
         '''
-        pass
+        X = quantum_states[0].density_matrix * priors[0] - quantum_states[1].density_matrix * priors[1]
+        eigenvals, eigenvectors = np.linalg.eigh(X)   # eig?
+        M0 = np.outer(eigenvectors[0], eigenvectors[0])
+        M1 = np.outer(eigenvectors[1], eigenvectors[1])
+        if eigenvals[0] < 0:
+            M0, M1 = M1, M0
+        self._operators = [Operator(M0), Operator(M1)]
+        
 
     def two_state_unambiguous(self, quantum_states: list, priors: list):
         '''for two state discrimination and unambiguous, the optimal measurement is known
