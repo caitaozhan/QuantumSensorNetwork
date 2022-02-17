@@ -2,6 +2,9 @@
 '''
 
 class Utility:
+
+    EPSILON = 1e-8
+
     @staticmethod
     def norm_squared(alpha):
         '''

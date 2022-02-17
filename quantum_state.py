@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from qiskit.quantum_info.operators.operator import Operator
-from qiskit.quantum_info import random_unitary, random_state
+from qiskit.quantum_info import random_unitary
 from qiskit.visualization import plot_bloch_multivector
 from qiskit_textbook.tools import random_state, array_to_latex
 from utility import Utility
@@ -13,7 +13,7 @@ class QuantumState:
        One quantum detector is represented by a single qubit quantum state
        N quantum detector are represented by a N qubit quantum state
     '''
-    def __init__(self, num_detector: int, psi: np.array = None):
+    def __init__(self, num_detector: int, psi: np.array):
         '''
         Args:
             num_detector: number of detector
