@@ -13,7 +13,7 @@ class QuantumState:
        One quantum detector is represented by a single qubit quantum state
        N quantum detector are represented by a N qubit quantum state
     '''
-    def __init__(self, num_detector: int, psi: np.array):
+    def __init__(self, num_detector: int, psi: np.array = None):
         '''
         Args:
             num_detector: number of detector
@@ -21,7 +21,7 @@ class QuantumState:
         '''
         self._num_detector = num_detector
         self._psi = psi
-        self._density_matrix = np.outer(psi, psi)
+        self._density_matrix = None
 
     @property
     def num_detector(self):
@@ -33,6 +33,10 @@ class QuantumState:
 
     @property
     def density_matrix(self):
+        if self._density_matrix is None:
+            if self._psi is None:
+                raise Exception('psi is None!')
+            self._density_matrix = np.outer(self._psi, self._psi)
         return self._density_matrix
 
     def init_random_state(self, seed: int = None):
@@ -54,13 +58,14 @@ class QuantumState:
             raise Exception('psi and operator dimension not equal')
 
     def __str__(self):
-        string = 'Quantum state is:\n'
+        string = ''
         index = 0
         num_of_bit = math.ceil(math.log2(len(self.psi)))
-        for index, cmpl in enumerate(self.psi):
+        for index, amplitude in enumerate(self.psi):
             state = Utility.integer2bit(index, num_of_bit)
-            cmpl = str(cmpl)[1:-1]     # (-0.14139694215565082+0.3754394106901288j)
-            string += f'|{state}>: {cmpl}\n'
+            if type(amplitude) is np.complex128:
+                amplitude = str(amplitude)[1:-1]     # (-0.14139694215565082+0.3754394106901288j)
+            string += f'|{state}>: {amplitude}\n'
         return string
 
 

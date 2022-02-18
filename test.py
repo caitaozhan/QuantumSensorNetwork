@@ -36,7 +36,8 @@ def test2():
     qs1 = QuantumState(num_detector=1, psi=vector1)
     qs2 = QuantumState(num_detector=1, psi=vector2)
     quantum_states = [qs1, qs2]
-    priors = [0.5, 0.5]
+    # priors = [0.75, 0.25]
+    priors = [0.25, 0.75]
     povm = Povm()
     povm.computational_basis()
 
@@ -47,25 +48,29 @@ def test2():
     print(f'simulate: error of discriminating |0> and |+> in computational basis is {error}')
 
 def test3():
-    '''discriminate |0> and |+> in computational basis
+    '''discriminate |0> and |+> in the optimal basis
     '''
+    seed = 1
+    repeat = 50_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
     qs1 = QuantumState(num_detector=1, psi=vector1)
     qs2 = QuantumState(num_detector=1, psi=vector2)
     quantum_states = [qs1, qs2]
-    priors = [0.5, 0.5]
-    povm = Povm()
-    povm.two_state_minerror(quantum_states, priors)
+    priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
+    # priors_list = [[0.5, 0.5]]
+    for priors in priors_list:
+        povm = Povm()
+        povm.two_state_minerror(quantum_states, priors)
 
-    quantum_measurement = QuantumMeasurement()
-    quantum_measurement.preparation(quantum_states, priors)
-    quantum_measurement.povm = povm
-    error = quantum_measurement.simulate(seed=1, repeat=50_000)
-    print(f'simulate: error of discriminating |0> and |+> in the optimal basis is {error}')
+        qm = QuantumMeasurement()
+        qm.preparation(quantum_states, priors)
+        qm.povm = povm
+        error = qm.simulate(seed, repeat)
+        qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
 
 
 if __name__ == '__main__':
-    test1()
-    test2()
+    # test1()
+    # test2()
     test3()
