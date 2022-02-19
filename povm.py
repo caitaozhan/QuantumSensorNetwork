@@ -38,7 +38,8 @@ class Povm:
         self._operators = [Operator(M0), Operator(M1)]
 
     def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = False):
-        '''for two state discrimination and minimum error, the optimal measurement is known
+        '''for two state minimum error discrimination, the optimal measurement is known.
+           It is a projective (i.e. von Neumann) measurement: https://arxiv.org/pdf/1707.02571.pdf
         '''
         X = quantum_states[0].density_matrix * priors[0] - quantum_states[1].density_matrix * priors[1]
         eigenvals, eigenvectors = np.linalg.eigh(X)
@@ -65,7 +66,7 @@ class Povm:
             M0, M1 = M1, M0
         self._operators = [Operator(M0), Operator(M1)]
         self._theoretical_error = 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2
-        self._method = 'Minimal Error'
+        self._method = 'Minimum Error'
 
     def two_state_unambiguous(self, quantum_states: list, priors: list):
         '''for two state discrimination and unambiguous, the optimal measurement is known
