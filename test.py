@@ -13,18 +13,19 @@ def test1():
     '''minimal error discriminatation of |0> and |+>
     '''
     seed = 1
-    repeat = 10_000
+    repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
     # vector2 = np.array([0, 1])
     qs1 = QuantumState(num_detector=1, state_vector=vector1)
     qs2 = QuantumState(num_detector=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
-    priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
+    # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
+    priors_list = [[0.5, 0.5], [0.4, 0.6]]
     # priors_list = [[0.5, 0.5]]
     for priors in priors_list:
         povm = Povm()
-        povm.two_state_minerror(quantum_states, priors, debug=True)
+        povm.two_state_minerror(quantum_states, priors, debug=False)
         qm = QuantumMeasurement()
         qm.preparation(quantum_states, priors)
         qm.povm = povm
@@ -36,14 +37,14 @@ def test2():
     '''Unambiguous discrimination  of |0> and |+>
     '''
     seed = 1
-    repeat = 50_000
+    repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
     qs1 = QuantumState(num_detector=1, state_vector=vector1)
     qs2 = QuantumState(num_detector=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     # priors_list = [[0.00001, 0.99999], [0.1, 0.9], [0.15, 0.85], [0.2, 0.8], [0.25, 0.75], [0.3, 0.7]]
-    priors_list = [[0.35, 0.65], [0.4, 0.6], [0.45, 0.55], [0.5, 0.5]]
+    priors_list = [[0.4, 0.6], [0.5, 0.5]]
     # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     # priors_list = [[0.5, 0.5]]
     for priors in priors_list:
@@ -111,7 +112,7 @@ def test4():
 
 
 if __name__ == '__main__':
-    # test1()
-    # test2()
-    test3()
-    test4()
+    test1()
+    test2()
+    # test3()
+    # test4()
