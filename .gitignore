@@ -1,4 +1,4 @@
 *.png
 .vscode
 __pycache__
-*tmp
+*tmp*

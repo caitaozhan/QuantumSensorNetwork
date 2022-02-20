@@ -96,12 +96,13 @@ class QuantumMeasurement:
     def simulate_report(self, quantum_states, priors, povm, seed, repeat, error):
         '''Generate the report for the simulation
         '''
+        metric = 'error' if povm.method == 'min error' else  'failure'
         print('\n-------SIMULATION REPORT------')
         print('Quantum states to be discriminated:')
         for state in quantum_states:
             print(state)
         print(f'The priors are:\n{priors}\n')
         print(f'The POVM ({povm.method}) is: \n{povm}', end='')
-        print(f'The theoretical error = {povm.theoretical_error}')
-        print(f'The simulated error   = {error}  (seed = {seed}, repeat = {repeat})')
+        print(f'The theoretical {metric} = {povm.theoretical_error}')
+        print(f'The simulated {metric}   = {error}  (seed = {seed}, repeat = {repeat})')
         print('-------END OF REPORT------')
