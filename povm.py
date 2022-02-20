@@ -2,6 +2,7 @@
 Positive operator valued measurement
 '''
 
+import math
 import numpy as np
 from quantum_state import QuantumState
 from qiskit.quantum_info.operators.operator import Operator
@@ -46,7 +47,14 @@ class Povm:
         M0 = np.outer(eigenvectors[:, 0], eigenvectors[:, 0])
         M1 = np.outer(eigenvectors[:, 1], eigenvectors[:, 1])
 
+        if eigenvals[0] < 0:  # positive and negative parts
+            M0, M1 = M1, M0
+        self._operators = [Operator(M0), Operator(M1)]
+        self._theoretical_error = 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2
+        self._method = 'Minimum Error'
+
         if debug:
+            print('Debug information inside self.two_state_minerror(...)')
             print('X\n', X)
             print('eigenvals\n', eigenvals)
             print('eigenvectors\n', eigenvectors)
@@ -58,17 +66,16 @@ class Povm:
             print('M0\n', M0)
             print('M1\n', M1)
             print('M0 + M1\n', M0 + M1)
+            print('M0 * M1\n', np.dot(M0, M1))
             print('eigenvals*(M0, M1)\n', eigenvals[0]*M0 + eigenvals[1]*M1)
             print('theoretical error 1 =', 0.5 - 0.5 * np.trace(np.dot((M0 - M1), X)))
             print('theoretical error 2 =', 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2)
-
-        if eigenvals[0] < 0:  # positive and negative parts
-            M0, M1 = M1, M0
-        self._operators = [Operator(M0), Operator(M1)]
-        self._theoretical_error = 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2
-        self._method = 'Minimum Error'
+            costheta = abs(np.dot(quantum_states[0].state_vector, quantum_states[1].state_vector))
+            print('theoretical error 3 =', 0.5 * (1 - math.sqrt(1 - 4*priors[0]*priors[1]*costheta**2)) )
+            # I found three different expressions for the theoretical value for minimum error. The result is the same
 
     def two_state_unambiguous(self, quantum_states: list, priors: list):
         '''for two state discrimination and unambiguous, the optimal measurement is known
         '''
+
         pass

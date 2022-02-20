@@ -35,7 +35,7 @@ class QuantumState:
     def density_matrix(self):
         if self._density_matrix is None:
             if self._state_vector is None:
-                raise Exception('psi is None!')
+                raise Exception('state_vector is None!')
             self._density_matrix = np.outer(self._state_vector, self._state_vector)
         return self._density_matrix
 
@@ -44,6 +44,10 @@ class QuantumState:
         if seed is not None:
             np.random.seed(seed)
         self._state_vector = random_state(self.num_detector)
+
+    def orthogonal_state(self):
+        '''get the orthogonal state'''
+        
 
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
@@ -55,7 +59,7 @@ class QuantumState:
         if dim == operator_dim:
             self._state_vector = np.dot(operator._data, self._state_vector)
         else:
-            raise Exception('psi and operator dimension not equal')
+            raise Exception('state_vector and operator dimension not equal')
 
     def __str__(self):
         string = ''
@@ -131,5 +135,6 @@ def test4():
     print(qs)
 
 if __name__ == '__main__':
-    test4()
+    test1()
+    # test4()
 

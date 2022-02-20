@@ -24,13 +24,13 @@ def test1():
     # priors_list = [[0.5, 0.5]]
     for priors in priors_list:
         povm = Povm()
-        povm.two_state_minerror(quantum_states, priors)
-
+        povm.two_state_minerror(quantum_states, priors, debug=False)
         qm = QuantumMeasurement()
         qm.preparation(quantum_states, priors)
         qm.povm = povm
         error = qm.simulate(seed, repeat)
         qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
 
 def test2():
     seed = 1
