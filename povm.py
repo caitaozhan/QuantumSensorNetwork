@@ -4,7 +4,6 @@ Positive operator valued measurement
 
 import math
 import numpy as np
-from quantum_state import QuantumState
 from qiskit.quantum_info.operators.operator import Operator
 
 class Povm:
@@ -98,9 +97,11 @@ class Povm:
         
         elif priors[0] < left:
             self._theoretical_error = priors[0] + priors[1]*costheta**2
+            print(f'left={left}, right={right}, priors[0]={priors[0]}')
             raise Exception('TODO')
         else: # priors[0] > right
             self._theoretical_error = priors[0]*costheta**2 + priors[1]
+            print(f'left={left}, right={right}, priors[0]={priors[0]}')
             raise Exception('TODO')
         self._method = 'Unambiguous'            
 
