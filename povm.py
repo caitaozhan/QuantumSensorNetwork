@@ -6,6 +6,8 @@ import math
 import numpy as np
 from qiskit.quantum_info.operators.operator import Operator
 
+from utility import Utility
+
 class Povm:
     '''encapsulate positive operator valued measurement
     '''
@@ -42,14 +44,23 @@ class Povm:
            The implementation is from this paper: https://arxiv.org/pdf/1707.02571.pdf
         '''
         X = quantum_states[0].density_matrix * priors[0] - quantum_states[1].density_matrix * priors[1]
-        eigenvals, eigenvectors = np.linalg.eigh(X)             # The eigen vectors are normalized 
-        M0 = np.outer(eigenvectors[:, 0], eigenvectors[:, 0])
-        M1 = np.outer(eigenvectors[:, 1], eigenvectors[:, 1])
+        eigenvals, eigenvectors = np.linalg.eigh(X)             # The eigen vectors are normalized
+        index = []
+        for i, eigen in enumerate(eigenvals):
+            if abs(eigen) > Utility.EPSILON:
+                index.append(i)
+        if len(index) != 2:
+            raise Exception(f'There must be two non-zero eigenvalues, but the currently there are {len(index)} eigen values')
+        eig1 = index[0]
+        eig2 = index[1]
 
-        if eigenvals[0] < 0:  # positive and negative parts
+        M0 = np.outer(eigenvectors[:, eig1], eigenvectors[:, eig1])
+        M1 = np.outer(eigenvectors[:, eig2], eigenvectors[:, eig2])
+
+        if eigenvals[eig1] < 0:  # positive and negative parts
             M0, M1 = M1, M0
         self._operators = [Operator(M0), Operator(M1)]
-        self._theoretical_error = 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2
+        self._theoretical_error = 1 - (1 + abs(eigenvals[eig1]) + abs(eigenvals[eig2])) / 2
         self._method = 'Minimum Error'
 
         if debug:
@@ -58,20 +69,21 @@ class Povm:
             print('eigenvals\n', eigenvals)
             print('eigenvectors\n', eigenvectors)
             print('X v = e v')
-            print('left: ', np.dot(X, eigenvectors[:, 0]))
-            print('right:', np.dot(eigenvals[0], eigenvectors[:, 0]))
-            print('left: ', np.dot(X, eigenvectors[:, 1].T))
-            print('right:', np.dot(eigenvals[1], eigenvectors[:, 1]))
+            print('left: ', np.dot(X, eigenvectors[:, eig1]))
+            print('right:', np.dot(eigenvals[eig1], eigenvectors[:, eig1]))
+            print('left: ', np.dot(X, eigenvectors[:, eig2].T))
+            print('right:', np.dot(eigenvals[eig2], eigenvectors[:, eig2]))
             print('M0\n', M0)
             print('M1\n', M1)
             print('M0 + M1\n', M0 + M1)
             print('M0 * M1\n', np.dot(M0, M1))
-            print('eigenvals*(M0, M1)\n', eigenvals[0]*M0 + eigenvals[1]*M1)
+            print('eigenvals*(M0, M1)\n', eigenvals[eig1]*M0 + eigenvals[eig2]*M1)
             print('theoretical error 1 =', 0.5 - 0.5 * np.trace(np.dot((M0 - M1), X)))
-            print('theoretical error 2 =', 1 - (1 + abs(eigenvals[0]) + abs(eigenvals[1])) / 2)
+            print('theoretical error 2 =', 1 - (1 + abs(eigenvals[eig1]) + abs(eigenvals[eig2])) / 2)
             costheta = abs(np.dot(quantum_states[0].state_vector, quantum_states[1].state_vector))
             print('theoretical error 3 =', 0.5 * (1 - math.sqrt(1 - 4*priors[0]*priors[1]*costheta**2)) )
             # I found three different expressions for the theoretical value for minimum error. The three are equivalent
+
 
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
         '''for two state discrimination (single detector) and unambiguous, the optimal POVM measurement is known
