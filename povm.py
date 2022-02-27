@@ -71,7 +71,7 @@ class Povm:
             print('X v = e v')
             print('left: ', np.dot(X, eigenvectors[:, eig1]))
             print('right:', np.dot(eigenvals[eig1], eigenvectors[:, eig1]))
-            print('left: ', np.dot(X, eigenvectors[:, eig2].T))
+            print('left: ', np.dot(X, eigenvectors[:, eig2]))
             print('right:', np.dot(eigenvals[eig2], eigenvectors[:, eig2]))
             print('M0\n', M0)
             print('M1\n', M1)
@@ -82,7 +82,14 @@ class Povm:
             print('theoretical error 2 =', 1 - (1 + abs(eigenvals[eig1]) + abs(eigenvals[eig2])) / 2)
             costheta = abs(np.dot(quantum_states[0].state_vector, quantum_states[1].state_vector))
             print('theoretical error 3 =', 0.5 * (1 - math.sqrt(1 - 4*priors[0]*priors[1]*costheta**2)) )
-            # I found three different expressions for the theoretical value for minimum error. The three are equivalent
+            tmp = np.dot(quantum_states[0].density_matrix, quantum_states[1].density_matrix)
+            print('theoretical error 4 =', 0.5 * (1 - math.sqrt(1 - 4*priors[0]*priors[1]*np.trace(tmp))) )
+            # I found four different expressions for the theoretical value for minimum error. The four are equivalent
+            print(f'check condition 1: M0*X*M1 = \n{np.dot(M0, np.dot(X, M1))}')
+            gamma = priors[0]*np.dot(M0, quantum_states[0].density_matrix) + priors[1]*np.dot(M1, quantum_states[1].density_matrix)
+            print('check condition 2: Tao - pipi^{hat}')
+            for i in [0, 1]:
+                print(gamma - priors[i]*quantum_states[i].density_matrix)
 
 
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
