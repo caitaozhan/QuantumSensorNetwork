@@ -34,7 +34,7 @@ class QuantumState:
         if self._density_matrix is None:
             if self._state_vector is None:
                 raise Exception('state_vector is None!')
-            self._density_matrix = np.outer(self._state_vector, self._state_vector)
+            self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...
         return self._density_matrix
 
     def init_random_state(self, seed: int = None):
