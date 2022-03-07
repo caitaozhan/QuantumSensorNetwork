@@ -1,4 +1,5 @@
-from numpy import np
+import numpy as np
+import math
 from utility import Utility
 from quantum_state import QuantumState
 from qiskit.quantum_info import random_unitary
@@ -68,7 +69,42 @@ def test4():
     qs.evolve(tensor_product)
     print(qs)
 
+
+def test5():
+    '''A random U with many different random initial state |a>, compute the minimum error and unambiguous discrimination error
+    '''
+    print('test_state.test5()')
+    print('A random U with many different random initial state |a>, compute the minimum error and unambiguous discrimination error.\n')
+    U = random_unitary(dims=2, seed=0)
+    U_ct = U.conjugate().transpose()
+    print('U')
+    Utility.print_matrix(U.data)
+    print('\nU_ct')
+    Utility.print_matrix(U_ct.data)
+    UU_ct = U.tensor(U_ct)
+    print('\nU tensor U_ct')
+    Utility.print_matrix(UU_ct.data)
+    print()
+
+    for i in range(20):
+        qs = QuantumState(num_detector=2)
+        qs.init_random_state(seed=i)
+        vec = qs.state_vector
+        print(f'seed = {i}, |a> = ', end='')
+        Utility.print_matrix([vec])
+        val = np.dot(np.dot(np.conj(vec), UU_ct.data), vec)
+        error = 0.5 * (1 - math.sqrt(1 - abs(val)**2))
+        print(f'P(min error) = {error:.4f}; P(unambiguous) = {abs(val):.4f}')
+        print()
+
+        # U_ctU = U_ct.tensor(U)
+        # val = np.dot(np.dot(np.conj(vec), U_ctU.data), vec)
+        # print(f'|<a|U_ct(tensor)U|a>| = {abs(val)}')
+        # print()
+
+
 if __name__ == '__main__':
-    test1()
+    # test1()
     # test4()
+    test5()
 

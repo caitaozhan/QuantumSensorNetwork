@@ -21,3 +21,16 @@ class Utility:
         bit = bit[2:]
         zeros = '0' * (num_of_bit - len(bit))
         return f'{zeros}{bit}'
+
+    @staticmethod
+    def print_matrix(matrix):
+        '''print a matrix with complex values elegantly
+        '''
+        for row in matrix:
+            for item in row:
+                real = f'{item.real:.4f}'
+                imag = f'{item.imag:.4f}'
+                if imag[0] != '-':
+                    imag = '+' + imag
+                print(f'({real:>7}{imag:>7}i)', end=' ')
+            print()
