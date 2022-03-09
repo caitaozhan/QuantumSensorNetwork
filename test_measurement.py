@@ -130,7 +130,7 @@ def test5():
 def test6():
     '''pretty good measurement of |0> and |+>
     '''
-    seed = 2
+    seed = 1
     repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
