@@ -77,9 +77,9 @@ class QuantumMeasurement:
 
             # step 2: bob receives the quantum state and does the measurement
             probs = []
-            for M in self.povm.operators:
+            for Pi in self.povm.operators:
                 density_operator = Operator(prepared_quantum_state.density_matrix)
-                tmp = M.dot(density_operator)
+                tmp = Pi.dot(density_operator)
                 prob = np.trace(tmp.data)
                 probs.append(prob)
             

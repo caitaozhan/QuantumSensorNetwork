@@ -127,10 +127,33 @@ def test5():
         qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
 
 
+def test6():
+    '''pretty good measurement of |0> and |+>
+    '''
+    seed = 2
+    repeat = 100_000
+    vector1 = np.array([1, 0])
+    vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
+    qs1 = QuantumState(num_detector=1, state_vector=vector1)
+    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    quantum_states = [qs1, qs2]
+    # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
+    priors_list = [[0.5, 0.5], [0.4, 0.6]]
+    for priors in priors_list:
+        povm = Povm()
+        povm.pretty_good_measurement(quantum_states, priors, debug=False)
+        qm = QuantumMeasurement()
+        qm.preparation(quantum_states, priors)
+        qm.povm = povm
+        error = qm.simulate(seed, repeat)
+        qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
+
 if __name__ == '__main__':
     # test1()
     # test2()
     # test3()
     # test4()
-    test5()
+    # test5()
+    test6()
     

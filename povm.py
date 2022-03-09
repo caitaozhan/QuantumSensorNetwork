@@ -4,8 +4,8 @@ Positive operator valued measurement
 
 import math
 import numpy as np
+from scipy.linalg import sqrtm
 from qiskit.quantum_info.operators.operator import Operator
-
 from utility import Utility
 
 class Povm:
@@ -41,7 +41,7 @@ class Povm:
 
     def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = False):
         '''for two state (single detector) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.
-           The implementation is from this paper: https://arxiv.org/pdf/1707.02571.pdf
+           Implementing paper: https://arxiv.org/pdf/1707.02571.pdf
         '''
         X = quantum_states[0].density_matrix * priors[0] - quantum_states[1].density_matrix * priors[1]
         eigenvals, eigenvectors = np.linalg.eig(X)             # The eigen vectors are normalized
@@ -64,7 +64,7 @@ class Povm:
         self._method = 'Minimum Error'
 
         if debug:
-            print('\nDebug information inside self.two_state_minerror()')
+            print('\nDebug information inside Povm.two_state_minerror()')
             print('X\n', X)
             print('eigenvals\n', eigenvals)
             print('eigenvectors\n', eigenvectors)
@@ -94,7 +94,7 @@ class Povm:
 
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
         '''for two state discrimination (single detector) and unambiguous, the optimal POVM measurement is known
-           The implementation is from this paper: https://iopscience.iop.org/article/10.1088/1742-6596/84/1/012001
+           Implementing paper: https://iopscience.iop.org/article/10.1088/1742-6596/84/1/012001
         '''
         qs1 = quantum_states[0].state_vector
         qs2 = quantum_states[1].state_vector
@@ -107,11 +107,11 @@ class Povm:
         if left <= priors[0] <= right:
             q1_opt = math.sqrt(priors[1] / priors[0]) * costheta
             q2_opt = math.sqrt(priors[0] / priors[1]) * costheta
-            M1 = (1 - q1_opt) / (sintheta**2) * np.outer(qs2_ortho, np.conj(qs2_ortho))
-            M2 = (1 - q2_opt) / (sintheta**2) * np.outer(qs1_ortho, np.conj(qs1_ortho))
+            Pi1 = (1 - q1_opt) / (sintheta**2) * np.outer(qs2_ortho, np.conj(qs2_ortho))
+            Pi2 = (1 - q2_opt) / (sintheta**2) * np.outer(qs1_ortho, np.conj(qs1_ortho))
             identity = np.array([[1, 0], [0, 1]])
-            M0 = identity - M1 - M2
-            self._operators = [Operator(M1), Operator(M2), Operator(M0)]
+            Pi0 = identity - Pi1 - Pi2
+            self._operators = [Operator(Pi1), Operator(Pi2), Operator(Pi0)]
             self._theoretical_error = 2 * math.sqrt(priors[0]*priors[1]) * costheta
         
         elif priors[0] < left:
@@ -125,15 +125,47 @@ class Povm:
         self._method = 'Unambiguous'            
 
         if debug:
-            print('\nDebug information inside self.two_state_unambiguous()')
+            print('\nDebug information inside Povm.two_state_unambiguous()')
             print('cosine  theta', costheta)
             print('sinuous theta', sintheta)
             print('qs1 ortho', qs1_ortho)
             print('qs2 ortho', qs2_ortho)
             print('q1 opt', q1_opt)
             print('q2 opt', q2_opt)
-            print('M2 * qs1', M2.dot(qs1))
-            print('M1 * qs2', M1.dot(qs2))
-            print('M1 + M2 + M0\n', M1 + M2 + M0)
+            print('Pi2 * qs1', Pi2.dot(qs1))
+            print('Pi1 * qs2', Pi1.dot(qs2))
+            print('Pi1 + Pi2 + Pi0\n', Pi1 + Pi2 + Pi0)
             print('left', left)
             print('right', right)
+
+
+    def pretty_good_measurement(self, quantum_states: list, priors: list, debug=True):
+        '''For any given set of states, we can construct an associated measurement, the square root measurement
+           Implementing paper: https://arxiv.org/pdf/0810.1970.pdf
+        '''
+        if len(quantum_states) != len(priors):
+            raise Exception('length of quantum_states and priors are not equal')
+        rho = 0
+        for qs, p in zip(quantum_states, priors):
+            rho += (p * qs.density_matrix)
+        rho_invsqrt = np.linalg.inv(sqrtm(rho))
+        self._operators = []
+        for qs, p in zip(quantum_states, priors):
+            Pi = p * np.dot(rho_invsqrt, np.dot(qs.density_matrix, rho_invsqrt))
+            self._operators.append(Operator(Pi))
+        self._method = 'Pretty Good'
+        self._theoretical_error = None 
+        
+        if debug:
+            print('\nDebug information inside Povm.pretty_good_measurement()')
+            Utility.print_matrix('rho:', rho)
+            Utility.print_matrix('rho_invsqrt:', rho_invsqrt)
+            summ = 0
+            string = ''
+            for i, Pi in enumerate(self._operators):
+                summ += Pi.data
+                tmp_str = f'Pi{i}:'
+                Utility.print_matrix(tmp_str, Pi.data)
+                string += f'{tmp_str[:-1]} + '
+            string = f'{string[:-2]}='
+            Utility.print_matrix(string, summ)

@@ -23,9 +23,10 @@ class Utility:
         return f'{zeros}{bit}'
 
     @staticmethod
-    def print_matrix(matrix):
+    def print_matrix(describe: str, matrix):
         '''print a matrix with complex values elegantly
         '''
+        print(describe)
         for row in matrix:
             for item in row:
                 real = f'{item.real:.4f}'
