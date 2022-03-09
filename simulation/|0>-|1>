@@ -113,8 +113,8 @@ The POVM (Pretty Good) is:
 [[0.14644661+0.j 0.35355339+0.j]
  [0.35355339+0.j 0.85355339+0.j]]
 
-The theoretical failure = None
-The simulated failure   = 0.14721  (seed = 1, repeat = 100000)
+The theoretical error = None
+The simulated error   = 0.14721  (seed = 1, repeat = 100000)
 -------END OF REPORT------
 
 -------SIMULATION REPORT------
@@ -135,6 +135,6 @@ The POVM (Pretty Good) is:
 [[0.17721904+0.j 0.38185397+0.j]
  [0.38185397+0.j 0.82278096+0.j]]
 
-The theoretical failure = None
-The simulated failure   = 0.14142  (seed = 1, repeat = 100000)
+The theoretical error = None
+The simulated error   = 0.14142  (seed = 1, repeat = 100000)
 -------END OF REPORT------
