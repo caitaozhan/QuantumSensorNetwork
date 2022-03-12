@@ -141,12 +141,43 @@ def test6():
     priors_list = [[0.5, 0.5], [0.4, 0.6]]
     for priors in priors_list:
         povm = Povm()
-        povm.pretty_good_measurement(quantum_states, priors, debug=False)
+        povm.pretty_good_measurement(quantum_states, priors, debug=True)
         qm = QuantumMeasurement()
         qm.preparation(quantum_states, priors)
         qm.povm = povm
         error = qm.simulate(seed, repeat)
         qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
+
+def test7():
+    '''pretty good measurement of two random states, when is it optimal?
+    '''
+    for seed in range(10):
+        qs1 = QuantumState(num_detector=1)
+        qs2 = QuantumState(num_detector=1)
+        qs1.init_random_state(seed=seed)
+        qs2.init_random_state(seed=seed+10)
+        quantum_states = [qs1, qs2]
+        priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.7, 0.3], [0.95, 0.05]]
+        for priors in priors_list:
+            povm = Povm()
+            povm.pretty_good_measurement(quantum_states, priors, debug=True)
+
+def test8():
+    '''pretty good measurement of three random states, when is it optimal?
+    '''
+    for seed in range(10):
+        qs1 = QuantumState(num_detector=1)
+        qs2 = QuantumState(num_detector=1)
+        qs3 = QuantumState(num_detector=1)
+        qs1.init_random_state(seed=seed)
+        qs2.init_random_state(seed=seed+10)
+        qs3.init_random_state(seed=seed+20)
+        quantum_states = [qs1, qs2, qs3]
+        priors_list = [[0.1, 0.1, 0.8], [0.2, 0.3, 0.5], [1/3, 1/3, 1/3], [0.7, 0.2, 0.1], [0.9, 0.06, 0.04]]
+        for priors in priors_list:
+            povm = Povm()
+            povm.pretty_good_measurement(quantum_states, priors, debug=True)
 
 
 if __name__ == '__main__':
@@ -155,5 +186,7 @@ if __name__ == '__main__':
     # test3()
     # test4()
     # test5()
-    test6()
+    # test6()
+    test7()
+    # test8()
     

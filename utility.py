@@ -1,5 +1,6 @@
 '''Some utility tools
 '''
+import numpy as np
 
 class Utility:
 
@@ -35,3 +36,46 @@ class Utility:
                     imag = '+' + imag
                 print(f'({real:>7}{imag:>7}i)', end=' ')
             print()
+
+    @staticmethod
+    def check_zero(matrix):
+        '''check if a matrix contains all zero entries
+        Args:
+            matrix -- np.array -- the matrix to be checked
+        Return:
+            bool -- True if all elements in the matrix are zero, False otherwise
+        '''
+        matrix = np.abs(matrix)
+        maxx = np.max(matrix)
+        if maxx < Utility.EPSILON:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def check_optimal(quantum_states: list, priors: list, povms: list):
+        '''check the optimality for minimum error povm
+        Args:
+            quantum_states -- a list of QuantumState objects
+            priors         -- a list of prior probabilities
+            povms          -- a list of Operator objects
+        Return:
+            bool -- True if povms are, False otherwise
+        '''
+        if not (len(quantum_states) == len(priors) == len(povms)):
+            raise Exception('error in input, the input parameters do not have equal length')
+        
+        length = len(quantum_states)
+        for i in range(length):
+            for j in range(i+1, length):
+                Pii  = povms[i].data
+                Pij  = povms[j].data
+                pi   = priors[i]
+                pj   = priors[j]
+                rhoi = quantum_states[i].density_matrix
+                rhoj = quantum_states[j].density_matrix
+                product = np.dot(Pii, np.dot(pi*rhoi - pj*rhoj, Pij))
+                if Utility.check_zero(product) == False:
+                    return False
+        return True
+

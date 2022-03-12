@@ -158,6 +158,7 @@ class Povm:
         
         if debug:
             print('\nDebug information inside Povm.pretty_good_measurement()')
+            print(f'prior list {priors}')
             Utility.print_matrix('rho:', rho)
             Utility.print_matrix('rho_invsqrt:', rho_invsqrt)
             summ = 0
@@ -169,3 +170,4 @@ class Povm:
                 string += f'{tmp_str[:-1]} + '
             string = f'{string[:-2]}='
             Utility.print_matrix(string, summ)
+            print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
