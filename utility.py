@@ -5,6 +5,7 @@ import numpy as np
 class Utility:
 
     EPSILON = 1e-8
+    EPSILON_SEMIDEFINITE = 8e-4 # relaxed for semidefinate programming optimal condition checking......
 
     @staticmethod
     def norm_squared(alpha):
@@ -47,7 +48,7 @@ class Utility:
         '''
         matrix = np.abs(matrix)
         maxx = np.max(matrix)
-        if maxx < Utility.EPSILON:
+        if maxx < Utility.EPSILON_SEMIDEFINITE:
             return True
         else:
             return False

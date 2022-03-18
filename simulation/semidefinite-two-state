@@ -1,0 +1,700 @@
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.2509+0.0000i) ( 0.2339+0.3650i) 
+( 0.2339-0.3650i) ( 0.7491+0.0000i) 
+Pi1:
+( 0.7491+0.0000i) (-0.2339-0.3650i) 
+(-0.2339+0.3650i) ( 0.2509+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.03206500106222265
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.3314+0.0000i) ( 0.2582+0.3936i) 
+( 0.2582-0.3936i) ( 0.6686+0.0000i) 
+Pi1:
+( 0.6686+0.0000i) (-0.2582-0.3936i) 
+(-0.2582+0.3936i) ( 0.3314+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.06949796217489534
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.5018+0.0000i) ( 0.2818+0.4130i) 
+( 0.2818-0.4130i) ( 0.4982+0.0000i) 
+Pi1:
+( 0.4982+0.0000i) (-0.2818-0.4130i) 
+(-0.2818+0.4130i) ( 0.5018+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.09529446746421166
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.6409+0.0000i) ( 0.2761+0.3923i) 
+( 0.2761-0.3923i) ( 0.3591+0.0000i) 
+Pi1:
+( 0.3591+0.0000i) (-0.2761-0.3923i) 
+(-0.2761+0.3923i) ( 0.6409+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.07859721033430633
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.7746+0.0000i) ( 0.2466+0.3373i) 
+( 0.2466-0.3373i) ( 0.2254+0.0000i) 
+Pi1:
+( 0.2254+0.0000i) (-0.2466-0.3373i) 
+(-0.2466+0.3373i) ( 0.7746+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.01665805044851787
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.1319+0.0000i) ( 0.2280-0.2500i) 
+( 0.2280+0.2500i) ( 0.8681+0.0000i) 
+Pi1:
+( 0.8681+0.0000i) (-0.2280+0.2500i) 
+(-0.2280-0.2500i) ( 0.1319+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.007660149450393394
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.1295+0.0000i) ( 0.1923-0.2752i) 
+( 0.1923+0.2752i) ( 0.8705+0.0000i) 
+Pi1:
+( 0.8705+0.0000i) (-0.1923+0.2752i) 
+(-0.1923-0.2752i) ( 0.1295+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.016095233224023953
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.1320+0.0000i) ( 0.1276-0.3136i) 
+( 0.1276+0.3136i) ( 0.8680+0.0000i) 
+Pi1:
+( 0.8680+0.0000i) (-0.1276+0.3136i) 
+(-0.1276-0.3136i) ( 0.1320+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.021580935423295644
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.1401+0.0000i) ( 0.0735-0.3393i) 
+( 0.0735+0.3393i) ( 0.8599+0.0000i) 
+Pi1:
+( 0.8599+0.0000i) (-0.0735+0.3393i) 
+(-0.0735-0.3393i) ( 0.1401+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.018056411755160817
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.1569+0.0000i) ( 0.0068-0.3636i) 
+( 0.0068+0.3636i) ( 0.8431+0.0000i) 
+Pi1:
+( 0.8431+0.0000i) (-0.0068+0.3636i) 
+(-0.0068-0.3636i) ( 0.1569+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.004028113489772056
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.2784+0.0000i) (-0.4034+0.1953i) 
+(-0.4034-0.1953i) ( 0.7216+0.0000i) 
+Pi1:
+( 0.7216+0.0000i) ( 0.4034-0.1953i) 
+( 0.4034+0.1953i) ( 0.2784+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.08634370822512993
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.3733+0.0000i) (-0.4419+0.1966i) 
+(-0.4419-0.1966i) ( 0.6267+0.0000i) 
+Pi1:
+( 0.6267+0.0000i) ( 0.4419-0.1966i) 
+( 0.4419+0.1966i) ( 0.3733+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.2073414722293644
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.8068+0.0000i) (-0.3801+0.1068i) 
+(-0.3801-0.1068i) ( 0.1932+0.0000i) 
+Pi1:
+( 0.1932+0.0000i) ( 0.3801-0.1068i) 
+( 0.3801+0.1068i) ( 0.8068+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.3243146231797903
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.9934+0.0000i) (-0.0651-0.0477i) 
+(-0.0651+0.0477i) ( 0.0066+0.0000i) 
+Pi1:
+( 0.0066+0.0000i) ( 0.0651+0.0477i) 
+( 0.0651-0.0477i) ( 0.9934+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.24323766705949912
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.9769+0.0000i) ( 0.1004-0.1118i) 
+( 0.1004+0.1118i) ( 0.0231+0.0000i) 
+Pi1:
+( 0.0231+0.0000i) (-0.1004+0.1118i) 
+(-0.1004-0.1118i) ( 0.9769+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.043530451730966147
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.7106+0.0000i) ( 0.0649+0.4488i) 
+( 0.0649-0.4488i) ( 0.2894+0.0000i) 
+Pi1:
+( 0.2894+0.0000i) (-0.0649-0.4488i) 
+(-0.0649+0.4488i) ( 0.7106+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.09535527451950276
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.7715+0.0000i) ( 0.0533+0.4165i) 
+( 0.0533-0.4165i) ( 0.2285+0.0000i) 
+Pi1:
+( 0.2285+0.0000i) (-0.0533-0.4165i) 
+(-0.0533+0.4165i) ( 0.7715+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.23488467635205335
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.9898+0.0000i) (-0.0601-0.0808i) 
+(-0.0601+0.0808i) ( 0.0102+0.0000i) 
+Pi1:
+( 0.0102+0.0000i) ( 0.0601+0.0808i) 
+( 0.0601-0.0808i) ( 0.9898+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.3981101648362233
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.6461+0.0000i) (-0.1011-0.4674i) 
+(-0.1011+0.4674i) ( 0.3539+0.0000i) 
+Pi1:
+( 0.3539+0.0000i) ( 0.1011+0.4674i) 
+( 0.1011-0.4674i) ( 0.6461+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.2792728098496503
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.5225+0.0000i) (-0.0941-0.4905i) 
+(-0.0941+0.4905i) ( 0.4775+0.0000i) 
+Pi1:
+( 0.4775+0.0000i) ( 0.0941+0.4905i) 
+( 0.0941-0.4905i) ( 0.5225+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.04781367626610866
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.8074+0.0000i) ( 0.3142-0.2384i) 
+( 0.3142+0.2384i) ( 0.1926+0.0000i) 
+Pi1:
+( 0.1926+0.0000i) (-0.3142+0.2384i) 
+(-0.3142-0.2384i) ( 0.8074+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.017370383270376877
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.7579+0.0000i) ( 0.3577-0.2357i) 
+( 0.3577+0.2357i) ( 0.2421+0.0000i) 
+Pi1:
+( 0.2421+0.0000i) (-0.3577+0.2357i) 
+(-0.3577-0.2357i) ( 0.7579+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.036906448260151326
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.6583+0.0000i) ( 0.4199-0.2206i) 
+( 0.4199+0.2206i) ( 0.3417+0.0000i) 
+Pi1:
+( 0.3417+0.0000i) (-0.4199+0.2206i) 
+(-0.4199-0.2206i) ( 0.6583+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.04990326263353517
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.5713+0.0000i) ( 0.4529-0.1994i) 
+( 0.4529+0.1994i) ( 0.4287+0.0000i) 
+Pi1:
+( 0.4287+0.0000i) (-0.4529+0.1994i) 
+(-0.4529-0.1994i) ( 0.5713+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.041548926141244946
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.4685+0.0000i) ( 0.4705-0.1662i) 
+( 0.4705+0.1662i) ( 0.5315+0.0000i) 
+Pi1:
+( 0.5315+0.0000i) (-0.4705+0.1662i) 
+(-0.4705-0.1662i) ( 0.4685+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.009091035770769418
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.4874+0.0000i) ( 0.2895-0.4074i) 
+( 0.2895+0.4074i) ( 0.5126+0.0000i) 
+Pi1:
+( 0.5126+0.0000i) (-0.2895+0.4074i) 
+(-0.2895-0.4074i) ( 0.4874+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.02432140208297906
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.4797+0.0000i) ( 0.3488-0.3577i) 
+( 0.3488+0.3577i) ( 0.5203+0.0000i) 
+Pi1:
+( 0.5203+0.0000i) (-0.3488+0.3577i) 
+(-0.3488-0.3577i) ( 0.4797+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.05215765967800268
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.4669+0.0000i) ( 0.4359-0.2426i) 
+( 0.4359+0.2426i) ( 0.5331+0.0000i) 
+Pi1:
+( 0.5331+0.0000i) (-0.4359+0.2426i) 
+(-0.4359-0.2426i) ( 0.4669+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.07095023731706074
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.4585+0.0000i) ( 0.4798-0.1343i) 
+( 0.4798+0.1343i) ( 0.5415+0.0000i) 
+Pi1:
+( 0.5415+0.0000i) (-0.4798+0.1343i) 
+(-0.4798-0.1343i) ( 0.4585+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.058825580467034566
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.4520+0.0000i) ( 0.4976-0.0065i) 
+( 0.4976+0.0065i) ( 0.5480+0.0000i) 
+Pi1:
+( 0.5480+0.0000i) (-0.4976+0.0065i) 
+(-0.4976-0.0065i) ( 0.4520+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.012685013897347552
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.7045+0.0000i) ( 0.1244+0.4390i) 
+( 0.1244-0.4390i) ( 0.2955+0.0000i) 
+Pi1:
+( 0.2955+0.0000i) (-0.1244-0.4390i) 
+(-0.1244+0.4390i) ( 0.7045+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.024829807911981527
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.6566+0.0000i) ( 0.1867+0.4365i) 
+( 0.1867-0.4365i) ( 0.3433+0.0000i) 
+Pi1:
+( 0.3433+0.0000i) (-0.1867-0.4365i) 
+(-0.1867+0.4365i) ( 0.6567+0.0000i) 
+Pi0 + Pi1 =
+( 0.9999+0.0000i) ( 0.0001-0.0000i) 
+( 0.0001+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.053316490884404266
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.5578+0.0000i) ( 0.2899+0.4033i) 
+( 0.2899-0.4033i) ( 0.4422+0.0000i) 
+Pi1:
+( 0.4422+0.0000i) (-0.2899-0.4033i) 
+(-0.2899+0.4033i) ( 0.5578+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.07251721766412156
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.4738+0.0000i) ( 0.3554+0.3508i) 
+( 0.3554-0.3508i) ( 0.5262+0.0000i) 
+Pi1:
+( 0.5262+0.0000i) (-0.3554-0.3508i) 
+(-0.3554+0.3508i) ( 0.4738+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.06010556235167386
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.3833+0.0000i) ( 0.4041+0.2703i) 
+( 0.4041-0.2703i) ( 0.6167+0.0000i) 
+Pi1:
+( 0.6167+0.0000i) (-0.4041-0.2703i) 
+(-0.4041+0.2703i) ( 0.3833+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.012946856800824857
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.8770+0.0000i) (-0.1145+0.3078i) 
+(-0.1145-0.3078i) ( 0.1230+0.0000i) 
+Pi1:
+( 0.1230+0.0000i) ( 0.1145-0.3078i) 
+( 0.1145+0.3078i) ( 0.8770+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.018050686976356034
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.8871+0.0000i) (-0.0483+0.3127i) 
+(-0.0483-0.3127i) ( 0.1128+0.0000i) 
+Pi1:
+( 0.1129+0.0000i) ( 0.0483-0.3127i) 
+( 0.0483+0.3127i) ( 0.8872+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.0384218419481106
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.8877+0.0000i) ( 0.0727+0.3072i) 
+( 0.0727-0.3072i) ( 0.1123+0.0000i) 
+Pi1:
+( 0.1123+0.0000i) (-0.0727-0.3072i) 
+(-0.0727+0.3072i) ( 0.8878+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0001+0.0000i) 
+The theoretical error is 0.05195291169060945
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.8716+0.0000i) ( 0.1673+0.2896i) 
+( 0.1673-0.2896i) ( 0.1284+0.0000i) 
+Pi1:
+( 0.1284+0.0000i) (-0.1673-0.2896i) 
+(-0.1673+0.2896i) ( 0.8716+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.0432282665801027
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.8359+0.0000i) ( 0.2676+0.2560i) 
+( 0.2676-0.2560i) ( 0.1641+0.0000i) 
+Pi1:
+( 0.1641+0.0000i) (-0.2676-0.2560i) 
+(-0.2676+0.2560i) ( 0.8359+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.009443968260095303
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.9436+0.0000i) (-0.1738-0.1518i) 
+(-0.1738+0.1518i) ( 0.0564+0.0000i) 
+Pi1:
+( 0.0564+0.0000i) ( 0.1738+0.1518i) 
+( 0.1738-0.1518i) ( 0.9436+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.05351757981452554
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.9832+0.0000i) (-0.1029-0.0773i) 
+(-0.1029+0.0773i) ( 0.0168+0.0000i) 
+Pi1:
+( 0.0168+0.0000i) ( 0.1029+0.0773i) 
+( 0.1029-0.0773i) ( 0.9832+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.11990529799939265
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.9830+0.0000i) ( 0.0759+0.1048i) 
+( 0.0759-0.1048i) ( 0.0170+0.0000i) 
+Pi1:
+( 0.0170+0.0000i) (-0.0759-0.1048i) 
+(-0.0759+0.1048i) ( 0.9830+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.16940059915098293
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.8869+0.0000i) ( 0.2106+0.2365i) 
+( 0.2106-0.2365i) ( 0.1131+0.0000i) 
+Pi1:
+( 0.1130+0.0000i) (-0.2106-0.2365i) 
+(-0.2106+0.2365i) ( 0.8869+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.13695789768147582
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.7466+0.0000i) ( 0.2976+0.3172i) 
+( 0.2976-0.3172i) ( 0.2534+0.0000i) 
+Pi1:
+( 0.2534+0.0000i) (-0.2976-0.3172i) 
+(-0.2976+0.3172i) ( 0.7466+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000+0.0000i) 
+( 0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.027489433307886002
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.1, 0.9]
+Pi0:
+( 0.4711+0.0000i) (-0.0188+0.4988i) 
+(-0.0188-0.4988i) ( 0.5289+0.0000i) 
+Pi1:
+( 0.5289+0.0000i) ( 0.0188-0.4988i) 
+( 0.0188+0.4988i) ( 0.4711+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.09882162587880117
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.25, 0.75]
+Pi0:
+( 0.5084+0.0000i) (-0.0236+0.4994i) 
+(-0.0236-0.4994i) ( 0.4916+0.0000i) 
+Pi1:
+( 0.4916+0.0000i) ( 0.0236-0.4994i) 
+( 0.0236+0.4994i) ( 0.5084+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.24609676969573457
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.5, 0.5]
+Pi0:
+( 0.9875+0.0000i) (-0.0659+0.0897i) 
+(-0.0659-0.0897i) ( 0.0125+0.0000i) 
+Pi1:
+( 0.0125+0.0000i) ( 0.0659-0.0897i) 
+( 0.0659+0.0897i) ( 0.9875+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) ( 0.0000-0.0000i) 
+( 0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.4487854794573839
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.7, 0.3]
+Pi0:
+( 0.7105+0.0000i) (-0.0063-0.4535i) 
+(-0.0063+0.4535i) ( 0.2895+0.0000i) 
+Pi1:
+( 0.2895+0.0000i) ( 0.0063+0.4535i) 
+( 0.0063-0.4535i) ( 0.7105+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000-0.0000i) 
+(-0.0000+0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.29456691219308073
+Check POVM optimality: True
+
+Debug information inside Povm.semidefinite_programming()
+prior list [0.95, 0.05]
+Pi0:
+( 0.6466+0.0000i) ( 0.0029-0.4780i) 
+( 0.0029+0.4780i) ( 0.3533+0.0000i) 
+Pi1:
+( 0.3534+0.0000i) (-0.0029+0.4780i) 
+(-0.0029-0.4780i) ( 0.6467+0.0000i) 
+Pi0 + Pi1 =
+( 1.0000+0.0000i) (-0.0000+0.0000i) 
+(-0.0000-0.0000i) ( 1.0000+0.0000i) 
+The theoretical error is 0.049484907671415
+Check POVM optimality: True

@@ -4,6 +4,7 @@ Positive operator valued measurement
 
 import math
 import numpy as np
+import cvxpy as cp
 from scipy.linalg import sqrtm
 from qiskit.quantum_info.operators.operator import Operator
 from utility import Utility
@@ -154,7 +155,7 @@ class Povm:
             Pi = p * np.dot(rho_invsqrt, np.dot(qs.density_matrix, rho_invsqrt))
             self._operators.append(Operator(Pi))
         self._method = 'Pretty Good'
-        self._theoretical_error = None 
+        self._theoretical_error = None
         
         if debug:
             print('\nDebug information inside Povm.pretty_good_measurement()')
@@ -170,4 +171,50 @@ class Povm:
                 string += f'{tmp_str[:-1]} + '
             string = f'{string[:-2]}='
             Utility.print_matrix(string, summ)
+            print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
+
+
+    def semidefinite_programming(self, quantum_states: list, priors: list, debug=True):
+        '''A numerical method for solving the optimal POVM through semidefinite programming
+           paper: https://arxiv.org/pdf/quant-ph/0205178.pdf
+        '''
+        if len(quantum_states) == 0:
+            raise Exception('empty quantum_states')
+        if len(quantum_states) != len(priors):
+            raise Exception('length of quantum_states and priors are not equal')
+        n = len(quantum_states[0].state_vector)
+        PIs = []
+        rhos = []
+        constraints = []
+        for qs, p in zip(quantum_states, priors):
+            rhos.append(p*qs.density_matrix)
+            X = cp.Variable((n, n), complex=True)
+            constraints.append(X >> 0)           # X is positive semidefinite (like non-negativity)
+            PIs.append(X)
+        Identity = np.eye(n)
+        constraints.append(sum(PIs) == Identity) # POVM constraint
+        objective = cp.real(cp.trace(sum(rho @ PI for rho, PI in zip(rhos, PIs))))  # the objective function
+        prob = cp.Problem(cp.Maximize(objective),
+                          constraints)
+        prob.solve()
+        self._method = 'Semidefinite programming'
+        if prob.status == 'optimal':
+            self._theoretical_error = 1 - prob.value
+            self._operators = [Operator(PI.value) for PI in PIs]
+        else:
+            raise Exception('prob.value is not optimal')
+
+        if debug:
+            print('\nDebug information inside Povm.semidefinite_programming()')
+            print(f'prior list {priors}')
+            summ = 0
+            string = ''
+            for i, Pi in enumerate(self._operators):
+                summ += Pi.data
+                tmp_str = f'Pi{i}:'
+                Utility.print_matrix(tmp_str, Pi.data)
+                string += f'{tmp_str[:-1]} + '
+            string = f'{string[:-2]}='
+            Utility.print_matrix(string, summ)
+            print(f'The theoretical error is {self._theoretical_error}')
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')

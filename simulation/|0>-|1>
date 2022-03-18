@@ -1,3 +1,4 @@
+Part 1: Minimum Error
 
 -------SIMULATION REPORT------
 Quantum states to be discriminated:
@@ -43,6 +44,104 @@ The theoretical error = 0.13944487245360104
 The simulated error   = 0.13871  (seed = 1, repeat = 100000)
 -------END OF REPORT------
 
+
+
+Part 2: Semidefinite Programming
+
+-------SIMULATION REPORT------
+Quantum states to be discriminated:
+|0>: 1
+|1>: 0
+
+|0>: 0.7071067811865475
+|1>: 0.7071067811865475
+
+The priors are:
+[0.5, 0.5]
+
+The POVM (Semidefinite programming) is: 
+[[ 0.85355378+0.j -0.3535533 +0.j]
+ [-0.3535533 +0.j  0.14644646+0.j]]
+
+[[0.14644675+0.j 0.3535535 +0.j]
+ [0.3535535 +0.j 0.85355395+0.j]]
+
+The theoretical error = 0.14644618145791988
+The simulated error   = 0.14721  (seed = 1, repeat = 100000)
+-------END OF REPORT------
+
+-------SIMULATION REPORT------
+Quantum states to be discriminated:
+|0>: 1
+|1>: 0
+
+|0>: 0.7071067811865475
+|1>: 0.7071067811865475
+
+The priors are:
+[0.4, 0.6]
+
+The POVM (Semidefinite programming) is: 
+[[ 0.77734918+0.j -0.41602497+0.j]
+ [-0.41602497+0.j  0.22264955+0.j]]
+
+[[0.22264975+0.j 0.41602497+0.j]
+ [0.41602497+0.j 0.7773487 +0.j]]
+
+The theoretical error = 0.1394458098795761
+The simulated error   = 0.13871  (seed = 1, repeat = 100000)
+
+
+
+Part 3: Pretty Good
+
+-------SIMULATION REPORT------
+Quantum states to be discriminated:
+|0>: 1
+|1>: 0
+
+|0>: 0.7071067811865475
+|1>: 0.7071067811865475
+
+The priors are:
+[0.5, 0.5]
+
+The POVM (Pretty Good) is: 
+[[ 0.85355339+0.j -0.35355339+0.j]
+ [-0.35355339+0.j  0.14644661+0.j]]
+
+[[0.14644661+0.j 0.35355339+0.j]
+ [0.35355339+0.j 0.85355339+0.j]]
+
+The theoretical error = None
+The simulated error   = 0.14721  (seed = 1, repeat = 100000)
+-------END OF REPORT------
+
+-------SIMULATION REPORT------
+Quantum states to be discriminated:
+|0>: 1
+|1>: 0
+
+|0>: 0.7071067811865475
+|1>: 0.7071067811865475
+
+The priors are:
+[0.4, 0.6]
+
+The POVM (Pretty Good) is: 
+[[ 0.82278096+0.j -0.38185397+0.j]
+ [-0.38185397+0.j  0.17721904+0.j]]
+
+[[0.17721904+0.j 0.38185397+0.j]
+ [0.38185397+0.j 0.82278096+0.j]]
+
+The theoretical error = None
+The simulated error   = 0.14142  (seed = 1, repeat = 100000)
+-------END OF REPORT------
+
+
+
+Part 4: Unambiguous
 
 -------SIMULATION REPORT------
 Quantum states to be discriminated:
@@ -94,47 +193,3 @@ The theoretical failure = 0.7071067811865475
 The simulated failure   = 0.70703  (seed = 1, repeat = 100000)
 -------END OF REPORT------
 
-
--------SIMULATION REPORT------
-Quantum states to be discriminated:
-|0>: 1
-|1>: 0
-
-|0>: 0.7071067811865475
-|1>: 0.7071067811865475
-
-The priors are:
-[0.5, 0.5]
-
-The POVM (Pretty Good) is: 
-[[ 0.85355339+0.j -0.35355339+0.j]
- [-0.35355339+0.j  0.14644661+0.j]]
-
-[[0.14644661+0.j 0.35355339+0.j]
- [0.35355339+0.j 0.85355339+0.j]]
-
-The theoretical error = None
-The simulated error   = 0.14721  (seed = 1, repeat = 100000)
--------END OF REPORT------
-
--------SIMULATION REPORT------
-Quantum states to be discriminated:
-|0>: 1
-|1>: 0
-
-|0>: 0.7071067811865475
-|1>: 0.7071067811865475
-
-The priors are:
-[0.4, 0.6]
-
-The POVM (Pretty Good) is: 
-[[ 0.82278096+0.j -0.38185397+0.j]
- [-0.38185397+0.j  0.17721904+0.j]]
-
-[[0.17721904+0.j 0.38185397+0.j]
- [0.38185397+0.j 0.82278096+0.j]]
-
-The theoretical error = None
-The simulated error   = 0.14142  (seed = 1, repeat = 100000)
--------END OF REPORT------
