@@ -16,8 +16,8 @@ def test1():
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
     # vector2 = np.array([0, 1])
-    qs1 = QuantumState(num_detector=1, state_vector=vector1)
-    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     # priors_list = [[0.5, 0.5], [0.4, 0.6]]
@@ -38,8 +38,8 @@ def test2():
     repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
-    qs1 = QuantumState(num_detector=1, state_vector=vector1)
-    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     # priors_list = [[0.5, 0.5], [0.4, 0.6]]
     # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
@@ -59,8 +59,8 @@ def test2():
 def test3():
     seed = 1
     repeat = 100_000
-    qs1 = QuantumState(num_detector=1)
-    qs2 = QuantumState(num_detector=1)
+    qs1 = QuantumState(num_sensor=1)
+    qs2 = QuantumState(num_sensor=1)
     qs1.init_random_state(seed=1)
     qs2.init_random_state(seed=2)
     quantum_states = [qs1, qs2]
@@ -80,8 +80,8 @@ def test3():
 def test4():
     seed = 2
     repeat = 100_000
-    qs1 = QuantumState(num_detector=1)
-    qs2 = QuantumState(num_detector=1)
+    qs1 = QuantumState(num_sensor=1)
+    qs2 = QuantumState(num_sensor=1)
     qs1.init_random_state(seed=1)
     qs2.init_random_state(seed=2)
     quantum_states = [qs1, qs2]
@@ -107,8 +107,8 @@ def test5():
     # vector1 = np.array([1, 0, 0, 0, 0, 0, 0, 0])
     # a = 1/math.sqrt(8)
     # vector2 = np.array([a, a, a, a, a, a, a, a])
-    qs1 = QuantumState(num_detector=1, state_vector=vector1)
-    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     priors_list = [[0.5, 0.5]]
@@ -128,8 +128,8 @@ def test6():
     repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
-    qs1 = QuantumState(num_detector=1, state_vector=vector1)
-    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     priors_list = [[0.5, 0.5], [0.4, 0.6]]
@@ -146,8 +146,8 @@ def test6():
 # pretty good measurement of two random states, when is it optimal?
 def test7():
     for seed in range(10):
-        qs1 = QuantumState(num_detector=1)
-        qs2 = QuantumState(num_detector=1)
+        qs1 = QuantumState(num_sensor=1)
+        qs2 = QuantumState(num_sensor=1)
         qs1.init_random_state(seed=seed)
         qs2.init_random_state(seed=seed+10)
         quantum_states = [qs1, qs2]
@@ -160,9 +160,9 @@ def test7():
 # pretty good measurement of three random states, when is it optimal?
 def test8():
     for seed in range(10):
-        qs1 = QuantumState(num_detector=1)
-        qs2 = QuantumState(num_detector=1)
-        qs3 = QuantumState(num_detector=1)
+        qs1 = QuantumState(num_sensor=1)
+        qs2 = QuantumState(num_sensor=1)
+        qs3 = QuantumState(num_sensor=1)
         qs1.init_random_state(seed=seed)
         qs2.init_random_state(seed=seed+10)
         qs3.init_random_state(seed=seed+20)
@@ -179,8 +179,8 @@ def test9():
     repeat = 100_000
     vector1 = np.array([1, 0])
     vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
-    qs1 = QuantumState(num_detector=1, state_vector=vector1)
-    qs2 = QuantumState(num_detector=1, state_vector=vector2)
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
     priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     priors_list = [[0.5, 0.5], [0.4, 0.6]]
@@ -197,8 +197,8 @@ def test9():
 # semidefinite programming of two random states, when is it optimal?
 def test10():
     for seed in range(10):
-        qs1 = QuantumState(num_detector=1)
-        qs2 = QuantumState(num_detector=1)
+        qs1 = QuantumState(num_sensor=1)
+        qs2 = QuantumState(num_sensor=1)
         qs1.init_random_state(seed=seed)
         qs2.init_random_state(seed=seed+10)
         quantum_states = [qs1, qs2]
@@ -211,9 +211,9 @@ def test10():
 # semidefinite programming of three random states, when is it optimal?
 def test11():
     for seed in range(10):
-        qs1 = QuantumState(num_detector=1)
-        qs2 = QuantumState(num_detector=1)
-        qs3 = QuantumState(num_detector=1)
+        qs1 = QuantumState(num_sensor=1)
+        qs2 = QuantumState(num_sensor=1)
+        qs3 = QuantumState(num_sensor=1)
         qs1.init_random_state(seed=seed)
         qs2.init_random_state(seed=seed+10)
         qs3.init_random_state(seed=seed+20)
@@ -227,7 +227,7 @@ def test11():
 if __name__ == '__main__':
     # test1()
     # test2()
-    # test3()
+    test3()
     # test4()
     # test5()
     # test6()
@@ -235,5 +235,5 @@ if __name__ == '__main__':
     # test8()
     # test9()
     # test10()
-    test11()
+    # test11()
     

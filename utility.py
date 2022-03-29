@@ -80,3 +80,13 @@ class Utility:
                     return False
         return True
 
+    @staticmethod
+    def get_theta(real, imag):
+        '''return the theta in radian
+        '''
+        theta = np.arccos(real)
+        if imag > 0:
+            return theta
+        else:
+            return 2*np.pi - theta
+

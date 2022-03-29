@@ -23,8 +23,8 @@ def test1():
 
 def test2():
     '''test qs.init_random_state'''
-    qs = QuantumState(num_detector=2)
-    qs.init_random_state(seed=0)
+    qs = QuantumState(num_sensor=2)
+    qs.init_random_state()
     print(qs)
     print('shape', qs.state_vector.shape[0])
 
@@ -85,7 +85,7 @@ def test5():
     print()
 
     for i in range(20):
-        qs = QuantumState(num_detector=2)
+        qs = QuantumState(num_sensor=2)
         qs.init_random_state(seed=i)
         vec = qs.state_vector
         Utility.print_matrix(f'seed = {i}, |a> = ', [vec])
@@ -102,6 +102,7 @@ def test5():
 
 if __name__ == '__main__':
     # test1()
+    test2()
     # test4()
-    test5()
+    # test5()
 

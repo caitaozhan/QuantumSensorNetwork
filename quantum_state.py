@@ -8,22 +8,22 @@ from utility import Utility
 class QuantumState:
     '''Encapsulate a (pure) quantum state, i.e. a complex vector in the Hilbert space.
        Currently using two-level quantum state, i.e., qubits
-       One quantum detector is represented by a single qubit quantum state
-       N quantum detector are represented by a N qubit quantum state
+       One quantum sensor is represented by a single qubit quantum state
+       N quantum sensor are represented by a N qubit quantum state
     '''
-    def __init__(self, num_detector: int, state_vector: np.array = None):
+    def __init__(self, num_sensor: int, state_vector: np.array = None):
         '''
         Args:
-            num_detector: number of detector
-            state_vector: a state vector of dimension 2**num_detector
+            num_sensor: number of sensor (i.e, detector)
+            state_vector: a state vector of dimension 2**num_sensor
         '''
-        self._num_detector = num_detector
+        self._num_sensor = num_sensor
         self._state_vector = state_vector
         self._density_matrix = None
 
     @property
-    def num_detector(self):
-        return self._num_detector
+    def num_sensor(self):
+        return self._num_sensor
 
     @property
     def state_vector(self):
@@ -41,7 +41,7 @@ class QuantumState:
         '''init a random quantum state'''
         if seed is not None:
             np.random.seed(seed)
-        self._state_vector = random_state(self.num_detector)
+        self._state_vector = random_state(self.num_sensor)
 
     def orthogonal_state(self):
         '''get the orthogonal state'''

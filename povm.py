@@ -41,7 +41,7 @@ class Povm:
         self._operators = [Operator(M0), Operator(M1)]
 
     def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = False):
-        '''for two state (single detector) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.
+        '''for two state (single sensor) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.
            Implementing paper: https://arxiv.org/pdf/1707.02571.pdf
         '''
         X = quantum_states[0].density_matrix * priors[0] - quantum_states[1].density_matrix * priors[1]
@@ -94,7 +94,7 @@ class Povm:
 
 
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
-        '''for two state discrimination (single detector) and unambiguous, the optimal POVM measurement is known
+        '''for two state discrimination (single sensor) and unambiguous, the optimal POVM measurement is known
            Implementing paper: https://iopscience.iop.org/article/10.1088/1742-6596/84/1/012001
         '''
         qs1 = quantum_states[0].state_vector
