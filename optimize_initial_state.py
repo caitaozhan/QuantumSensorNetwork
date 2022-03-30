@@ -4,6 +4,7 @@ Optimizing initial state
 
 import numpy as np
 import math
+from qiskit_textbook.tools import random_state
 from qiskit.quantum_info.operators.operator import Operator
 from quantum_state import QuantumState
 from utility import Utility
@@ -21,7 +22,7 @@ class OptimizeInitialState(QuantumState):
         return self._optimze_method
 
     def __str__(self):
-        s = f'Optimization method is {self.optimize_method}.\nInitial state is:\n'
+        s = f'\nOptimization method is {self.optimize_method}.\nInitial state is:\n'
         parent = super().__str__()
         return s + parent
 
@@ -38,6 +39,12 @@ class OptimizeInitialState(QuantumState):
         '''
         pass
 
+    def random(self, seed, unitary_operator: Operator):
+        '''ignore the unitary operator and randomly initialize a quantum state
+        '''
+        np.random.seed(seed)
+        self._state_vector = random_state(nqubits=self.num_sensor)
+        self._method = 'Random'
 
     def guess(self, unitary_operator: Operator):
         '''do an eigenvalue decomposition, the two eigen vectors are |v> and |u>,

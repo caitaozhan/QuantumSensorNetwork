@@ -16,6 +16,7 @@ class Povm:
         self._operators = operators   # a list of Operator
         self._method = ''
         self._theoretical_error = -1
+        self._theoretical_success = -1
 
     @property
     def operators(self):
@@ -24,6 +25,10 @@ class Povm:
     @property
     def theoretical_error(self):
         return self._theoretical_error
+
+    @property
+    def therotical_success(self):
+        return self._theoretical_success
 
     @property
     def method(self):
@@ -40,7 +45,7 @@ class Povm:
         M1 = np.outer([0, 1], [0, 1])
         self._operators = [Operator(M0), Operator(M1)]
 
-    def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = False):
+    def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = True):
         '''for two state (single sensor) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.
            Implementing paper: https://arxiv.org/pdf/1707.02571.pdf
         '''
@@ -66,19 +71,19 @@ class Povm:
 
         if debug:
             print('\nDebug information inside Povm.two_state_minerror()')
-            print('X\n', X)
-            print('eigenvals\n', eigenvals)
-            print('eigenvectors\n', eigenvectors)
+            Utility.print_matrix('X', X)
+            Utility.print_matrix('eigenvals', [eigenvals])
+            Utility.print_matrix('eigenvectors', eigenvectors)
             print('X v = e v')
-            print('left: ', np.dot(X, eigenvectors[:, eig1]))
-            print('right:', np.dot(eigenvals[eig1], eigenvectors[:, eig1]))
-            print('left: ', np.dot(X, eigenvectors[:, eig2]))
-            print('right:', np.dot(eigenvals[eig2], eigenvectors[:, eig2]))
-            print('M0\n', M0)
-            print('M1\n', M1)
-            print('M0 + M1\n', M0 + M1)
-            print('M0 * M1\n', np.dot(M0, M1))
-            print('eigenvals*(M0, M1)\n', eigenvals[eig1]*M0 + eigenvals[eig2]*M1)
+            Utility.print_matrix('left: ', [np.dot(X, eigenvectors[:, eig1])])
+            Utility.print_matrix('right:', [np.dot(eigenvals[eig1], eigenvectors[:, eig1])])
+            Utility.print_matrix('left: ', [np.dot(X, eigenvectors[:, eig2])])
+            Utility.print_matrix('right:', [np.dot(eigenvals[eig2], eigenvectors[:, eig2])])
+            Utility.print_matrix('M0', M0)
+            Utility.print_matrix('M1', M1)
+            Utility.print_matrix('M0 + M1', M0 + M1)
+            # print('M0 * M1\n', np.dot(M0, M1))
+            # print('eigenvals*(M0, M1)\n', eigenvals[eig1]*M0 + eigenvals[eig2]*M1)
             print('theoretical error 1 =', float(0.5 - 0.5 * np.trace(np.dot((M0 - M1), X))))
             print('theoretical error 2 =', 1 - (1 + abs(eigenvals[eig1]) + abs(eigenvals[eig2])) / 2)
             costheta = abs(np.dot(np.conj(quantum_states[0].state_vector), quantum_states[1].state_vector))
@@ -86,11 +91,13 @@ class Povm:
             tmp = np.dot(quantum_states[0].density_matrix, quantum_states[1].density_matrix)
             print('theoretical error 4 =', 0.5 * (1 - math.sqrt(1 - 4*priors[0]*priors[1]*np.trace(tmp))) )
             # I found four different expressions for the theoretical value for minimum error. The four are equivalent
-            print(f'check condition 1: M0*X*M1 = \n{np.dot(M0, np.dot(X, M1))}')
-            gamma = priors[0]*np.dot(M0, quantum_states[0].density_matrix) + priors[1]*np.dot(M1, quantum_states[1].density_matrix)
-            print('check condition 2: gamma - pipi^{hat}')
-            for i in [0, 1]:
-                print(gamma - priors[i]*quantum_states[i].density_matrix)
+            print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
+            # Utility.print_matrix('check condition 1: M0*X*M1', np.dot(M0, np.dot(X, M1)))
+            # print(f'check condition 1: M0*X*M1 = \n{np.dot(M0, np.dot(X, M1))}')
+            # gamma = priors[0]*np.dot(M0, quantum_states[0].density_matrix) + priors[1]*np.dot(M1, quantum_states[1].density_matrix)
+            # print('check condition 2: gamma - pipi^{hat}')
+            # for i in [0, 1]:
+            #     print(gamma - priors[i]*quantum_states[i].density_matrix)
 
 
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
@@ -199,6 +206,7 @@ class Povm:
         prob.solve()
         self._method = 'Semidefinite programming'
         if prob.status == 'optimal':
+            self._theoretical_success = prob.value
             self._theoretical_error = 1 - prob.value
             self._operators = [Operator(PI.value) for PI in PIs]
         else:

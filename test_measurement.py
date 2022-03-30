@@ -19,9 +19,9 @@ def test1():
     qs1 = QuantumState(num_sensor=1, state_vector=vector1)
     qs2 = QuantumState(num_sensor=1, state_vector=vector2)
     quantum_states = [qs1, qs2]
-    # priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
+    priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.75, 0.25], [0.9, 0.1]]
     # priors_list = [[0.5, 0.5], [0.4, 0.6]]
-    priors_list = [[0.5, 0.5]]
+    # priors_list = [[0.5, 0.5]]
     for priors in priors_list:
         povm = Povm()
         povm.two_state_minerror(quantum_states, priors, debug=True)
@@ -225,9 +225,9 @@ def test11():
 
 
 if __name__ == '__main__':
-    # test1()
+    test1()
     # test2()
-    test3()
+    # test3()
     # test4()
     # test5()
     # test6()

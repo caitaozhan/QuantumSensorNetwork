@@ -1,6 +1,7 @@
 '''Some utility tools
 '''
 import numpy as np
+from qiskit.quantum_info.operators.operator import Operator
 
 class Utility:
 
@@ -18,7 +19,10 @@ class Utility:
         return abs(alpha)**2
 
     @staticmethod
-    def integer2bit(integer, num_of_bit):
+    def integer2bit(integer: int , num_of_bit: int):
+        '''transform an integer to its binary form
+           if integer = 3 and num_of_bit = 3, return 011
+        '''
         bit = bin(integer)    # '0b11'
         bit = bit[2:]
         zeros = '0' * (num_of_bit - len(bit))
@@ -81,7 +85,7 @@ class Utility:
         return True
 
     @staticmethod
-    def get_theta(real, imag):
+    def get_theta(real: float, imag: float):
         '''return the theta in radian
         '''
         theta = np.arccos(real)
@@ -90,3 +94,18 @@ class Utility:
         else:
             return 2*np.pi - theta
 
+    @staticmethod
+    def evolve_operator(unitary_operator: Operator, num_sensor: int, i: int):
+        '''Generate I \otimes U \otimes I
+           In the above example, num_sensor = 3 and i = 1
+        Return:
+            Operator
+        '''
+        identity = np.eye(2)
+        tensor = 1
+        for j in range(num_sensor):
+            if j == i:
+                tensor = np.kron(tensor, unitary_operator._data)
+            else:
+                tensor = np.kron(tensor, identity)
+        return Operator(tensor)
