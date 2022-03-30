@@ -43,10 +43,6 @@ class QuantumState:
             np.random.seed(seed)
         self._state_vector = random_state(self.num_sensor)
 
-    def orthogonal_state(self):
-        '''get the orthogonal state'''
-        
-
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
         Args:
@@ -66,7 +62,10 @@ class QuantumState:
         for index, amplitude in enumerate(self.state_vector):
             state = Utility.integer2bit(index, num_of_bit)
             if type(amplitude) is np.complex128:
-                amplitude = str(amplitude)[1:-1]     # (-0.14139694215565082+0.3754394106901288j)
-            string += f'|{state}>: {amplitude}\n'
+                real = f'{amplitude.real:.5f}'
+                imag = f'{amplitude.imag:.4f}'
+                string += f'|{state}>: {real:>8}{imag:>8}i\n'
+            else:
+                string += f'|{state}>: {amplitude}\n'
         return string
 
