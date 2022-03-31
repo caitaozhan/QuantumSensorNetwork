@@ -2,12 +2,14 @@
 Optimizing initial state
 '''
 
+import copy
 import numpy as np
 import math
 from qiskit_textbook.tools import random_state
 from qiskit.quantum_info.operators.operator import Operator
 from quantum_state import QuantumState
 from utility import Utility
+from povm import Povm
 
 
 class OptimizeInitialState(QuantumState):
@@ -34,10 +36,16 @@ class OptimizeInitialState(QuantumState):
             summ += Utility.norm_squared(amp)
         return True if abs(summ - 1) < Utility.EPSILON else False
 
-    def normalize_state(self):
-        '''Normalize a state vector if not normalized
+    def normalize_state(self, state: np.array):
+        '''Normalize a state vector
+        Return:
+            np.array -- the normalized state
         '''
-        pass
+        state_copy = np.array(state)
+        magnitude_squared = 0
+        for a in state_copy:
+            magnitude_squared += abs(a)**2
+        return state_copy / np.sqrt(magnitude_squared)
 
     def random(self, seed, unitary_operator: Operator):
         '''ignore the unitary operator and randomly initialize a quantum state
@@ -75,3 +83,99 @@ class OptimizeInitialState(QuantumState):
         if self.check_state() is False:
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Guess'
+
+    def evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm):
+        '''evaluate the initial state
+        Args:
+            init_state -- initial state
+            unitary_operator -- unitary operator
+            priors -- prior probabilities
+            povm   -- positive operator valued measurement
+        Return:
+            float -- evaluate score by SDP solver
+        '''
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+        povm.semidefinite_programming(quantum_states, priors, debug=False)
+        return povm.therotical_success
+
+    def find_neighbors(self, init_state: QuantumState, i: int, mod_step: list, amp_step: list):
+        '''find four neighbors of the initial state
+        Args:
+            init_state -- initial state
+            i        -- ith element of the state vector to be modified
+            mod_step -- step size for modulus
+            amp_step -- step size for amplitude
+        Return:
+            list -- a list of QuantumState object
+        '''
+        init_state_vector = init_state.state_vector.copy()
+        z = init_state_vector[i]
+        r = abs(z)
+        theta = Utility.get_theta(z.real, z.imag)
+        array = []
+        init_state_vector[i] = (r + mod_step)*np.exp(complex(0, theta))
+        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
+        init_state_vector[i] = (r - mod_step)*np.exp(complex(0, theta))
+        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
+        init_state_vector[i] = r*np.exp(complex(0, theta + amp_step))
+        array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
+        init_state_vector[i] = r*np.exp(complex(0, theta - amp_step))
+        array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
+        return array
+
+    def hill_climbing(self, unitary_operator: Operator, priors: list, seed: int, epsilon: float, mod_step: list, amp_step: list, decrease_rate: float, min_iteration: int):
+        '''use the good old hill climbing method to optimize the initial state
+        Args:
+            unitary_operator -- describe the interaction with the environment
+            priors -- prior probabilities
+            seed -- random seed
+            EPSILON -- for hill climbing termination
+            mod_step -- step size for modulus
+            amp_step -- step size for amplitude
+            decrease_rate -- decrease rate
+            min_iteration -- minimal number of iteration
+        Return:
+            dict -- a dict of hill climbing summary
+        '''
+        print('\nStart hill climbing...')
+        np.random.seed(seed)
+        qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+        print(f'Random start:\n{qstate}')
+        N = 2**self.num_sensor
+        povm = Povm()
+        best_score = self.evaluate(qstate, unitary_operator, priors, povm)
+        scores = [best_score]
+        terminate = False
+        iteration = 0
+        while terminate is False or iteration < min_iteration:
+            iteration += 1
+            before_score = best_score
+            for i in range(N):
+                neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
+                best_step = -1
+                for j in range(len(neighbors)):
+                    score = self.evaluate(neighbors[j], unitary_operator, priors, povm)
+                    if score > best_score:
+                        best_score = score
+                        best_step = j
+                if best_step == -1:
+                    mod_step[i] *= decrease_rate
+                    amp_step[i] *= decrease_rate
+                elif best_step in [0, 1]:
+                    qstate = neighbors[best_step]
+                    mod_step[i] *= decrease_rate
+                else: # best_step in [2, 3]:
+                    qstate = neighbors[best_step]
+                    amp_step[i] *= decrease_rate
+            scores.append(best_score)
+            if best_score - before_score < epsilon:
+                terminate = True
+
+        self._state_vector = qstate.state_vector
+        self._optimze_method = 'Hill climbing'
+        return scores
