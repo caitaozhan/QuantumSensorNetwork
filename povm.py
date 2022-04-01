@@ -8,6 +8,7 @@ import cvxpy as cp
 from scipy.linalg import sqrtm
 from qiskit.quantum_info.operators.operator import Operator
 from utility import Utility
+from input_output import Default
 
 class Povm:
     '''encapsulate positive operator valued measurement
@@ -53,7 +54,7 @@ class Povm:
         eigenvals, eigenvectors = np.linalg.eig(X)             # The eigen vectors are normalized
         index = []
         for i, eigen in enumerate(eigenvals):
-            if abs(eigen) > Utility.EPSILON:
+            if abs(eigen) > Default.EPSILON:
                 index.append(i)
         if len(index) != 2:
             raise Exception(f'There must be two non-zero eigenvalues, but the currently there are {len(index)} eigen values')

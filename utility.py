@@ -2,12 +2,9 @@
 '''
 import numpy as np
 from qiskit.quantum_info.operators.operator import Operator
+from input_output import Default
 
 class Utility:
-
-    EPSILON = 1e-8              # the epsilon for zero
-    EPSILON_SEMIDEFINITE = 8e-4 # relaxed for semidefinate programming optimal condition checking......
-    EPSILON_HILLCLIMBING = 1e-4 # the epsilon for hill climbing termination
 
     @staticmethod
     def norm_squared(alpha):
@@ -53,7 +50,7 @@ class Utility:
         '''
         matrix = np.abs(matrix)
         maxx = np.max(matrix)
-        if maxx < Utility.EPSILON_SEMIDEFINITE:
+        if maxx < Default.EPSILON_SEMIDEFINITE:
             return True
         else:
             return False

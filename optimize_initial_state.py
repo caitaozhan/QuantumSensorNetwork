@@ -10,6 +10,7 @@ from qiskit.quantum_info.operators.operator import Operator
 from quantum_state import QuantumState
 from utility import Utility
 from povm import Povm
+from input_output import Default
 
 
 class OptimizeInitialState(QuantumState):
@@ -24,7 +25,7 @@ class OptimizeInitialState(QuantumState):
         return self._optimze_method
 
     def __str__(self):
-        s = f'\nOptimization method is {self.optimize_method}.\nInitial state is:\n'
+        s = f'\n{self.optimize_method}\nInitial state:\n'
         parent = super().__str__()
         return s + parent
 
@@ -34,7 +35,7 @@ class OptimizeInitialState(QuantumState):
         summ = 0
         for amp in self._state_vector:
             summ += Utility.norm_squared(amp)
-        return True if abs(summ - 1) < Utility.EPSILON else False
+        return True if abs(summ - 1) < Default.EPSILON else False
 
     def normalize_state(self, state: np.array):
         '''Normalize a state vector
@@ -84,7 +85,13 @@ class OptimizeInitialState(QuantumState):
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Guess'
 
-    def evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm):
+    def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm):
+        '''evaluate the self.state_vector
+        '''
+        qstate = QuantumState(self.num_sensor, self.state_vector)
+        return self._evaluate(qstate, unitary_operator, priors, povm)
+
+    def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm):
         '''evaluate the initial state
         Args:
             init_state -- initial state
@@ -128,13 +135,15 @@ class OptimizeInitialState(QuantumState):
         array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
         return array
 
-    def hill_climbing(self, unitary_operator: Operator, priors: list, seed: int, epsilon: float, mod_step: list, amp_step: list, decrease_rate: float, min_iteration: int):
+    def hill_climbing(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, \
+                            epsilon: float, mod_step: list, amp_step: list, decrease_rate: float, min_iteration: int):
         '''use the good old hill climbing method to optimize the initial state
         Args:
+            startState       -- the start point of hill climbing
+            seed             -- random seed
             unitary_operator -- describe the interaction with the environment
-            priors -- prior probabilities
-            seed -- random seed
-            EPSILON -- for hill climbing termination
+            priors   -- prior probabilities
+            EPSILON  -- for hill climbing termination
             mod_step -- step size for modulus
             amp_step -- step size for amplitude
             decrease_rate -- decrease rate
@@ -143,12 +152,17 @@ class OptimizeInitialState(QuantumState):
             dict -- a dict of hill climbing summary
         '''
         print('\nStart hill climbing...')
-        np.random.seed(seed)
-        qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
-        print(f'Random start:\n{qstate}')
+        qstate = None
+        if startState is None:
+            np.random.seed(seed)
+            qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+            print(f'Random start:\n{qstate}')
+        else:
+            qstate = startState
+            print(f'Start from guess:\n{startState}')
         N = 2**self.num_sensor
         povm = Povm()
-        best_score = self.evaluate(qstate, unitary_operator, priors, povm)
+        best_score = self._evaluate(qstate, unitary_operator, priors, povm)
         scores = [best_score]
         terminate = False
         iteration = 0
@@ -159,7 +173,7 @@ class OptimizeInitialState(QuantumState):
                 neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
                 best_step = -1
                 for j in range(len(neighbors)):
-                    score = self.evaluate(neighbors[j], unitary_operator, priors, povm)
+                    score = self._evaluate(neighbors[j], unitary_operator, priors, povm)
                     if score > best_score:
                         best_score = score
                         best_step = j
@@ -172,7 +186,7 @@ class OptimizeInitialState(QuantumState):
                 else: # best_step in [2, 3]:
                     qstate = neighbors[best_step]
                     amp_step[i] *= decrease_rate
-            scores.append(best_score)
+            scores.append(round(best_score, 6))
             if best_score - before_score < epsilon:
                 terminate = True
 

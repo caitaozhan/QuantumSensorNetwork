@@ -6,7 +6,7 @@ import random
 import numpy as np
 from itertools import accumulate
 from bisect import bisect_left
-from utility import Utility
+from input_output import Default
 from qiskit.quantum_info.operators.operator import Operator
 from povm import Povm
 
@@ -47,7 +47,7 @@ class QuantumMeasurement:
         '''
         if len(quantum_states) != len(prior):
             raise Exception('Number of quantum states and prior probability not equal')
-        if abs(sum(prior) - 1) > Utility.EPSILON:
+        if abs(sum(prior) - 1) > Default.EPSILON:
             raise Exception('Prior probability summation not one.')
 
         self._quantum_states = quantum_states
