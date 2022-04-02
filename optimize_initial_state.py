@@ -163,7 +163,7 @@ class OptimizeInitialState(QuantumState):
         N = 2**self.num_sensor
         povm = Povm()
         best_score = self._evaluate(qstate, unitary_operator, priors, povm)
-        scores = [best_score]
+        scores = [round(best_score, 6)]
         terminate = False
         iteration = 0
         while terminate is False or iteration < min_iteration:
@@ -189,6 +189,8 @@ class OptimizeInitialState(QuantumState):
             scores.append(round(best_score, 6))
             if best_score - before_score < epsilon:
                 terminate = True
+            else:
+                terminate = False
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Hill climbing'

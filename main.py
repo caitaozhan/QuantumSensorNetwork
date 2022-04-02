@@ -103,12 +103,16 @@ if __name__ == '__main__':
     parser.add_argument('-p',  '--priors', type=float, nargs='+', default=None, help='the prior probability for sensors')
     parser.add_argument('-us', '--unitary_seed', type=int, nargs=1, default=[Default.unitary_seed], help='the seed that affect the unitary operator')
     parser.add_argument('-m',  '--methods', type=str, nargs='+', default=[Default.method], help='the method for finding the initial state')
+    parser.add_argument('-od', '--output_dir', type=str, nargs=1, default=[Default.output_dir], help='output directory')
+    parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
+    
     # below are for hill climbing
     parser.add_argument('-ss', '--start_seed', type=int, nargs=1, default=[Default.start_seed], help='seed that affects the start point of hill climbing')
     parser.add_argument('-ms', '--mod_step', type=float, nargs=1, default=[Default.mod_step], help='step size for modulus')
     parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
+    
 
     args = parser.parse_args()
     experiement_id = args.experiment_id[0]
@@ -138,16 +142,18 @@ if __name__ == '__main__':
         amp_step = [args.amp_step[0]] * 2**num_sensor
         decrease_rate = args.decrease_rate[0]
         min_iteration = args.min_iteration[0]
+        start_time = time.time()
         scores = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, \
                                              mod_step, amp_step, decrease_rate, min_iteration)
+        runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 6)
-        real_iteration = len(scores)
+        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
         hillclimb_output = HillclimbOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
-                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores)
+                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime)
         outputs.append(hillclimb_output)
 
 
-    log_dir, log_file = 'result-tmp', '3.31.2022'
-    logger = Logger(log_dir, log_file)
-    logger.write_log(problem_input, outputs)
+    log_dir = args.output_dir[0]
+    log_file = args.output_file[0]
+    Logger.write_log(log_dir, log_file, problem_input, outputs)

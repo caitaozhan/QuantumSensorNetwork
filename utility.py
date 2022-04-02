@@ -1,5 +1,6 @@
 '''Some utility tools
 '''
+
 import numpy as np
 from qiskit.quantum_info.operators.operator import Operator
 from input_output import Default
@@ -107,3 +108,18 @@ class Utility:
             else:
                 tensor = np.kron(tensor, identity)
         return Operator(tensor)
+
+    @staticmethod
+    def generate_priors(num_sensor: int, equal: bool):
+        '''if equal, then generate equal priors for num_sensor number of sensors
+        Return:
+            array-like object
+        '''
+        if equal:
+            return [1./num_sensor]*num_sensor
+        else:
+            p = []
+            for _ in range(num_sensor):
+                p.append(np.random.rand())
+            p = np.array(p)
+            return p / np.sum(p)

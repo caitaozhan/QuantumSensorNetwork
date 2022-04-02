@@ -10,6 +10,9 @@ import json
 class Default:
     '''Some default configurations
     '''
+    output_dir  = 'result-tmp'
+    output_file = 'foo'
+    methods = ['Guess', 'Hill climbing']
     # some constants
     EPSILON = 1e-8              # the epsilon for zero
     EPSILON_SEMIDEFINITE = 8e-4 # relaxed for semidefinate programming optimal condition checking......
@@ -48,7 +51,7 @@ class ProblemInput:
         inputdict = {
             'experiment_id': self.experiment_id,
             'num_sensor': self.num_sensor,
-            'priors': self.priors,
+            'priors': [round(p, 4) for p in self.priors],
             'unitary_seed': self.unitary_seed
         }
         return json.dumps(inputdict)
@@ -120,6 +123,7 @@ class HillclimbOutput:
     real_iteration: int     # number of iterations in reality
     init_state: str         # the resulting initial state
     scores: List[float]     # the evaluation value of each iteration
+    runtime: float          # rum time
 
     def __str__(self):
         return self.to_json_str()
@@ -133,8 +137,9 @@ class HillclimbOutput:
             'experiment_id': self.experiment_id,
             'error': self.error,
             'method': self.method,
-            'min_interation': self.min_iteration,
+            'min_iteration': self.min_iteration,
             'real_iteration': self.real_iteration,
+            'runtime': self.runtime,
             'decrease_rate': self.decrease_rate,
             'success': self.success,
             'start_seed': self.start_seed,
@@ -156,4 +161,4 @@ class HillclimbOutput:
         outdict = json.loads(json_str)
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['start_seed'], outdict['mod_step'], outdict['amp_step'], outdict['decrease_rate'], \
-                   outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'])
+                   outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], outdict['runtime'])

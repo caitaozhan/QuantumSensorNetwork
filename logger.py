@@ -3,19 +3,42 @@
 
 import os
 
+from zmq import DEALER
+from input_output import ProblemInput, GuessOutput, HillclimbOutput, Default
+
 class Logger:
 
-    def __init__(self, log_dir, log_file):
-        self.log_dir = log_dir
-        self.log_file = log_file
-
-    def write_log(self, myinput, myoutputs):
-        if os.path.exists(self.log_dir) is False:
-            os.mkdir(self.log_dir)
+    @staticmethod
+    def write_log(log_dir, log_file, myinput, myoutputs):
+        if os.path.exists(log_dir) is False:
+            os.mkdir(log_dir)
         
-        with open(os.path.join(self.log_dir, self.log_file), 'a') as f:
+        with open(os.path.join(log_dir, log_file), 'a') as f:
             f.write(f'{myinput}\n')
             for output in myoutputs:
                 f.write(f'{output}\n')
             f.write('\n')
             f.flush()
+
+    @staticmethod
+    def read_log(logs):
+        data = []
+        for log in logs:
+            f = open(log,'r')
+            while True:
+                line = f.readline()
+                if line == '':
+                    break
+                myinput = ProblemInput.from_json_str(line)
+                output_by_method = {}
+                line = f.readline()
+                while line != '' and line != '\n':
+                    if line.find('Guess') != -1:
+                        output = GuessOutput.from_json_str(line)
+                        output_by_method['Guess'] = output
+                    if line.find('Hill climbing') != -1:
+                        output = HillclimbOutput.from_json_str(line)
+                        output_by_method['Hill climbing'] = output
+                    line = f.readline()
+                data.append((myinput, output_by_method))
+        return data
