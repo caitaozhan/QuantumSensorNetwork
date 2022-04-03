@@ -30,16 +30,16 @@ if __name__ == '__main__':
     command = ['python', 'main.py']
     base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "50"]
 
-    num_sensor = 2
-    equal = True
-    task = 1
+    num_sensor = 3
+    equal = False
+    task = 2
     output_dir = 'result-tmp'
-    output_file = 'vary_numsensor'
+    output_file = 'vary-prior'
 
     ps = []
     for i in range(task):
         args = set_numsensor_prior(base_args, num_sensor, equal)
-        args = set_startseed(args, i)
+        args = set_startseed(args, 0)
         args = set_log(args, output_dir, output_file)
         print(args)
         ps.append(Popen(command + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE))

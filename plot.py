@@ -4,8 +4,8 @@ from logger import Logger
 
 class Plot:
 
-    plt.rcParams['font.size'] = 50
-    plt.rcParams['lines.linewidth'] = 5
+    plt.rcParams['font.size'] = 65
+    plt.rcParams['lines.linewidth'] = 8
     
     @staticmethod
     def hillclimbing(scores: list, constant: float = None):
@@ -25,14 +25,130 @@ class Plot:
         fig.savefig('tmp.png')
 
     @staticmethod
-    def vary_priors(data):
-        pass
+    def vary_priors(data, filename):
+        table = []
+        for myinput, output_by_method in data:
+            tmp = [myinput.priors]
+            for method, output in output_by_method.items():
+                if method == 'Guess':
+                    tmp.append(output.success)
+                if method == 'Hill climbing':
+                    tmp.append(output.scores)
+            table.append(tmp)
 
+        iteration = 50
+        prior0  = table[0][0]
+        guess0  = [table[0][1] for _ in range(iteration)]
+        scores0 = table[0][2][:iteration]
+        prior1  = table[1][0]
+        guess1  = [table[1][1] for _ in range(iteration)]
+        scores1 = table[1][2][:iteration]
+
+        fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+        fig.subplots_adjust(left=0.1, right=0.96, top=0.85, bottom=0.1)
+        ax.plot(guess0,  color='r', label=str(prior0))
+        ax.plot(scores0, color='r')
+        ax.plot(guess1,  color='deepskyblue', label=str(prior1))
+        ax.plot(scores1, color='deepskyblue')
+        ax.legend(ncol=1, bbox_to_anchor=(0.2, 0.99))
+        ax.set_xlabel('Iterations')
+        ax.set_ylabel('Discrimination Success Probability')
+        fig.savefig(filename)
+
+
+    @staticmethod
+    def vary_numsensor(data, filename):
+        table = []
+        for myinput, output_by_method in data:
+            tmp = [myinput.num_sensor]
+            for method, output in output_by_method.items():
+                if method == 'Guess':
+                    tmp.append(output.success)
+                if method == 'Hill climbing':
+                    tmp.append(output.scores)
+            table.append(tmp)
+
+        iteration = 50
+        numsen0 = table[0][0]
+        guess0  = [table[0][1] for _ in range(iteration)]
+        scores0 = table[0][2][:iteration]
+        numsen1 = table[1][0]
+        guess1  = [table[1][1] for _ in range(iteration)]
+        scores1 = table[1][2][:iteration]
+        numsen2 = table[2][0]
+        guess2  = [table[2][1] for _ in range(iteration)]
+        scores2 = table[2][2][:iteration]
+        numsen3 = table[3][0]
+        guess3  = [table[3][1] for _ in range(iteration)]
+        scores3 = table[3][2][:iteration]
+
+        fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+        fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+        ax.plot(guess0,  color='r', label=str(numsen0))
+        ax.plot(scores0, color='r')
+        ax.plot(guess1,  color='deepskyblue', label=str(numsen1))
+        ax.plot(scores1, color='deepskyblue')
+        ax.plot(guess2,  color='g', label=str(numsen2))
+        ax.plot(scores2, color='g')
+        ax.plot(guess3,  color='black', label=str(numsen3))
+        ax.plot(scores3, color='black')
+
+        ax.legend(ncol=4, bbox_to_anchor=(0.2, 0.99))
+        ax.set_xlabel('Iterations')
+        ax.set_ylabel('Discrimination Success Probability')
+        fig.savefig(filename)
+
+
+    @staticmethod
+    def vary_startseed(data, filename):
+        table = []
+        for _, output_by_method in data:
+            tmp = []
+            for method, output in output_by_method.items():
+                if method == 'Hill climbing':
+                    tmp.append(output.start_seed)
+                    tmp.append(output.scores)
+            table.append(tmp)
+
+        iteration = 50
+        stseed0 = table[0][0]
+        scores0 = table[0][1][:iteration]
+        stseed1 = table[1][0]
+        scores1 = table[1][1][:iteration]
+        stseed2 = table[2][0]
+        scores2 = table[2][1][:iteration]
+        stseed3 = table[3][0]
+        scores3 = table[3][1][:iteration]
+
+        fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+        fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+        ax.plot(scores0,  color='r', label=str(stseed0))
+        ax.plot(scores1,  color='deepskyblue', label=str(stseed1))
+        ax.plot(scores2,  color='g', label=str(stseed2))
+        ax.plot(scores3,  color='black', label=str(stseed3))
+
+        ax.legend(ncol=4, bbox_to_anchor=(0.2, 0.99))
+        ax.set_xlabel('Iterations')
+        ax.set_ylabel('Discrimination Success Probability')
+        fig.savefig(filename)
 
 def vary_priors():
     logs = ['result-tmp/vary-prior']
+    figname = 'result-tmp/vary-prior'
     data = Logger.read_log(logs)
-    print(data)
+    Plot.vary_priors(data, figname)
+
+def vary_numsensors():
+    logs = ['result-tmp/vary-numsensor']
+    filename = 'result-tmp/vary-numsensor'
+    data = Logger.read_log(logs)
+    Plot.vary_numsensor(data, filename)
+
+def vary_startseed():
+    logs = ['result-tmp/vary-startseed']
+    filename = 'result-tmp/vary-startseed'
+    data = Logger.read_log(logs)
+    Plot.vary_startseed(data, filename)
 
 
 if __name__ == '__main__':
@@ -41,4 +157,6 @@ if __name__ == '__main__':
     # Plot.hillclimbing(scores, constant)
 
 
-    vary_priors()
+    # vary_priors()
+    vary_numsensors()
+    # vary_startseed()
