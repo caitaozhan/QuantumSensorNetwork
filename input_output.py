@@ -39,6 +39,7 @@ class ProblemInput:
     num_sensor: int       # number of sensors
     priors: List[float]   # prior probability for each sensors
     unitary_seed: int     # seed for generating the unitary operator
+    unitary_theta: float  # the angle (theta) of the symmetric eigen values
 
     def __str__(self):
         return self.to_json_str()
@@ -52,10 +53,11 @@ class ProblemInput:
             'experiment_id': self.experiment_id,
             'num_sensor': self.num_sensor,
             'priors': [round(p, 4) for p in self.priors],
-            'unitary_seed': self.unitary_seed
+            'unitary_seed': self.unitary_seed,
+            'unitary_theta': self.unitary_theta
         }
         return json.dumps(inputdict)
-    
+
     @classmethod
     def from_json_str(cls, json_str: str):
         '''init an Input object from json string
@@ -65,7 +67,7 @@ class ProblemInput:
             Input
         '''
         indict = json.loads(json_str)
-        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'])
+        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'], indict['unitary_theta'])
 
 
 @dataclass

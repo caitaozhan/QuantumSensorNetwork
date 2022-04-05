@@ -123,3 +123,24 @@ class Utility:
                 p.append(np.random.rand())
             p = np.array(p)
             return p / np.sum(p)
+
+    @staticmethod
+    def generate_unitary_operator(theta: float, seed: int):
+        '''
+        Args:
+            theta -- the angle (in degree) for the symmetric eigen values (from eigen value decomposition)
+            unitary_seed -- control generating the random matrix
+        '''
+        from qiskit.quantum_info import random_unitary
+        RAD = 180 / np.pi
+        theta = theta / RAD
+        e_val1 = complex(np.cos(theta), np.sin(theta))
+        e_val2 = complex(np.cos(theta), -np.sin(theta))
+        Lambda = np.array([[e_val1, 0], [0, e_val2]])
+        Q = random_unitary(2, seed=seed)._data
+        Q_inv = np.linalg.inv(Q)                # a random matrix is invertable almost for sure
+        U = Operator(np.dot(Q, np.dot(Lambda, Q_inv)))
+        if U.is_unitary():
+            return U
+        else:
+            raise Exception('Failed to generate an unitary matrix')

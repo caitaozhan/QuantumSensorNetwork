@@ -5,7 +5,6 @@ import numpy as np
 import argparse
 import copy
 from qiskit.quantum_info import random_unitary
-from zmq import DEALER
 from quantum_state import QuantumState
 from optimize_initial_state import OptimizeInitialState
 from povm import Povm
@@ -102,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('-ns', '--num_sensor', type=int, nargs=1, default=[Default.num_sensor], help='number of sensors')
     parser.add_argument('-p',  '--priors', type=float, nargs='+', default=None, help='the prior probability for sensors')
     parser.add_argument('-us', '--unitary_seed', type=int, nargs=1, default=[Default.unitary_seed], help='the seed that affect the unitary operator')
+    parser.add_argument('-ut', '--unitary_theta', type=float, nargs=1, default=[None], help='the angle theta of the eigen values')
     parser.add_argument('-m',  '--methods', type=str, nargs='+', default=[Default.method], help='the method for finding the initial state')
     parser.add_argument('-od', '--output_dir', type=str, nargs=1, default=[Default.output_dir], help='output directory')
     parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
@@ -112,18 +112,23 @@ if __name__ == '__main__':
     parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
-    
+
 
     args = parser.parse_args()
     experiement_id = args.experiment_id[0]
     num_sensor     = args.num_sensor[0]
     priors         = args.priors
     unitary_seed   = args.unitary_seed[0]
+    unitary_theta  = args.unitary_theta[0]
     methods        = args.methods
 
-    problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed)
+    problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed, unitary_theta)
     opt_initstate = OptimizeInitialState(num_sensor)
-    unitary_operator = random_unitary(dims=2, seed=unitary_seed)
+    if unitary_theta:
+        unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
+    else:
+        # when not specifying the theta, generate a random unitary that has some random thetas
+        unitary_operator = random_unitary(dims=2, seed=unitary_seed)
     povm = Povm()
     outputs = []
 

@@ -133,22 +133,36 @@ class Plot:
         fig.savefig(filename)
 
 def vary_priors():
-    logs = ['result-tmp/vary-prior']
+    logs = ['result/4.2.2022/vary-prior']
     figname = 'result-tmp/vary-prior'
     data = Logger.read_log(logs)
     Plot.vary_priors(data, figname)
 
 def vary_numsensors():
-    logs = ['result-tmp/vary-numsensor']
+    logs = ['result/4.2.2022/vary-numsensor']
     filename = 'result-tmp/vary-numsensor'
     data = Logger.read_log(logs)
     Plot.vary_numsensor(data, filename)
 
 def vary_startseed():
-    logs = ['result-tmp/vary-startseed']
+    logs = ['result/4.2.2022/vary-startseed']
     filename = 'result-tmp/vary-startseed'
     data = Logger.read_log(logs)
     Plot.vary_startseed(data, filename)
+
+def special_u():
+    logs = ['result/4.4.2022/special-U']
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        print(myinput)
+        print('Guess error =', output_by_method['Guess'].error)
+        print(output_by_method['Guess'].init_state)
+        print('Hill climbing error =', output_by_method['Hill climbing'].error)
+        print(output_by_method['Hill climbing'].init_state)
+
+    # print(data[0][1]['Guess'].init_state)
 
 
 if __name__ == '__main__':
@@ -158,5 +172,7 @@ if __name__ == '__main__':
 
 
     # vary_priors()
-    vary_numsensors()
+    # vary_numsensors()
     # vary_startseed()
+
+    special_u()
