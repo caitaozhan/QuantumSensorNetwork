@@ -67,6 +67,17 @@ class QuantumMeasurement:
         Return:
             float: the error probability
         '''
+        memory = {}
+        def compute_prob(pick: int, density_operator: Operator, i: int, Pi: Operator):
+            '''use memory to save time
+            '''
+            if (pick, i) in memory:
+                return memory[(pick, i)]
+            tmp = Pi.dot(density_operator)
+            prob = np.trace(tmp.data)
+            memory[(pick, i)] = prob
+            return prob
+
         random.seed(seed)
         index = 0
         error_count = 0
@@ -77,10 +88,11 @@ class QuantumMeasurement:
 
             # step 2: bob receives the quantum state and does the measurement
             probs = []
-            for Pi in self.povm.operators:
+            for i, Pi in enumerate(self.povm.operators):
                 density_operator = Operator(prepared_quantum_state.density_matrix)
-                tmp = Pi.dot(density_operator)
-                prob = np.trace(tmp.data)
+                # tmp = Pi.dot(density_operator)
+                # prob = np.trace(tmp.data)
+                prob = compute_prob(pick, density_operator, i, Pi)
                 probs.append(prob)
             
             # step 3: collect the error stats

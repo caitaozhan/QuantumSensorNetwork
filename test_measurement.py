@@ -2,11 +2,14 @@
 Putting things together
 '''
 
+import copy
 import numpy as np
 import math
 from quantum_state import QuantumState
 from povm import Povm
 from quantum_measurement import QuantumMeasurement
+from utility import Utility
+from optimize_initial_state import OptimizeInitialState
 
 
 # minimal error discriminatation of |0> and |+>
@@ -224,8 +227,38 @@ def test11():
             povm.semidefinite_programming(quantum_states, priors, debug=True)
 
 
+# unitary theta = 90 degrees, pretty good and SDP same?
+def test12():
+    num_sensor = 3
+    seed = 2
+    theta = 20
+    priors = [1./3, 1./3, 1./3]
+    # priors = [0.15, 0.3, 0.55]
+    povm = Povm()
+    unitary_operator = Utility.generate_unitary_operator(theta, seed)
+    opt_initstate = OptimizeInitialState(num_sensor)
+    opt_initstate.guess(unitary_operator)
+    print(opt_initstate)
+    print('success', opt_initstate.evaluate(unitary_operator, priors, povm))
+    init_state = QuantumState(num_sensor, opt_initstate.state_vector)
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(unitary_operator, num_sensor, i)
+        init_state_copy = copy.deepcopy(init_state)
+        init_state_copy.evolve(evolve_operator)
+        quantum_states.append(init_state_copy)
+    # povm.pretty_good_measurement(quantum_states, priors, debug=False)
+    povm.semidefinite_programming(quantum_states, priors, debug=False)
+    repeat = 1_000_000
+    qm = QuantumMeasurement()
+    qm.preparation(quantum_states, priors)
+    qm.povm = povm
+    error = qm.simulate(seed, repeat)
+    qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
+
 if __name__ == '__main__':
-    test1()
+    # test1()
     # test2()
     # test3()
     # test4()
@@ -236,4 +269,4 @@ if __name__ == '__main__':
     # test9()
     # test10()
     # test11()
-    
+    test12()

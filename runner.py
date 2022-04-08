@@ -25,17 +25,9 @@ def set_log(args, output_dir, output_file):
     args += ['-od', output_dir, '-of', output_file]
     return args
 
-def set_unitary_theta(args, num_sensor):
+def set_unitary_theta(args, theta: int):
     args = args.copy()
-    args += ['-ut']
-    if num_sensor == 2:
-        args += ['45']
-    elif num_sensor == 3:
-        args += ['180']
-    elif num_sensor == 4:
-        args += ['120']
-    else:
-        raise Exception(f'number of sensor {num_sensor} is not considered yet')
+    args += ['-ut', str(theta)]
     return args
 
 def get_output(p: Popen):
@@ -59,26 +51,37 @@ if __name__ == '__main__':
     num_sensor = 3
     equal = True
     task = 1
-    output_dir = 'result/4.4.2022'
-    output_file = 'foo'
-
+    output_dir = 'result/4.6.2022'
+    output_file = 'varying_theta'
+    thetas = [x for x in range(1, 180)]
     ps = []
-    for i in range(task):
-        args = set_numsensor_prior(base_args, num_sensor, equal)
-        args = set_unitary_theta(args, num_sensor)
-        args = set_startseed(args, 0)
-        args = set_log(args, output_dir, output_file)
-        print(command + args)
-        ps.append(Popen(command + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+    tasks = []
+    for x in thetas:
+        for y in [0, 1]:
+            args = set_numsensor_prior(base_args, num_sensor, equal)
+            args = set_unitary_theta(args, x)
+            args = set_startseed(args, y)
+            args = set_log(args, output_dir, output_file)
+            tasks.append(command + args)
     
-    while len(ps) > 0:
-        new_ps = []
-        for p in ps:
-            if p.poll() is None:
-                new_ps.append(p)
-            else:
-                get_output(p)
-        ps = new_ps
-        time.sleep(0.5)
+    # for t in tasks:
+    #     print(t)
+    
+    parallel = 2
+    ps = []
+    while len(tasks) > 0:
+        if len(ps) < parallel:
+            task = tasks.pop(0)
+            print(task)
+            ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+        else:
+            time.sleep(0.5)
+            new_ps = []
+            for p in ps:
+                if p.poll() is None:
+                    new_ps.append(p)
+                else:
+                    get_output(p)
+            ps = new_ps
 
     print('Done!')
