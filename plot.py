@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from logger import Logger
+import numpy as np
 
 
 class Plot:
@@ -151,16 +152,45 @@ def vary_startseed():
     Plot.vary_startseed(data, filename)
 
 def special_u():
-    logs = ['result/4.4.2022/special-U']
+    RAD = 180 / np.pi
+    def theory(theta):
+        alpha = np.sqrt(5 + 4*np.cos(2*theta))
+        return 1./27 * (8*alpha*abs(np.sin(theta)) - 4*np.cos(2*theta) + 13)
+
+
+    logs = ['result/4.6.2022/varying_theta']
+    X = []
+    y_guess = []
+    y_hillclimb0 = []
+    y_hillclimb1 = []
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
         output_by_method = experiment[1]
-        print(myinput)
-        print('Guess error =', output_by_method['Guess'].error)
-        print(output_by_method['Guess'].init_state)
-        print('Hill climbing error =', output_by_method['Hill climbing'].error)
-        print(output_by_method['Hill climbing'].init_state)
+        if output_by_method['Hill climbing'].start_seed == 0:
+            X.append(myinput.unitary_theta)
+            y_guess.append(output_by_method['Guess'].success)
+            y_hillclimb0.append(output_by_method['Hill climbing'].success)
+        if output_by_method['Hill climbing'].start_seed == 1:
+            y_hillclimb1.append(output_by_method['Hill climbing'].success)
+
+    y_theory = []
+    for x in X:
+        y_theory.append(theory(x/RAD))
+
+    y_hillclimb = [max(y0, y1) for y0, y1 in zip(y_hillclimb0, y_hillclimb1)]
+    fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+    fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, y_theory, label='Theoritical equation')
+    ax.plot(X, y_guess, label='Guess, evaluate by SDP')
+    ax.plot(X, y_hillclimb, label='Hill climbing')
+    ax.legend()
+    ax.set_xlabel('Theta (in degrees)')
+    ax.set_ylabel('Success Probability')
+    ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+    filename = 'result/4.6.2022/varying_theta'
+    fig.savefig(filename)
 
     # print(data[0][1]['Guess'].init_state)
 
