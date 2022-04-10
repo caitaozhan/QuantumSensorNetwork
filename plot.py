@@ -173,6 +173,15 @@ def special_u():
             y_hillclimb0.append(output_by_method['Hill climbing'].success)
         if output_by_method['Hill climbing'].start_seed == 1:
             y_hillclimb1.append(output_by_method['Hill climbing'].success)
+        
+        if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
+        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90]:
+            print('\ntheta =', myinput.unitary_theta)
+            print(output_by_method['Guess'].init_state)
+            print('guess success probability =', output_by_method['Guess'].success)
+            print(output_by_method['Hill climbing'].init_state)
+            print('hill climbing probability =', output_by_method['Hill climbing'].success)
+            print('---')
 
     y_theory = []
     for x in X:
