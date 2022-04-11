@@ -151,12 +151,12 @@ def vary_startseed():
     data = Logger.read_log(logs)
     Plot.vary_startseed(data, filename)
 
+
 def special_u():
     RAD = 180 / np.pi
     def theory(theta):
         alpha = np.sqrt(5 + 4*np.cos(2*theta))
         return 1./27 * (8*alpha*abs(np.sin(theta)) - 4*np.cos(2*theta) + 13)
-
 
     logs = ['result/4.6.2022/varying_theta']
     X = []
@@ -204,6 +204,43 @@ def special_u():
     # print(data[0][1]['Guess'].init_state)
 
 
+def special_u_2():
+    RAD = 180 / np.pi
+    def theory(theta):
+        alpha = np.sqrt(5 + 4*np.cos(2*theta))
+        return 1./27 * (8*alpha*abs(np.sin(theta)) - 4*np.cos(2*theta) + 13)
+
+    logs = ['result/4.11.2022/varying_theta_unambiguous']
+    X_y = []
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        X_y.append((myinput.unitary_theta, output_by_method['Guess'].success))
+
+    X_y.sort()
+    X = [x for x, _ in X_y]
+    y_guess = [y for _, y in X_y]
+    y_theory = []
+    for x in X:
+        y_theory.append(theory(x/RAD))
+    fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+    fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, y_theory, label='Min Error. Theoretical')
+    ax.plot(X, y_guess, label='Unambiguous. Guess, evaluate by SDP')
+    ax.legend()
+    ax.set_xlabel('Theta (in degrees)')
+    ax.set_ylabel('Success Probability')
+    ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+    filename = 'result/4.11.2022/varying_theta_unambiguous'
+    fig.savefig(filename)
+
+    # print(data[0][1]['Guess'].init_state)
+
+
+
+
 def print_results():
     logs = ['result/4.10.2022/varying_theta_unambiguous']
     data = Logger.read_log(logs)
@@ -230,6 +267,6 @@ if __name__ == '__main__':
     # vary_priors()
     # vary_numsensors()
     # vary_startseed()
-    # special_u()
+    special_u_2()
 
-    print_results()
+    # print_results()
