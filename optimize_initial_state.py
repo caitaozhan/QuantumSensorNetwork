@@ -85,19 +85,20 @@ class OptimizeInitialState(QuantumState):
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Guess'
 
-    def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm):
+    def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the self.state_vector
         '''
         qstate = QuantumState(self.num_sensor, self.state_vector)
-        return self._evaluate(qstate, unitary_operator, priors, povm)
+        return self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
 
-    def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm):
+    def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the initial state
         Args:
             init_state -- initial state
             unitary_operator -- unitary operator
             priors -- prior probabilities
             povm   -- positive operator valued measurement
+            eval_metric -- 'min error' or 'unambiguous'
         Return:
             float -- evaluate score by SDP solver
         '''
@@ -107,7 +108,12 @@ class OptimizeInitialState(QuantumState):
             init_state_copy = copy.deepcopy(init_state)
             init_state_copy.evolve(evolve_operator)
             quantum_states.append(init_state_copy)
-        povm.semidefinite_programming(quantum_states, priors, debug=False)
+        if eval_metric == 'min error':
+            povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+        elif eval_metric == 'unambiguous':
+            povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=False)
+        else:
+            raise Exception(f'unknown eval_metric: {eval_metric}!')
         return povm.therotical_success
 
     def find_neighbors(self, init_state: QuantumState, i: int, mod_step: list, amp_step: list):
@@ -135,8 +141,8 @@ class OptimizeInitialState(QuantumState):
         array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
         return array
 
-    def hill_climbing(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, \
-                            epsilon: float, mod_step: list, amp_step: list, decrease_rate: float, min_iteration: int):
+    def hill_climbing(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, epsilon: float, \
+                            mod_step: list, amp_step: list, decrease_rate: float, min_iteration: int, eval_metric: str):
         '''use the good old hill climbing method to optimize the initial state
         Args:
             startState       -- the start point of hill climbing
@@ -148,6 +154,7 @@ class OptimizeInitialState(QuantumState):
             amp_step -- step size for amplitude
             decrease_rate -- decrease rate
             min_iteration -- minimal number of iteration
+            eval_metric -- 'min error' or 'unambiguous'
         Return:
             dict -- a dict of hill climbing summary
         '''
@@ -156,13 +163,13 @@ class OptimizeInitialState(QuantumState):
         if startState is None:
             np.random.seed(seed)
             qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
-            print(f'Random start:\n{qstate}')
+            # print(f'Random start:\n{qstate}')
         else:
             qstate = startState
-            print(f'Start from guess:\n{startState}')
+            # print(f'Start from guess:\n{startState}')
         N = 2**self.num_sensor
         povm = Povm()
-        best_score = self._evaluate(qstate, unitary_operator, priors, povm)
+        best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
         scores = [round(best_score, 6)]
         terminate = False
         iteration = 0
@@ -173,7 +180,7 @@ class OptimizeInitialState(QuantumState):
                 neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
                 best_step = -1
                 for j in range(len(neighbors)):
-                    score = self._evaluate(neighbors[j], unitary_operator, priors, povm)
+                    score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
                     if score > best_score:
                         best_score = score
                         best_step = j

@@ -204,14 +204,32 @@ def special_u():
     # print(data[0][1]['Guess'].init_state)
 
 
+def print_results():
+    logs = ['result/4.10.2022/varying_theta_unambiguous']
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        
+        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
+        if output_by_method['Hill climbing'].start_seed == 0:
+            print('\ntheta =', myinput.unitary_theta)
+            print(output_by_method['Guess'].init_state)
+            print('Guess success probability =', output_by_method['Guess'].success)
+            print(output_by_method['Hill climbing'].init_state)
+            eval_metric = output_by_method['Hill climbing'].eval_metric
+            print(f'Hill climbing ({eval_metric}) probability =', output_by_method['Hill climbing'].success)
+            print('---')
+
+
 if __name__ == '__main__':
-    # scores = [0.7899917641851644, 0.832989, 0.845341, 0.852194, 0.857062, 0.859864, 0.860891, 0.860928, 0.861471, 0.861524, 0.861533, 0.861536, 0.861537, 0.861541, 0.861543, 0.861763, 0.861993, 0.862333, 0.862427, 0.86244, 0.862667, 0.862849, 0.862851, 0.862853, 0.862854, 0.862854, 0.862855, 0.862856, 0.862856, 0.862857, 0.862857, 0.862857, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.86286, 0.862944, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862955, 0.862989, 0.863003, 0.863005]
+    # scores = [0.789991, 0.832989, 0.845341, 0.852194, 0.857062, 0.859864, 0.860891, 0.860928, 0.861471, 0.861524, 0.861533, 0.861536, 0.861537, 0.861541, 0.861543, 0.861763, 0.861993, 0.862333, 0.862427, 0.86244, 0.862667, 0.862849, 0.862851, 0.862853, 0.862854, 0.862854, 0.862855, 0.862856, 0.862856, 0.862857, 0.862857, 0.862857, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.86286, 0.862944, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862955, 0.862989, 0.863003, 0.863005]
     # constant = 0.794494
     # Plot.hillclimbing(scores, constant)
-
 
     # vary_priors()
     # vary_numsensors()
     # vary_startseed()
+    # special_u()
 
-    special_u()
+    print_results()

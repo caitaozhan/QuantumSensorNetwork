@@ -29,6 +29,7 @@ class Default:
     amp_step = 0.1        # initial amplitude step size
     decrease_rate = 0.96  # decrease rate for the step sizes
     min_iteration = 100   # minimum interation
+    eval_metric = 'min error'
 
 
 @dataclass
@@ -126,6 +127,7 @@ class HillclimbOutput:
     init_state: str         # the resulting initial state
     scores: List[float]     # the evaluation value of each iteration
     runtime: float          # rum time
+    eval_metric: str = 'min error' # 'min error' or 'unambiguous'
 
     def __str__(self):
         return self.to_json_str()
@@ -139,6 +141,7 @@ class HillclimbOutput:
             'experiment_id': self.experiment_id,
             'error': self.error,
             'method': self.method,
+            'eval_metric': self.eval_metric,
             'min_iteration': self.min_iteration,
             'real_iteration': self.real_iteration,
             'runtime': self.runtime,
@@ -163,4 +166,5 @@ class HillclimbOutput:
         outdict = json.loads(json_str)
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['start_seed'], outdict['mod_step'], outdict['amp_step'], outdict['decrease_rate'], \
-                   outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], outdict['runtime'])
+                   outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
+                   outdict['runtime'], outdict['eval_metric'])

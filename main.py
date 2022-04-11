@@ -41,7 +41,7 @@ def main2():
         optis_copy.evolve(evolve_operator)
         quantum_states.append(optis_copy)
     # Optimizing the POVM
-    povm.semidefinite_programming(quantum_states, priors, debug=False)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
     guess_success = povm.therotical_success
     print(f'SDP error = {povm.theoretical_error}')
     povm.two_state_minerror(quantum_states, priors, debug=False)   # the measurement operators summation is not Identity... But the theoretical error is correct
@@ -64,7 +64,7 @@ def main2():
         optis_copy.evolve(evolve_operator)
         quantum_states.append(optis_copy)
     # Optimizing the POVM
-    povm.semidefinite_programming(quantum_states, priors, debug=False)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
     print(f'SDP error = {povm.theoretical_error}')
     povm.two_state_minerror(quantum_states, priors, debug=False)   # the measurement operators summation is not Identity... But the theoretical error is correct
     print(f'MED error = {povm.theoretical_error}')
@@ -86,7 +86,7 @@ def main2():
             quantum_states.append(optis_copy)
         # Optimizing the POVM
         start = time.time()
-        povm.semidefinite_programming(quantum_states, priors, debug=False)
+        povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
         elapse += (time.time() - start)
         errors.append(povm.theoretical_error)
     print(f'min error = {np.min(errors)}\nmax error = {np.max(errors)}\navg error = {np.average(errors)}')
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
-
+    parser.add_argument('-em', '--eval_metric', type=str, nargs=1, default=[Default.eval_metric], help='a state is evaluated by min error or unambiguous')
 
     args = parser.parse_args()
     experiement_id = args.experiment_id[0]
@@ -121,6 +121,7 @@ if __name__ == '__main__':
     unitary_seed   = args.unitary_seed[0]
     unitary_theta  = args.unitary_theta[0]
     methods        = args.methods
+    eval_metric = args.eval_metric[0]
 
     problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed, unitary_theta)
     opt_initstate = OptimizeInitialState(num_sensor)
@@ -134,7 +135,7 @@ if __name__ == '__main__':
 
     if "Guess" in methods:
         opt_initstate.guess(unitary_operator)
-        success = opt_initstate.evaluate(unitary_operator, priors, povm)
+        success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
         success = round(success, 6)
         error = round(1-success, 6)
         guess_output = GuessOutput(experiement_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
@@ -149,13 +150,13 @@ if __name__ == '__main__':
         min_iteration = args.min_iteration[0]
         start_time = time.time()
         scores = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, \
-                                             mod_step, amp_step, decrease_rate, min_iteration)
+                                             mod_step, amp_step, decrease_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 6)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
         hillclimb_output = HillclimbOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
-                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime)
+                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(hillclimb_output)
 
 

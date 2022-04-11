@@ -176,7 +176,7 @@ def test8():
             povm.pretty_good_measurement(quantum_states, priors, debug=True)
 
 
-# semidefinite programming for |0> and |1>
+# semidefinite programming (min error) for |0> and |1>
 def test9():
     seed = 1
     repeat = 100_000
@@ -189,7 +189,7 @@ def test9():
     priors_list = [[0.5, 0.5], [0.4, 0.6]]
     for priors in priors_list:
         povm = Povm()
-        povm.semidefinite_programming(quantum_states, priors, debug=False)
+        povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
         qm = QuantumMeasurement()
         qm.preparation(quantum_states, priors)
         qm.povm = povm
@@ -197,7 +197,7 @@ def test9():
         qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
 
 
-# semidefinite programming of two random states, when is it optimal?
+# semidefinite programming (min error) of two random states, when is it optimal?
 def test10():
     for seed in range(10):
         qs1 = QuantumState(num_sensor=1)
@@ -208,10 +208,10 @@ def test10():
         priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.7, 0.3], [0.95, 0.05]]
         for priors in priors_list:
             povm = Povm()
-            povm.semidefinite_programming(quantum_states, priors, debug=True)
+            povm.semidefinite_programming_minerror(quantum_states, priors, debug=True)
 
 
-# semidefinite programming of three random states, when is it optimal?
+# semidefinite programming (min error) of three random states, when is it optimal?
 def test11():
     for seed in range(10):
         qs1 = QuantumState(num_sensor=1)
@@ -224,7 +224,7 @@ def test11():
         priors_list = [[0.1, 0.1, 0.8], [0.2, 0.3, 0.5], [1/3, 1/3, 1/3], [0.7, 0.2, 0.1], [0.9, 0.06, 0.04]]
         for priors in priors_list:
             povm = Povm()
-            povm.semidefinite_programming(quantum_states, priors, debug=True)
+            povm.semidefinite_programming_minerror(quantum_states, priors, debug=True)
 
 
 # unitary theta = 90 degrees, pretty good and SDP same?
@@ -239,7 +239,7 @@ def test12():
     opt_initstate = OptimizeInitialState(num_sensor)
     opt_initstate.guess(unitary_operator)
     print(opt_initstate)
-    print('success', opt_initstate.evaluate(unitary_operator, priors, povm))
+    print('success', opt_initstate.evaluate(unitary_operator, priors, povm, 'min error'))
     init_state = QuantumState(num_sensor, opt_initstate.state_vector)
     quantum_states = []
     for i in range(num_sensor):
@@ -248,13 +248,56 @@ def test12():
         init_state_copy.evolve(evolve_operator)
         quantum_states.append(init_state_copy)
     # povm.pretty_good_measurement(quantum_states, priors, debug=False)
-    povm.semidefinite_programming(quantum_states, priors, debug=False)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
     repeat = 1_000_000
     qm = QuantumMeasurement()
     qm.preparation(quantum_states, priors)
     qm.povm = povm
     error = qm.simulate(seed, repeat)
     qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
+
+# semidefinite programming (Unambiguous) of |0> and |+>
+def test13():
+    seed = 1
+    repeat = 100_000
+    vector1 = np.array([1, 0])
+    vector2 = np.array([1/math.sqrt(2), 1/math.sqrt(2)])
+    qs1 = QuantumState(num_sensor=1, state_vector=vector1)
+    qs2 = QuantumState(num_sensor=1, state_vector=vector2)
+    quantum_states = [qs1, qs2]
+    priors_list = [[0.5, 0.5]]
+    for priors in priors_list:
+        povm = Povm()
+        povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=False)
+
+        qm = QuantumMeasurement()
+        qm.preparation(quantum_states, priors)
+        qm.povm = povm
+        error = qm.simulate(seed, repeat)
+        qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
+
+# Unambiguous discrimination of two random states (complex numbers introduced)
+def test14():
+    seed = 2
+    repeat = 100_000
+    qs1 = QuantumState(num_sensor=1)
+    qs2 = QuantumState(num_sensor=1)
+    qs1.init_random_state(seed=1)
+    qs2.init_random_state(seed=2)
+    quantum_states = [qs1, qs2]
+    priors_list = [[0.4, 0.6]]
+    for priors in priors_list:
+        povm = Povm()
+        povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=False)
+
+        qm = QuantumMeasurement()
+        qm.preparation(quantum_states, priors)
+        qm.povm = povm
+        error = qm.simulate(seed, repeat)
+        qm.simulate_report(quantum_states, priors, povm, seed, repeat, error)
+
 
 
 if __name__ == '__main__':
@@ -269,4 +312,6 @@ if __name__ == '__main__':
     # test9()
     # test10()
     # test11()
-    test12()
+    # test12()
+    # test13()
+    test14()

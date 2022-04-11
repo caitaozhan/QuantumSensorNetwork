@@ -30,6 +30,11 @@ def set_unitary_theta(args, theta: int):
     args += ['-ut', str(theta)]
     return args
 
+def set_eval_metric(args, eval_metric: str):
+    args = args.copy()
+    args += ['-em', eval_metric]
+    return args
+
 def get_output(p: Popen):
     stderr = p.stderr.readlines()
     if stderr:
@@ -51,28 +56,30 @@ if __name__ == '__main__':
     num_sensor = 3
     equal = True
     task = 1
-    output_dir = 'result/4.6.2022'
-    output_file = 'varying_theta'
+    eval_metric = 'unambiguous'  # 'min error' or 'unambiguous'
+    output_dir = 'result/4.10.2022'
+    output_file = 'varying_theta_unambiguous'
     thetas = [x for x in range(1, 180)]
+
     ps = []
     tasks = []
     for x in thetas:
         for y in [0, 1]:
             args = set_numsensor_prior(base_args, num_sensor, equal)
+            args = set_eval_metric(args, eval_metric)
             args = set_unitary_theta(args, x)
             args = set_startseed(args, y)
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
     
-    # for t in tasks:
-    #     print(t)
+    print(f'total number of tasks = {len(tasks)}')
     
     parallel = 2
     ps = []
     while len(tasks) > 0:
         if len(ps) < parallel:
             task = tasks.pop(0)
-            print(task)
+            print(task, f'{len(tasks)} tasks still in queue')
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
         else:
             time.sleep(0.5)
@@ -83,5 +90,3 @@ if __name__ == '__main__':
                 else:
                     get_output(p)
             ps = new_ps
-
-    print('Done!')

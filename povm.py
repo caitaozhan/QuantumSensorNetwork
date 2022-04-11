@@ -182,8 +182,8 @@ class Povm:
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
 
 
-    def semidefinite_programming(self, quantum_states: list, priors: list, debug=True):
-        '''A numerical method for solving the optimal POVM through semidefinite programming
+    def semidefinite_programming_minerror(self, quantum_states: list, priors: list, debug=True):
+        '''A numerical method for solving the optimal min error POVM through semidefinite programming
            paper: https://arxiv.org/pdf/quant-ph/0205178.pdf
         '''
         if len(quantum_states) == 0:
@@ -201,9 +201,8 @@ class Povm:
             PIs.append(X)
         Identity = np.eye(n)
         constraints.append(sum(PIs) == Identity) # POVM constraint
-        objective = cp.real(cp.trace(sum(rho @ PI for rho, PI in zip(rhos, PIs))))  # the objective function
-        prob = cp.Problem(cp.Maximize(objective),
-                          constraints)
+        objective = cp.real(sum(cp.trace(rho @ PI) for rho, PI in zip(rhos, PIs)))  # the objective function
+        prob = cp.Problem(cp.Maximize(objective), constraints)
         prob.solve()
         self._method = 'Semidefinite programming'
         if prob.status == 'optimal':
@@ -214,7 +213,7 @@ class Povm:
             raise Exception('prob.value is not optimal')
 
         if debug:
-            print('\nDebug information inside Povm.semidefinite_programming()')
+            print('\nDebug information inside Povm.semidefinite_programming_minerror()')
             print(f'prior list {priors}')
             summ = 0
             string = ''
@@ -227,3 +226,61 @@ class Povm:
             Utility.print_matrix(string, summ)
             print(f'The theoretical error is {self._theoretical_error}')
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
+
+
+    def semidefinite_programming_unambiguous(self, quantum_states: list, priors: list, debug=True):
+        '''A numerical method for solving the optimal unambiguous POVM through semidefinite programming
+           paper: https://arxiv.org/pdf/1707.02571.pdf
+        '''
+        if len(quantum_states) == 0:
+            raise Exception('quantum_states is empty!')
+        if len(quantum_states) != len(priors):
+            raise Exception('length of quantum_states not equal to priors')
+        n = len(quantum_states[0].state_vector)
+        constraints = []
+        Ms = []
+        for _ in quantum_states:
+            X = cp.Variable((n, n), complex=True)
+            constraints.append(X >> 0)         # X is positive semidefinite
+            Ms.append(X)
+        
+        for i in range(len(Ms)):
+            for j in range(len(quantum_states)):
+                if j != i:                     # orthogonal --> unambiguous
+                    constraints.append(cp.real(cp.trace(Ms[i] @ quantum_states[j].density_matrix)) == 0)
+
+        X = cp.Variable((n, n), complex=True)  # the POVM element that gathers all the ambiguous results
+        constraints.append(X >> 0)             # X is positive semidefinite
+        Ms.append(X)
+        Identity = np.eye(n)
+        constraints.append(sum(Ms) == Identity)
+
+        objective = cp.real(sum(q * cp.trace(M @ qs.density_matrix) for q, M, qs in zip(priors, Ms, quantum_states))) # MI list has one additional elements, but it doesn't affect the correctness of the program
+        prob = cp.Problem(cp.Maximize(objective), constraints)
+        prob.solve(verbose=False)
+        self._method = 'Semidefinite programming'
+        if prob.status == 'optimal':
+            self._theoretical_success = prob.value
+            self._theoretical_error = 1 - prob.value
+            self._operators = [Operator(MI.value) for MI in Ms]
+        else:
+            raise Exception('prob.value is not optimal')
+        
+        if debug:
+            print('\nDebug information inside Povm.semidefinite_programming_unambiguous()')
+            print(f'prior list {priors}')
+            summ = 0
+            string = ''
+            for i, Pi in enumerate(self._operators):
+                summ += Pi.data
+                tmp_str = f'Pi{i}:'
+                Utility.print_matrix(tmp_str, Pi.data)
+                string += f'{tmp_str[:-1]} + '
+            string = f'{string[:-2]}='
+            Utility.print_matrix(string, summ)
+            print(f'The theoretical error is {self._theoretical_error}')
+            # print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
+   
+
+
+
