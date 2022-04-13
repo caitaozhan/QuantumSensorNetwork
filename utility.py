@@ -144,3 +144,4 @@ class Utility:
             return U
         else:
             raise Exception('Failed to generate an unitary matrix')
+

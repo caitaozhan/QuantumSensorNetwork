@@ -167,4 +167,4 @@ class HillclimbOutput:
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['start_seed'], outdict['mod_step'], outdict['amp_step'], outdict['decrease_rate'], \
                    outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
-                   outdict['runtime'], outdict['eval_metric'])
+                   outdict['runtime'], outdict['eval_metric'] if 'eval_metric' in outdict else None)

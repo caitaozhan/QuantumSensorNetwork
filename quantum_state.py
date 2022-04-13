@@ -29,6 +29,10 @@ class QuantumState:
     def state_vector(self):
         return self._state_vector
 
+    @state_vector.setter
+    def state_vector(self, vector: np.array):
+        self._state_vector = vector
+
     @property
     def density_matrix(self):
         if self._density_matrix is None:
@@ -63,8 +67,8 @@ class QuantumState:
             state = Utility.integer2bit(index, num_of_bit)
             if type(amplitude) is np.complex128:
                 real = f'{amplitude.real:.5f}'
-                imag = f'{amplitude.imag:.4f}'
-                string += f'|{state}>: {real:>8}{imag:>8}i\n'
+                imag = f'{amplitude.imag:.5f}'
+                string += f'|{state}>: {real:>8} {imag:>8}i\n'
             else:
                 string += f'|{state}>: {amplitude}\n'
         return string

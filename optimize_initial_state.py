@@ -14,7 +14,7 @@ from input_output import Default
 
 
 class OptimizeInitialState(QuantumState):
-    '''Optimize the initial state
+    '''A quantum state that has optimization capabilities, i.e., optimizing the initial state.
     '''
     def __init__(self, num_sensor: int):
         super().__init__(num_sensor=num_sensor, state_vector=None)
@@ -28,6 +28,35 @@ class OptimizeInitialState(QuantumState):
         s = f'\n{self.optimize_method}\nInitial state:\n'
         parent = super().__str__()
         return s + parent
+
+    def set_statevector_from_str(self, s: str):
+        '''set the self._state_vector from the __str__() string
+        Args:
+            s -- the __str__() string
+            Example:
+
+            Guess
+            Initial state:
+            |000>:  0.31088  0.3194i
+            |001>:  0.42490 -0.0000i
+            |010>:  0.42490 -0.0000i
+            |011>: -0.19850  0.2039i
+            |100>:  0.42490 -0.0000i
+            |101>: -0.19850  0.2039i
+            |110>: -0.19850  0.2039i
+            |111>: -0.00349 -0.1295i
+        '''
+        statevector = []
+        s = s.split('\n')
+        for line in s:
+            if '>:' in line:
+                line = line.split()
+                real = line[1]
+                imag = line[2]
+                real = float(real.strip())
+                imag = float(imag[:-1].strip())
+                statevector.append(complex(real, imag))
+        self._state_vector = np.array(statevector)
 
     def check_state(self):
         '''check if the amplitudes norm_squared add up to one
@@ -47,6 +76,24 @@ class OptimizeInitialState(QuantumState):
         for a in state_copy:
             magnitude_squared += abs(a)**2
         return state_copy / np.sqrt(magnitude_squared)
+
+    def upperbound(self, unitary_operator: Operator, priors: list):
+        '''an upper bound from equation (10) of this paper: https://arxiv.org/pdf/1509.04592.pdf
+        '''
+        init_state = QuantumState(self.num_sensor, self.state_vector)
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+        summ = 0
+        for i in range(self.num_sensor):
+            for j in range(self.num_sensor):
+                psi_i = quantum_states[i].state_vector
+                psi_j = quantum_states[j].state_vector
+                summ += 2 * np.sqrt(abs(((priors[i] + priors[j])/2)**2 - priors[i]*priors[j]*(abs(np.dot(np.conj(psi_i), psi_j)))**2))
+        return 1./self.num_sensor + 1./(2*self.num_sensor)*summ
 
     def random(self, seed, unitary_operator: Operator):
         '''ignore the unitary operator and randomly initialize a quantum state
