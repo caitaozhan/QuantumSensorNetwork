@@ -156,9 +156,15 @@ class OptimizeInitialState(QuantumState):
             init_state_copy.evolve(evolve_operator)
             quantum_states.append(init_state_copy)
         if eval_metric == 'min error':
-            povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+            try:
+                povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+            except Exception as e:
+                raise e
         elif eval_metric == 'unambiguous':
-            povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=False)
+            try:
+                povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=True)
+            except Exception as e:
+                raise e
         else:
             raise Exception(f'unknown eval_metric: {eval_metric}!')
         return povm.therotical_success
@@ -216,7 +222,10 @@ class OptimizeInitialState(QuantumState):
             # print(f'Start from guess:\n{startState}')
         N = 2**self.num_sensor
         povm = Povm()
-        best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+        try:
+            best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+        except Exception as e:
+            raise e
         scores = [round(best_score, 6)]
         terminate = False
         iteration = 0
@@ -227,7 +236,12 @@ class OptimizeInitialState(QuantumState):
                 neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
                 best_step = -1
                 for j in range(len(neighbors)):
-                    score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
+                    try:
+                        score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
+                    except Exception as e:
+                        # print(e)
+                        score = 0
+                        print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}')
                     if score > best_score:
                         best_score = score
                         best_step = j

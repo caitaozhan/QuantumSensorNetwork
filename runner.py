@@ -59,7 +59,7 @@ if __name__ == '__main__':
     eval_metric = 'unambiguous'  # 'min error' or 'unambiguous'
     output_dir  = 'result/4.11.2022'
     output_file = 'varying_theta_unambiguous'
-    thetas      = [x for x in range(1, 180)]
+    thetas      = [x for x in range(118, 119)]
     start_seed  = [0]
 
     ps = []
@@ -77,11 +77,12 @@ if __name__ == '__main__':
     
     parallel = 2
     ps = []
-    while len(tasks) > 0:
-        if len(ps) < parallel:
+    while len(tasks) > 0 or len(ps) > 0:
+        if len(ps) < parallel and len(tasks) > 0:
             task = tasks.pop(0)
             print(task, f'{len(tasks)} tasks still in queue')
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+            # ps.append(Popen(task))
         else:
             time.sleep(0.5)
             new_ps = []
@@ -89,5 +90,6 @@ if __name__ == '__main__':
                 if p.poll() is None:
                     new_ps.append(p)
                 else:
+                    # pass
                     get_output(p)
             ps = new_ps

@@ -3,6 +3,7 @@ Positive operator valued measurement
 '''
 
 import math
+from tabnanny import verbose
 import numpy as np
 import cvxpy as cp
 from scipy.linalg import sqrtm
@@ -203,7 +204,7 @@ class Povm:
         constraints.append(sum(PIs) == Identity) # POVM constraint
         objective = cp.real(sum(cp.trace(rho @ PI) for rho, PI in zip(rhos, PIs)))  # the objective function
         prob = cp.Problem(cp.Maximize(objective), constraints)
-        prob.solve()
+        prob.solve(verbose=debug)
         self._method = 'Semidefinite programming'
         if prob.status == 'optimal':
             self._theoretical_success = prob.value
@@ -224,6 +225,7 @@ class Povm:
                 string += f'{tmp_str[:-1]} + '
             string = f'{string[:-2]}='
             Utility.print_matrix(string, summ)
+            print(f'Number of contraints = {len(constraints)}')
             print(f'The theoretical error is {self._theoretical_error}')
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
 
@@ -257,14 +259,14 @@ class Povm:
 
         objective = cp.real(sum(q * cp.trace(M @ qs.density_matrix) for q, M, qs in zip(priors, Ms, quantum_states))) # MI list has one additional elements, but it doesn't affect the correctness of the program
         prob = cp.Problem(cp.Maximize(objective), constraints)
-        prob.solve(verbose=False)
+        prob.solve(verbose=debug)
         self._method = 'Semidefinite programming'
-        if prob.status == 'optimal':
+        if prob.status == 'optimal' or prob.status == 'optimal_inaccurate':
             self._theoretical_success = prob.value
             self._theoretical_error = 1 - prob.value
             self._operators = [Operator(MI.value) for MI in Ms]
         else:
-            raise Exception('prob.value is not optimal')
+            raise Exception(f'prob.status={prob.status}')
         
         if debug:
             print('\nDebug information inside Povm.semidefinite_programming_unambiguous()')
@@ -278,6 +280,7 @@ class Povm:
                 string += f'{tmp_str[:-1]} + '
             string = f'{string[:-2]}='
             Utility.print_matrix(string, summ)
+            print(f'Number of contraints = {len(constraints)}')
             print(f'The theoretical error is {self._theoretical_error}')
             # print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
    

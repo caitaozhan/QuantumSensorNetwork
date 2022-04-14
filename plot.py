@@ -1,4 +1,5 @@
 import numpy as np
+from collections import defaultdict
 import matplotlib.pyplot as plt
 from logger import Logger
 from optimize_initial_state import OptimizeInitialState
@@ -214,33 +215,56 @@ def special_u_2():
     def theory_unambiguous(theta):
         return 1./3 * (4 * np.sin(theta)**2) / (8 * np.cos(theta)**2 + 1)
 
-    logs = ['result/4.11.2022/varying_theta_unambiguous']
-    X_y = []
+    logs = ['result/4.10.2022/varying_theta_unambiguous', 'result/4.11.2022/varying_theta_unambiguous',\
+            'result/4.13.2022/varying_theta_unambiguous']
+    X_y_guess = []
+    guessdict = defaultdict(list)
+    hillclimbdict = defaultdict(list)
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
         output_by_method = experiment[1]
-        X_y.append((myinput.unitary_theta, output_by_method['Guess'].success))
+        if 'Guess' in output_by_method:
+            guessdict[myinput.unitary_theta].append(output_by_method['Guess'].success)
+        if 'Hill climbing' in output_by_method:
+            hillclimbdict[myinput.unitary_theta].append(output_by_method['Hill climbing'].success)
 
-    X_y.sort()
-    X = [x for x, _ in X_y]
-    y_guess = [y for _, y in X_y]
-    y_theory_minerror = []
-    y_theory_unambiguous = []
-    for x in X:
-        y_theory_minerror.append(theory_minerror(x/RAD))
-        y_theory_unambiguous.append(theory_unambiguous(x/RAD))
+    y_hillclimb_unambiguous = []
+    for theta, suc_list in sorted(hillclimbdict.items()):
+        y_hillclimb_unambiguous.append((theta, max(suc_list)))
+    y_guess_unambiguous = []
+    for theta, suc_list in sorted(guessdict.items()):
+        y_guess_unambiguous.append((theta, max(suc_list)))
+
+    if len(y_guess_unambiguous) != len(y_hillclimb_unambiguous):
+        raise Exception('Guess and Hill climbing data length are not matching')
+
+    X = []
+    y_guess = []
+    y_hillclimb = []
+    for (theta1, success1), (theta2, success2) in zip(y_guess_unambiguous, y_hillclimb_unambiguous):
+        if theta1 != theta2:
+            raise Exception('theta1 != theta2')
+        X.append(theta1)
+        y_guess.append(success1)
+        y_hillclimb.append(success2)
+    # y_theory_minerror = []
+    # y_theory_unambiguous = []
+    # for x in X:
+        # y_theory_minerror.append(theory_minerror(x/RAD))
+        # y_theory_unambiguous.append(theory_unambiguous(x/RAD))
     fig, ax = plt.subplots(1, 1, figsize=(35, 25))
     fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
-    ax.plot(X, y_theory_minerror, label='Min Error. Theoretical')
-    ax.plot(X, y_theory_unambiguous, label='Unambiguous. Theoretical')
+    # ax.plot(X, y_theory_minerror, label='Min Error. Theoretical')
+    # ax.plot(X, y_theory_unambiguous, label='Unambiguous. Theoretical')
     ax.plot(X, y_guess, label='Unambiguous. Guess, evaluate by SDP')
+    ax.plot(X, y_hillclimb, label='Unambiguous. Hill climbing')
     ax.legend()
     ax.set_xlabel('Theta (in degrees)')
     ax.set_ylabel('Success Probability')
     ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    filename = 'result/4.11.2022/varying_theta_unambiguous'
+    filename = 'result/4.13.2022/varying_theta_unambiguous'
     fig.savefig(filename)
 
 
@@ -347,7 +371,8 @@ if __name__ == '__main__':
     # vary_priors()
     # vary_numsensors()
     # vary_startseed()
-    special_u()
+    # special_u()
+    special_u_2()
 
     # print_results()
 

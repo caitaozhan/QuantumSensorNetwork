@@ -349,6 +349,9 @@
 {"experiment_id": 0, "num_sensor": 3, "priors": [0.3333, 0.3333, 0.3333], "unitary_seed": 2, "unitary_theta": 117.0}
 {"experiment_id": 0, "error": 0.116653, "method": "Guess", "success": 0.883347, "init_state": "\nGuess\nInitial state:\n|000>:  0.31088  0.3194i\n|001>:  0.42490  0.0000i\n|010>:  0.42490  0.0000i\n|011>: -0.19850  0.2039i\n|100>:  0.42490  0.0000i\n|101>: -0.19850  0.2039i\n|110>: -0.19850  0.2039i\n|111>: -0.00349 -0.1295i\n"}
 
+{"experiment_id": 0, "num_sensor": 3, "priors": [0.3333, 0.3333, 0.3333], "unitary_seed": 2, "unitary_theta": 118.0}
+{"experiment_id": 0, "error": 0.000212, "method": "Guess", "success": 0.999788, "init_state": "\nGuess\nInitial state:\n|000>:  0.31088  0.31936i\n|001>:  0.42490  0.00000i\n|010>:  0.42490  0.00000i\n|011>: -0.19850  0.20392i\n|100>:  0.42490  0.00000i\n|101>: -0.19850  0.20392i\n|110>: -0.19850  0.20392i\n|111>: -0.00349 -0.12947i\n"}
+
 {"experiment_id": 0, "num_sensor": 3, "priors": [0.3333, 0.3333, 0.3333], "unitary_seed": 2, "unitary_theta": 119.0}
 {"experiment_id": 0, "error": 2.7e-05, "method": "Guess", "success": 0.999973, "init_state": "\nGuess\nInitial state:\n|000>:  0.31088  0.3194i\n|001>:  0.42490  0.0000i\n|010>:  0.42490  0.0000i\n|011>: -0.19850  0.2039i\n|100>:  0.42490  0.0000i\n|101>: -0.19850  0.2039i\n|110>: -0.19850  0.2039i\n|111>: -0.00349 -0.1295i\n"}
 
