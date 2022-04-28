@@ -12,11 +12,11 @@ class Default:
     '''
     output_dir  = 'result-tmp'
     output_file = 'foo'
-    methods = ['Guess', 'Hill climbing']
+    methods = ['Guess', 'Hill climbing', 'Simulated annealing']
     # some constants
     EPSILON = 1e-8              # the epsilon for zero
     EPSILON_SEMIDEFINITE = 8e-4 # relaxed for semidefinate programming optimal condition checking......
-    EPSILON_HILLCLIMBING = 1e-6 # the epsilon for hill climbing termination
+    EPSILON_OPT          = 1e-7 # the epsilon for optimization termination
 
     # problem input related
     num_sensor   = 2
@@ -28,8 +28,16 @@ class Default:
     mod_step = 0.1        # initial modulus step size
     amp_step = 0.1        # initial amplitude step size
     decrease_rate = 0.96  # decrease rate for the step sizes
+
+    # below are for simulated annealing
+    init_step = 1       # initial step size
+    max_stuck = 1         # max stuck in a same temperature
+    cooling_rate = 0.96   # the annealing cooling rate
+
+    # below are for both hill climbing and simulated annealing
     min_iteration = 100   # minimum interation
     eval_metric = 'min error'
+
 
 
 @dataclass
@@ -124,10 +132,10 @@ class HillclimbOutput:
     decrease_rate: float    # the decrease rate for the step sizes
     min_iteration: int      # the minimum iteration for hill climbing
     real_iteration: int     # number of iterations in reality
-    init_state: str         # the resulting initial state
+    init_state: str         # the initial state found
     scores: List[float]     # the evaluation value of each iteration
-    runtime: float          # rum time
-    eval_metric: str = 'min error' # 'min error' or 'unambiguous'
+    runtime: float          # run time
+    eval_metric: str        # 'min error' or 'unambiguous'
 
     def __str__(self):
         return self.to_json_str()
@@ -145,9 +153,9 @@ class HillclimbOutput:
             'min_iteration': self.min_iteration,
             'real_iteration': self.real_iteration,
             'runtime': self.runtime,
+            'start_seed': self.start_seed,
             'decrease_rate': self.decrease_rate,
             'success': self.success,
-            'start_seed': self.start_seed,
             'mod_step': self.mod_step,
             'amp_step': self.amp_step,
             'init_state': self.init_state,
@@ -157,7 +165,7 @@ class HillclimbOutput:
 
     @classmethod
     def from_json_str(cls, json_str):
-        '''init an Hill climbing output object from json string
+        '''init a Hill climbing output object from json string
         Args:
             json_str -- a string of json
         Return:
@@ -168,3 +176,63 @@ class HillclimbOutput:
                    outdict['start_seed'], outdict['mod_step'], outdict['amp_step'], outdict['decrease_rate'], \
                    outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
                    outdict['runtime'], outdict['eval_metric'] if 'eval_metric' in outdict else None)
+
+
+@dataclass
+class SimulatedAnnealOutput:
+    '''encapsulate the simulated annealing method's information
+    '''
+    experiment_id: int
+    method: str
+    error: float
+    success: float       # also 1 - error, the last value of scores
+    start_seed: int      # the seed that affects the starting point of simulated annealing
+    init_step: float     # the initial step size
+    max_stuck: int       # frozen criteria
+    cooling_rate: float  # the decrease in temperature
+    min_iteration: int   # the minimum iteration for simulated annealing
+    real_iteration: int  # number of iterations in reality
+    init_state: str      # the initial state found
+    scores: List[float]  # the evaluation value of each evaluation
+    runtime: float       # run time
+    eval_metric: str     # 'min error' or 'unambiguous'
+
+    def __str__(self):
+        return self.to_json_str()
+    
+    def to_json_str(self):
+        '''return json formatting str
+        Return:
+            str
+        '''
+        outputdict = {
+            'experiment_id': self.experiment_id,
+            'error': self.error,
+            'method': self.method,
+            'eval_metric': self.eval_metric,
+            'min_iteration': self.min_iteration,
+            'real_iteration': self.real_iteration,
+            'runtime': self.runtime,
+            'start_seed': self.start_seed,
+            'cooling_rate': self.cooling_rate,
+            'success': self.success,
+            'init_step': self.init_step,
+            'max_stuck': self.max_stuck,
+            'init_state': self.init_state,
+            'scores': self.scores,
+        }
+        return json.dumps(outputdict)
+
+    @classmethod
+    def from_json_str(cls, json_str):
+        '''init a Simulated annealing output object from json string
+        Args:
+            json_str -- a string of json
+        Return:
+            SimulatedAnnealOutput
+        '''
+        outdict = json.loads(json_str)
+        return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
+                   outdict['start_seed'], outdict['init_step'], outdict['max_stuck'], outdict['cooling_rate'],\
+                   outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'],\
+                   outdict['runtime'], outdict['eval_metric'])

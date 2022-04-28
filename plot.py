@@ -346,21 +346,29 @@ def upperbound():
 
 
 def print_results():
-    logs = ['result/4.10.2022/varying_theta_unambiguous']
+    # logs = ['result/4.10.2022/varying_theta_unambiguous']
+    logs = ['result-tmp/foo']
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
         output_by_method = experiment[1]
-        
-        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
-        if output_by_method['Hill climbing'].start_seed == 0:
-            print('\ntheta =', myinput.unitary_theta)
-            print(output_by_method['Guess'].init_state)
-            print('Guess success probability =', output_by_method['Guess'].success)
+        if 'Hill climbing' in output_by_method:
+            print('Hill climbing success probability', output_by_method['Hill climbing'].success)
             print(output_by_method['Hill climbing'].init_state)
-            eval_metric = output_by_method['Hill climbing'].eval_metric
-            print(f'Hill climbing ({eval_metric}) probability =', output_by_method['Hill climbing'].success)
-            print('---')
+        if 'Simulated annealing' in output_by_method:
+            print('Simulated annealing success probability', output_by_method['Simulated annealing'].success)
+            print(output_by_method['Simulated annealing'].init_state)
+
+
+        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
+        # if output_by_method['Hill climbing'].start_seed == 0:
+        #     print('\ntheta =', myinput.unitary_theta)
+        #     print(output_by_method['Guess'].init_state)
+        #     print('Guess success probability =', output_by_method['Guess'].success)
+        #     print(output_by_method['Hill climbing'].init_state)
+        #     eval_metric = output_by_method['Hill climbing'].eval_metric
+        #     print(f'Hill climbing ({eval_metric}) probability =', output_by_method['Hill climbing'].success)
+        #     print('---')
 
 
 if __name__ == '__main__':
@@ -372,8 +380,8 @@ if __name__ == '__main__':
     # vary_numsensors()
     # vary_startseed()
     # special_u()
-    special_u_2()
+    # special_u_2()
 
-    # print_results()
+    print_results()
 
     # upperbound()

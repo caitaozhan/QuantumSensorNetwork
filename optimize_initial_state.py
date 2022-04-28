@@ -3,6 +3,7 @@ Optimizing initial state
 '''
 
 import copy
+from matplotlib.pyplot import cool
 import numpy as np
 import math
 from qiskit_textbook.tools import random_state
@@ -202,14 +203,14 @@ class OptimizeInitialState(QuantumState):
             seed             -- random seed
             unitary_operator -- describe the interaction with the environment
             priors   -- prior probabilities
-            EPSILON  -- for hill climbing termination
+            epsilon  -- for termination
             mod_step -- step size for modulus
             amp_step -- step size for amplitude
             decrease_rate -- decrease rate
             min_iteration -- minimal number of iteration
             eval_metric -- 'min error' or 'unambiguous'
         Return:
-            dict -- a dict of hill climbing summary
+            list -- a list of scores at each iteration
         '''
         print('\nStart hill climbing...')
         qstate = None
@@ -241,7 +242,7 @@ class OptimizeInitialState(QuantumState):
                     except Exception as e:
                         # print(e)
                         score = 0
-                        print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}')
+                        print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}, error={e}')
                     if score > best_score:
                         best_score = score
                         best_step = j
@@ -262,4 +263,91 @@ class OptimizeInitialState(QuantumState):
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Hill climbing'
+        return scores
+
+    def generate_init_temperature(self, qstate, init_step, N: int, unitary_operator: Operator, priors: list, povm: Povm, eval_metric):
+        scores = []
+        for i in range(N):
+            neighbor = self.find_SA_neighbor(qstate, i, init_step)
+            score = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+            scores.append(score)
+        return np.std(scores)
+
+    def find_SA_neighbor(self, qstate: QuantumState, i: int, step_size: float):
+        real = 2 * np.random.random() - 1
+        imag = 2 * np.random.random() - 1
+        direction = real + 1j*imag
+        direction /= abs(direction)  # normalize
+        state_vector = qstate.state_vector.copy()
+        state_vector[i] += direction * step_size
+        normalized_vector = self.normalize_state(state_vector)
+        return QuantumState(self.num_sensor, normalized_vector)
+
+    def simulated_annealing(self, seed: int, unitary_operator: Operator, priors: list, init_step: float, epsilon: float, \
+                                  max_stuck: int, cooling_rate: float, min_iteration: int, eval_metric: str):
+        '''use the simulated annealing to optimize the initial state
+        Args:
+            seed             -- random seed
+            unitary_operator -- describe the interaction with the environment
+            priors    -- prior probabilities
+            init_step -- the initial step size
+            epsilon   -- for termination
+            max_stuck -- frozen criteria
+            cooling_rate   -- cooling rate
+            min_iteration -- minimal number of iterations
+            eval_metric    -- 'min error' or 'unambiguous'
+        Return:
+            list -- a list of scores at each iteration
+        '''
+        print('\nStart simulated annealing...')
+        np.random.seed(seed)
+        qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+        print(f'Random start:\n{qstate}')
+        povm = Povm()
+        N = 2**self.num_sensor
+        init_temperature = self.generate_init_temperature(qstate, init_step, N, unitary_operator, priors, povm, eval_metric)
+        temperature = init_temperature
+        score1  = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+        scores = [round(score1, 6)]
+        terminate  = False
+        eval_count = 0
+        stuck_count = 0
+        min_evaluation = min_iteration * N
+        while terminate is False or eval_count < min_evaluation:
+            previous_score = score1
+            stepsize = init_step * temperature / init_temperature
+            for i in range(N):
+                neighbor = self.find_SA_neighbor(qstate, i, stepsize)
+                try:
+                    score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+                    eval_count += 1
+                except Exception as e:
+                    score2 = -100
+                    print(f'solver issue at eval_count={eval_count}, error={e}')
+                dS = score2 - score1 # score2 is the score of the neighbor state, score1 is for current state
+                if dS > 0:
+                    qstate = neighbor           # qstate improves
+                    score1 = score2
+                else:  # S <= 0
+                    prob = np.exp(dS / temperature)
+                    if np.random.uniform(0, 1) < prob:
+                        qstate = neighbor       # qstate becomes worse
+                        score1 = score2
+                    else:                       # qstate no change
+                        pass
+            scores.append(round(score2, 6))
+            if previous_score >= score2 - epsilon:
+                stuck_count += 1
+            else:
+                stuck_count = 0
+                terminate = False
+            if stuck_count == max_stuck:
+                terminate = True
+            
+            # check optimal
+
+            temperature *= cooling_rate
+
+        self._state_vector = qstate.state_vector
+        self._optimze_method = 'Simulated annealing'
         return scores

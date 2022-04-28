@@ -49,18 +49,17 @@ def get_output(p: Popen):
 
 if __name__ == '__main__':
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Guess", "-mi", "50"]
+    base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
 
     # base_args = ["-us", "2", "-m", "Guess", "-ut", "60"]
 
-    num_sensor  = 3
+    num_sensor  = 2
     equal       = True
-    task        = 1
-    eval_metric = 'unambiguous'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/4.11.2022'
-    output_file = 'varying_theta_unambiguous'
-    thetas      = [x for x in range(118, 119)]
-    start_seed  = [0]
+    eval_metric = 'min error'  # 'min error' or 'unambiguous'
+    output_dir  = 'result/4.14.2022'
+    output_file = 'varying_theta_2sensor_minerror'
+    thetas      = [x for x in range(1, 180)]
+    start_seed  = [0, 1]
 
     ps = []
     tasks = []

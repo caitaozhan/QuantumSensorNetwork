@@ -11,7 +11,7 @@ from povm import Povm
 from utility import Utility
 import time
 from plot import Plot
-from input_output import Default, ProblemInput, GuessOutput, HillclimbOutput
+from input_output import Default, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
 from logger import Logger
 
 
@@ -54,7 +54,7 @@ def main2():
     decrease_rate = 0.96
     iteration = 100
     startState = QuantumState(num_sensor, optis.state_vector)
-    scores = optis.hill_climbing(startState=startState, seed=0, unitary_operator=unitary_operator, priors=priors, epsilon=Default.EPSILON_HILLCLIMBING, \
+    scores = optis.hill_climbing(startState=startState, seed=0, unitary_operator=unitary_operator, priors=priors, epsilon=Default.EPSILON_OPT, \
                                  mod_step=mod_step, amp_step=amp_step, decrease_rate=decrease_rate, min_iteration=iteration)
     print(optis)
     quantum_states = []
@@ -105,14 +105,22 @@ if __name__ == '__main__':
     parser.add_argument('-m',  '--methods', type=str, nargs='+', default=[Default.method], help='the method for finding the initial state')
     parser.add_argument('-od', '--output_dir', type=str, nargs=1, default=[Default.output_dir], help='output directory')
     parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
-    
+
     # below are for hill climbing
     parser.add_argument('-ss', '--start_seed', type=int, nargs=1, default=[Default.start_seed], help='seed that affects the start point of hill climbing')
     parser.add_argument('-ms', '--mod_step', type=float, nargs=1, default=[Default.mod_step], help='step size for modulus')
     parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
+
+    # below are for simulated annealing
+    parser.add_argument('-is', '--init_step', type=float, nargs=1, default=[Default.init_step], help='initial step')
+    parser.add_argument('-st', '--max_stuck', type=int, nargs=1, default=[Default.max_stuck], help='max stuck in a same temperature')
+    parser.add_argument('-cr', '--cooling_rate', type=float, nargs=1, default=[Default.cooling_rate], help='the cooling rate')
+
+    # below are for both hill climbing and simulated annealing
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
     parser.add_argument('-em', '--eval_metric', type=str, nargs=1, default=[Default.eval_metric], help='a state is evaluated by min error or unambiguous')
+
 
     args = parser.parse_args()
     experiement_id = args.experiment_id[0]
@@ -121,7 +129,7 @@ if __name__ == '__main__':
     unitary_seed   = args.unitary_seed[0]
     unitary_theta  = args.unitary_theta[0]
     methods        = args.methods
-    eval_metric = args.eval_metric[0]
+    eval_metric    = args.eval_metric[0]
 
     problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed, unitary_theta)
     opt_initstate = OptimizeInitialState(num_sensor)
@@ -129,7 +137,7 @@ if __name__ == '__main__':
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
         # when not specifying the theta, generate a random unitary that has some random thetas
-        unitary_operator = random_unitary(dims=2, seed=unitary_seed)
+        unitary_operator = random_unitary(dims=2**num_sensor, seed=unitary_seed)
     povm = Povm()
     outputs = []
 
@@ -143,7 +151,7 @@ if __name__ == '__main__':
 
     if "Hill climbing" in methods:
         start_seed = args.start_seed[0]
-        epsilon = Default.EPSILON_HILLCLIMBING
+        epsilon = Default.EPSILON_OPT
         mod_step = [args.mod_step[0]] * 2**num_sensor
         amp_step = [args.amp_step[0]] * 2**num_sensor
         decrease_rate = args.decrease_rate[0]
@@ -159,6 +167,23 @@ if __name__ == '__main__':
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(hillclimb_output)
 
+    if 'Simulated annealing' in methods:
+        start_seed   = args.start_seed[0]
+        init_step    = args.init_step[0]
+        max_stuck    = args.max_stuck[0]
+        cooling_rate = args.cooling_rate[0]
+        min_iteration = args.min_iteration[0]
+        epsilon = Default.EPSILON_OPT
+        start_time   = time.time()
+        scores = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, epsilon, \
+                                                   max_stuck, cooling_rate, min_iteration, eval_metric)
+        runtime = round(time.time() - start_time, 2)
+        success = scores[-1]
+        error = round(1 - success, 6)
+        real_iteration = len(scores) - 1
+        simulateanneal_output = SimulatedAnnealOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, init_step,\
+                                                      max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+        outputs.append(simulateanneal_output)
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

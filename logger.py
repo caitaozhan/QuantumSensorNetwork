@@ -4,7 +4,7 @@
 import os
 
 from zmq import DEALER
-from input_output import ProblemInput, GuessOutput, HillclimbOutput, Default
+from input_output import ProblemInput, GuessOutput, HillclimbOutput, Default, SimulatedAnnealOutput
 
 class Logger:
 
@@ -39,6 +39,9 @@ class Logger:
                     if line.find('Hill climbing') != -1:
                         output = HillclimbOutput.from_json_str(line)
                         output_by_method['Hill climbing'] = output
+                    if line.find('Simulated annealing') != -1:
+                        output = SimulatedAnnealOutput.from_json_str(line)
+                        output_by_method['Simulated annealing'] = output
                     line = f.readline()
                 data.append((myinput, output_by_method))
         return data
