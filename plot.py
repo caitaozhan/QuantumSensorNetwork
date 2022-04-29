@@ -347,28 +347,316 @@ def upperbound():
 
 def print_results():
     # logs = ['result/4.10.2022/varying_theta_unambiguous']
-    logs = ['result-tmp/foo']
+    logs = ['result/4.6.2022/varying_theta']
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
+        if myinput.unitary_theta != 60:
+            continue
+        output_by_method = experiment[1]
+        if 'Guess' in output_by_method:
+            print(output_by_method['Guess'].init_state)
+            print('Guess success probability =', output_by_method['Guess'].success)
+
+    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    # logs = ['result/4.6.2022/varying_theta']
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        if myinput.unitary_theta != 60:
+            continue
         output_by_method = experiment[1]
         if 'Hill climbing' in output_by_method:
-            print('Hill climbing success probability', output_by_method['Hill climbing'].success)
+            print('\ntheta =', myinput.unitary_theta)
             print(output_by_method['Hill climbing'].init_state)
+            eval_metric = output_by_method['Hill climbing'].eval_metric
+            print(f'Hill climbing ({eval_metric}) probability =', output_by_method['Hill climbing'].success)
+            print('---')
+
+
+def simulated_hillclimb_compare():
+    # logs = ['result/4.27.2022/varying_theta_3sensor_minerror', 'result/4.28.2022/varying_theta_3sensor_minerror']
+    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    data = Logger.read_log(logs)
+    simulated = {}   # (theta, start_seed) --> success
+    hillclimb = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb[(theta, start_seed)] = success
         if 'Simulated annealing' in output_by_method:
-            print('Simulated annealing success probability', output_by_method['Simulated annealing'].success)
-            print(output_by_method['Simulated annealing'].init_state)
+            start_seed = output_by_method['Simulated annealing'].start_seed
+            success = output_by_method['Simulated annealing'].success
+            simulated[(theta, start_seed)] = success
+
+    sa_minus_hc = []
+    sa_minus_hc0 = []
+    sa_minus_hc1 = []
+    zeros = []
+    for theta in range(1, 90):
+        zeros.append(0)
+        for start_seed in [0, 1]:
+            simulated_success = simulated[(theta, start_seed)]
+            hillclimb_success = hillclimb[(theta, start_seed)]
+            sa_minus_hc.append(simulated_success - hillclimb_success)
+            if start_seed == 0:
+                sa_minus_hc0.append(simulated_success - hillclimb_success)
+            if start_seed == 1:
+                sa_minus_hc1.append(simulated_success - hillclimb_success)
+
+    print('Start seed both 0 and 1')
+    print(f'avg. = {np.average(sa_minus_hc)}')
+    print(f'std. = {np.std(sa_minus_hc)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(sa_minus_hc)
+    ax.plot(zeros*2)
+    ax.set_ylim([-0.005, 0.025])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated Anneal - Hill Climb')
+    fig.savefig('result/4.28.2022/sa-hc-seed0-1.bugfix.png')
+
+    print('Start seed 0')
+    print(f'avg. = {np.average(sa_minus_hc0)}')
+    print(f'std. = {np.std(sa_minus_hc0)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(sa_minus_hc0)
+    ax.plot(zeros)
+    ax.set_ylim([-0.005, 0.01])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated Anneal - Hill Climb')
+    fig.savefig('result/4.28.2022/sa-hc-seed0.bugfix.png')
+
+    print('Start seed 1')
+    print(f'avg. = {np.average(sa_minus_hc1)}')
+    print(f'std. = {np.std(sa_minus_hc1)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(sa_minus_hc1)
+    ax.plot(zeros)
+    ax.set_ylim([-0.005, 0.01])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated Anneal - Hill Climb')
+    fig.savefig('result/4.28.2022/sa-hc-seed1.bugfix.png')
 
 
-        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
-        # if output_by_method['Hill climbing'].start_seed == 0:
-        #     print('\ntheta =', myinput.unitary_theta)
-        #     print(output_by_method['Guess'].init_state)
-        #     print('Guess success probability =', output_by_method['Guess'].success)
-        #     print(output_by_method['Hill climbing'].init_state)
-        #     eval_metric = output_by_method['Hill climbing'].eval_metric
-        #     print(f'Hill climbing ({eval_metric}) probability =', output_by_method['Hill climbing'].success)
-        #     print('---')
+def hillclimb_bugfix():
+    logs = ['result/4.6.2022/varying_theta']
+    data = Logger.read_log(logs)
+    hillclimb = {}       # (theta, start_seed) --> success
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb[(theta, start_seed)] = success
+
+    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    data = Logger.read_log(logs)
+    hillclimb_bugfix = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb_bugfix[(theta, start_seed)] = success
+
+    hillclimbbugfix = []
+    hillclimbbugfix0 = []
+    hillclimbbugfix1 = []
+    zeros = []
+    for theta in range(1, 90):
+        zeros.append(0)
+        for start_seed in [0, 1]:
+            hillclimbbugfix_success = hillclimb_bugfix[(theta, start_seed)]
+            hillclimb_success = hillclimb[(theta, start_seed)]
+            hillclimbbugfix.append(hillclimbbugfix_success - hillclimb_success)
+            if start_seed == 0:
+                hillclimbbugfix0.append(hillclimbbugfix_success - hillclimb_success)
+            if start_seed == 1:
+                hillclimbbugfix1.append(hillclimbbugfix_success - hillclimb_success)
+
+    print('Start seed both 0 and 1')
+    print(f'avg. = {np.average(hillclimbbugfix)}')
+    print(f'std. = {np.std(hillclimbbugfix)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimbbugfix)
+    ax.plot(zeros*2)
+    ax.set_ylim([-0.005, 0.025])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Bug Fix')
+    fig.savefig('result/4.28.2022/hillclimbbugfix-seed0-1.bugfix.png')
+
+    print('Start seed 0')
+    print(f'avg. = {np.average(hillclimbbugfix0)}')
+    print(f'std. = {np.std(hillclimbbugfix0)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimbbugfix0)
+    ax.plot(zeros)
+    ax.set_ylim([-0.005, 0.01])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Bug Fix')
+    fig.savefig('result/4.28.2022/hillclimbbugfix-seed0.bugfix.png')
+
+    print('Start seed 1')
+    print(f'avg. = {np.average(hillclimbbugfix1)}')
+    print(f'std. = {np.std(hillclimbbugfix1)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimbbugfix1)
+    ax.plot(zeros)
+    ax.set_ylim([-0.005, 0.01])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Bug Fix')
+    fig.savefig('result/4.28.2022/hillclimbbugfix-seed1.bugfix.png')
+
+
+def hillclimb_guess_compare():
+    logs = ['result/4.6.2022/varying_theta']
+    data = Logger.read_log(logs)
+    guess = {}       # (theta, start_seed) --> success
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Guess' in output_by_method:
+            success = output_by_method['Guess'].success
+            guess[(theta, 0)] = success
+            guess[(theta, 1)] = success
+
+    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    data = Logger.read_log(logs)
+    hillclimb_bugfix = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb_bugfix[(theta, start_seed)] = success
+
+    hillclimb_minus_guess = []
+    hillclimb_minus_guess0 = []
+    hillclimb_minus_guess1 = []
+    zeros = []
+    for theta in range(1, 61):
+        zeros.append(0)
+        for start_seed in [0, 1]:
+            hillclimbbugfix_success = hillclimb_bugfix[(theta, start_seed)]
+            hillclimb_success = guess[(theta, start_seed)]
+            hillclimb_minus_guess.append(hillclimbbugfix_success - hillclimb_success)
+            if start_seed == 0:
+                hillclimb_minus_guess0.append(hillclimbbugfix_success - hillclimb_success)
+            if start_seed == 1:
+                hillclimb_minus_guess1.append(hillclimbbugfix_success - hillclimb_success)
+
+    print('Start seed both 0 and 1')
+    print(f'avg. = {np.average(hillclimb_minus_guess)}')
+    print(f'std. = {np.std(hillclimb_minus_guess)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimb_minus_guess)
+    ax.plot(zeros*2)
+    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Minus Guess')
+    fig.savefig('result/4.28.2022/hillclimb-guess-seed0-1.bugfix.png')
+
+    print('Start seed 0')
+    print(f'avg. = {np.average(hillclimb_minus_guess0)}')
+    print(f'std. = {np.std(hillclimb_minus_guess0)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimb_minus_guess0)
+    ax.plot(zeros)
+    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Minus Guess')
+    fig.savefig('result/4.28.2022/hillclimb-guess-seed0.bugfix.png')
+
+    print('Start seed 1')
+    print(f'avg. = {np.average(hillclimb_minus_guess1)}')
+    print(f'std. = {np.std(hillclimb_minus_guess1)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimb_minus_guess1)
+    ax.plot(zeros)
+    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Minus Guess')
+    fig.savefig('result/4.28.2022/hillclimb-guess-seed1.bugfix.png')
+
+
+def simulatedanneal_hillclimb_iterations():
+    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    data = Logger.read_log(logs)
+    simulated = {}   # (theta, start_seed) --> scores
+    hillclimb = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            scores = output_by_method['Hill climbing'].scores
+            hillclimb[(theta, start_seed)] = scores
+        if 'Simulated annealing' in output_by_method:
+            start_seed = output_by_method['Simulated annealing'].start_seed
+            scores = output_by_method['Simulated annealing'].scores
+            simulated[(theta, start_seed)] = scores
+
+    theta = 60
+    start_seed = 0
+    simulated0_score = simulated[(theta, start_seed)]
+    hillclimb0_score = hillclimb[(theta, start_seed)]
+    start_seed = 1
+    simulated1_score = simulated[(theta, start_seed)]
+    hillclimb1_score = hillclimb[(theta, start_seed)]
+
+    print(f'simulated seed 0 max = {max(simulated0_score)} at {simulated0_score.index(max(simulated0_score))}')
+    print(f'simulated seed 1 max = {max(simulated1_score)} at {simulated1_score.index(max(simulated1_score))}')
+
+    print('Start seed both 0 and 1')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(simulated0_score, label='Seed 0')
+    ax.plot(simulated1_score, label='Seed 1')
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated Seed 0 and 1')
+    ax.legend()
+    fig.savefig('result/4.28.2022/simulated-iterations-seed0-1.png')
+
+    print('Start seed 0')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimb0_score, label='Hill Climb')
+    ax.plot(simulated0_score, label='Simulated Anneal')
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated & Hill Climb Seed 0')
+    ax.legend()
+    fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed0.png')
+
+    print('Start seed 1')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(hillclimb1_score, label='Hill Climb')
+    ax.plot(simulated1_score, label='Simulated Anneal')
+    ax.set_ylabel('Success probability')
+    ax.set_title('Simulated & Hill Climb Seed 1')
+    ax.legend()
+    fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed1.png')
 
 
 if __name__ == '__main__':
@@ -382,6 +670,14 @@ if __name__ == '__main__':
     # special_u()
     # special_u_2()
 
-    print_results()
+    # print_results()
 
     # upperbound()
+
+    # simulated_hillclimb_compare()
+
+    # hillclimb_bugfix()
+
+    # hillclimb_guess_compare()
+
+    simulatedanneal_hillclimb_iterations()

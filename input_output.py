@@ -30,8 +30,8 @@ class Default:
     decrease_rate = 0.96  # decrease rate for the step sizes
 
     # below are for simulated annealing
-    init_step = 1       # initial step size
-    max_stuck = 1         # max stuck in a same temperature
+    init_step = 0.1       # initial step size
+    max_stuck = 2         # max stuck in a same temperature
     cooling_rate = 0.96   # the annealing cooling rate
 
     # below are for both hill climbing and simulated annealing

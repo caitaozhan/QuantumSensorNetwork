@@ -312,29 +312,30 @@ class OptimizeInitialState(QuantumState):
         terminate  = False
         eval_count = 0
         stuck_count = 0
-        min_evaluation = min_iteration * N
+        min_evaluation = min_iteration * 4*N
         while terminate is False or eval_count < min_evaluation:
             previous_score = score1
             stepsize = init_step * temperature / init_temperature
-            for i in range(N):
-                neighbor = self.find_SA_neighbor(qstate, i, stepsize)
-                try:
-                    score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
-                    eval_count += 1
-                except Exception as e:
-                    score2 = -100
-                    print(f'solver issue at eval_count={eval_count}, error={e}')
-                dS = score2 - score1 # score2 is the score of the neighbor state, score1 is for current state
-                if dS > 0:
-                    qstate = neighbor           # qstate improves
-                    score1 = score2
-                else:  # S <= 0
-                    prob = np.exp(dS / temperature)
-                    if np.random.uniform(0, 1) < prob:
-                        qstate = neighbor       # qstate becomes worse
+            for _ in range(4):
+                for i in range(N):
+                    neighbor = self.find_SA_neighbor(qstate, i, stepsize)
+                    try:
+                        score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+                        eval_count += 1
+                    except Exception as e:
+                        score2 = -100
+                        print(f'solver issue at eval_count={eval_count}, error={e}')
+                    dS = score2 - score1 # score2 is the score of the neighbor state, score1 is for current state
+                    if dS > 0:
+                        qstate = neighbor           # qstate improves
                         score1 = score2
-                    else:                       # qstate no change
-                        pass
+                    else:  # S <= 0
+                        prob = np.exp(dS / temperature)
+                        if np.random.uniform(0, 1) < prob:
+                            qstate = neighbor       # qstate becomes worse
+                            score1 = score2
+                        else:                       # qstate no change
+                            pass
             scores.append(round(score2, 6))
             if previous_score >= score2 - epsilon:
                 stuck_count += 1
