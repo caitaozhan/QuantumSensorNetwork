@@ -85,13 +85,17 @@ class Utility:
 
     @staticmethod
     def get_theta(real: float, imag: float):
-        '''return the theta in radian
+        '''return the theta in radian, want it between [0, 2*pi]
         '''
-        theta = np.arccos(real)
-        if imag > 0:
+        theta = np.arctan(imag / real)  # theta between [-pi/2, pi/2]
+        if real > 0 and imag > 0:       # first quadrant
             return theta
-        else:
-            return 2*np.pi - theta
+        elif real < 0 and imag > 0:     # second quadrant
+            return np.pi + theta
+        elif real < 0 and imag < 0:     # third quadrant
+            return np.pi + theta
+        else: # real > 0 and imag < 0:  # fourth quadrant
+            return 2*np.pi + theta
 
     @staticmethod
     def evolve_operator(unitary_operator: Operator, num_sensor: int, i: int):
