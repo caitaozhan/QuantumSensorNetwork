@@ -51,13 +51,13 @@ if __name__ == '__main__':
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
 
-    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "-mi", "100"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "100", "-rn", "True"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/4.28.2022'
-    output_file = 'varying_theta_3sensor_minerror.bugfix'
+    output_dir  = 'result/4.29.2022'
+    output_file = 'varying_theta_3sensor_minerror.randomneighbor'
     thetas      = [x for x in range(1, 90)]
     start_seed  = [0, 1]
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 2
+    parallel = 1
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:

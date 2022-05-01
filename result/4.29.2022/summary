@@ -1,0 +1,34 @@
+Hill climbing Polar minus Real/imaginary parts
+
+---
+
+Start seed 0
+avg. = -8.573033707869689e-06
+std. = 2.6048738950465222e-05
+# cases when polar is better than realimag = 18
+Start seed 1
+avg. = 1.685393258428028e-06
+std. = 4.477674845691053e-05
+# cases when polar is better than realimag = 38
+
+---
+
+Start seed 0
+avg. = -4.179775280901186e-06
+std. = 4.341272060193358e-05
+# cases when polar is better than randomneighbor = 18
+Start seed 1
+avg. = -1.6752808988761775e-05
+std. = 4.2863850540066924e-05
+# cases when polar is better than randomneighbor = 15
+
+--
+
+Start seed 0
+avg. = -4.393258426968503e-06
+std. = 4.534477608937887e-05
+# cases when randomneighbor is better than realimag = 30
+Start seed 1
+avg. = 1.8438202247189802e-05
+std. = 3.717010852223559e-05
+# cases when realimag is better than randomneighbor = 60

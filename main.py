@@ -111,6 +111,8 @@ if __name__ == '__main__':
     parser.add_argument('-ms', '--mod_step', type=float, nargs=1, default=[Default.mod_step], help='step size for modulus')
     parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
+    parser.add_argument('-rn', '--random_neighbor', type=bool, nargs=1, default=[Default.random_neighbor], help='random neighbors or predefined direction neighbors')
+    parser.add_argument('-ri', '--realimag_neighbor', type=bool, nargs=1, default=[Default.realimag_neighbor], help='changing the real part and imaginary part')
 
     # below are for simulated annealing
     parser.add_argument('-is', '--init_step', type=float, nargs=1, default=[Default.init_step], help='initial step')
@@ -144,8 +146,8 @@ if __name__ == '__main__':
     if "Guess" in methods:
         opt_initstate.guess(unitary_operator)
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
-        success = round(success, 6)
-        error = round(1-success, 6)
+        success = round(success, 8)
+        error = round(1-success, 8)
         guess_output = GuessOutput(experiement_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(guess_output)
 
@@ -156,15 +158,18 @@ if __name__ == '__main__':
         amp_step = [args.amp_step[0]] * 2**num_sensor
         decrease_rate = args.decrease_rate[0]
         min_iteration = args.min_iteration[0]
+        random_neighbor = args.random_neighbor[0]
+        realimag_neighbor = args.realimag_neighbor[0]
         start_time = time.time()
-        scores = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, \
-                                             mod_step, amp_step, decrease_rate, min_iteration, eval_metric)
+        scores = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, mod_step, amp_step, \
+                                             decrease_rate, min_iteration, eval_metric, random_neighbor, realimag_neighbor)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
-        error = round(1 - success, 6)
+        error = round(1 - success, 8)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
         hillclimb_output = HillclimbOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
-                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
+                                           random_neighbor, realimag_neighbor)
         outputs.append(hillclimb_output)
 
     if 'Simulated annealing' in methods:
@@ -179,7 +184,7 @@ if __name__ == '__main__':
                                                    max_stuck, cooling_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
-        error = round(1 - success, 6)
+        error = round(1 - success, 8)
         real_iteration = len(scores) - 1
         simulateanneal_output = SimulatedAnnealOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, init_step,\
                                                       max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)

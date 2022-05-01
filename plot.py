@@ -347,23 +347,22 @@ def upperbound():
 
 def print_results():
     # logs = ['result/4.10.2022/varying_theta_unambiguous']
-    logs = ['result/4.6.2022/varying_theta']
+    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.randomneighbor']
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
-        if myinput.unitary_theta != 60:
+        if myinput.unitary_theta != 46:
             continue
         output_by_method = experiment[1]
-        if 'Guess' in output_by_method:
-            print(output_by_method['Guess'].init_state)
-            print('Guess success probability =', output_by_method['Guess'].success)
+        if 'Hill climbing' in output_by_method:
+            print(output_by_method['Hill climbing'].init_state)
+            print('Hill climbing success probability =', output_by_method['Hill climbing'].success)
 
-    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
-    # logs = ['result/4.6.2022/varying_theta']
+    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.realimag.100iter']
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
-        if myinput.unitary_theta != 60:
+        if myinput.unitary_theta != 46:
             continue
         output_by_method = experiment[1]
         if 'Hill climbing' in output_by_method:
@@ -659,6 +658,80 @@ def simulatedanneal_hillclimb_iterations():
     fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed1.png')
 
 
+def hillclimb_neighbor_compare():
+    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.randomneighbor']
+    data = Logger.read_log(logs)
+    hillclimb_randomneighbor = {}       # (theta, start_seed) --> success
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb_randomneighbor[(theta, start_seed)] = success
+
+    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.realimag.100iter']
+    data = Logger.read_log(logs)
+    hillclimb_realimag = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        theta = int(myinput.unitary_theta)
+        if 'Hill climbing' in output_by_method:
+            start_seed = output_by_method['Hill climbing'].start_seed
+            success = output_by_method['Hill climbing'].success
+            hillclimb_realimag[(theta, start_seed)] = success
+
+    polar_minus_realimag_0 = []
+    polar_minus_realimag_1 = []
+    zeros = []
+    for theta in range(1, 90):
+        zeros.append(0)
+        for start_seed in [0, 1]:
+            hillclimb_randomneighbor_success = hillclimb_randomneighbor[(theta, start_seed)]
+            hillclimb_realimag_success = hillclimb_realimag[(theta, start_seed)]
+            if start_seed == 0:
+                polar_minus_realimag_0.append(hillclimb_randomneighbor_success - hillclimb_realimag_success)
+            if start_seed == 1:
+                polar_minus_realimag_1.append(hillclimb_randomneighbor_success - hillclimb_realimag_success)
+
+    print('Start seed 0')
+    print(f'avg. = {np.average(polar_minus_realimag_0)}')
+    print(f'std. = {np.std(polar_minus_realimag_0)}')
+    counter = 0
+    for item in polar_minus_realimag_0:
+        if item > 0:
+            counter += 1
+    print(f'# cases when randomneighbor is better than realimag = {counter}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(polar_minus_realimag_0)
+    ax.plot(zeros)
+    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climb Randomneighbor Minus Realimag')
+    fig.savefig('result/4.29.2022/hillclimb-randomneighbor-realimag-seed0.png')
+
+    print('Start seed 1')
+    print(f'avg. = {np.average(polar_minus_realimag_1)}')
+    print(f'std. = {np.std(polar_minus_realimag_1)}')
+    counter = 0
+    for item in polar_minus_realimag_1:
+        if item > 0:
+            counter += 1
+    print(f'# cases when randomneighbor is better than realimag = {counter}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(polar_minus_realimag_1)
+    ax.plot(zeros)
+    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylabel('Success probability')
+    ax.set_title('Hill Climbing Randomneighbor Minus Realimag')
+    fig.savefig('result/4.29.2022/hillclimb-randomneighbor-realimag-seed1.png')
+
+
+
 if __name__ == '__main__':
     # scores = [0.789991, 0.832989, 0.845341, 0.852194, 0.857062, 0.859864, 0.860891, 0.860928, 0.861471, 0.861524, 0.861533, 0.861536, 0.861537, 0.861541, 0.861543, 0.861763, 0.861993, 0.862333, 0.862427, 0.86244, 0.862667, 0.862849, 0.862851, 0.862853, 0.862854, 0.862854, 0.862855, 0.862856, 0.862856, 0.862857, 0.862857, 0.862857, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.86286, 0.862944, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862955, 0.862989, 0.863003, 0.863005]
     # constant = 0.794494
@@ -680,4 +753,5 @@ if __name__ == '__main__':
 
     # hillclimb_guess_compare()
 
-    simulatedanneal_hillclimb_iterations()
+    # simulatedanneal_hillclimb_iterations()
+    hillclimb_neighbor_compare()
