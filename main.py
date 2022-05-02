@@ -139,15 +139,15 @@ if __name__ == '__main__':
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
         # when not specifying the theta, generate a random unitary that has some random thetas
-        unitary_operator = random_unitary(dims=2**num_sensor, seed=unitary_seed)
+        unitary_operator = random_unitary(dims=2**num_sensor, seed=unitary_seed)  # BUG in num_sensor?
     povm = Povm()
     outputs = []
 
     if "Guess" in methods:
         opt_initstate.guess(unitary_operator)
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
-        success = round(success, 8)
-        error = round(1-success, 8)
+        success = round(success, 7)
+        error = round(1-success, 7)
         guess_output = GuessOutput(experiement_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(guess_output)
 
@@ -165,7 +165,7 @@ if __name__ == '__main__':
                                              decrease_rate, min_iteration, eval_metric, random_neighbor, realimag_neighbor)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
-        error = round(1 - success, 8)
+        error = round(1 - success, 7)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
         hillclimb_output = HillclimbOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                                                    max_stuck, cooling_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
-        error = round(1 - success, 8)
+        error = round(1 - success, 7)
         real_iteration = len(scores) - 1
         simulateanneal_output = SimulatedAnnealOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, init_step,\
                                                       max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)

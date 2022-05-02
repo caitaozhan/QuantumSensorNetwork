@@ -48,17 +48,22 @@ def get_output(p: Popen):
 
 
 if __name__ == '__main__':
+
+    # print('sleeping...')
+    # time.sleep(60*60*10)
+    # print('start working')
+
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
 
-    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "100", "-rn", "True"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "50", "-rn", "True"]
 
-    num_sensor  = 3
+    num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/4.29.2022'
-    output_file = 'varying_theta_3sensor_minerror.randomneighbor'
-    thetas      = [x for x in range(1, 90)]
+    output_dir  = 'result/5.1.2022'
+    output_file = 'varying_theta_4sensor_minerror'
+    thetas      = [x for x in range(2, 180, 3)] + [x for x in range(3, 180, 3)]
     start_seed  = [0, 1]
 
     ps = []
@@ -74,7 +79,7 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 1
+    parallel = 2
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:

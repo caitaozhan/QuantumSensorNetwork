@@ -1,5 +1,3 @@
-Hill climbing Polar minus Real/imaginary parts
-
 ---
 
 Start seed 0
@@ -31,4 +29,4 @@ std. = 4.534477608937887e-05
 Start seed 1
 avg. = 1.8438202247189802e-05
 std. = 3.717010852223559e-05
-# cases when realimag is better than randomneighbor = 60
+# cases when randomneighbor is better than realimag = 60

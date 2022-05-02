@@ -204,6 +204,101 @@ def special_u():
     filename = 'result/4.6.2022/varying_theta'
     fig.savefig(filename)
 
+# min error discrimination, 2 sensors, varying the theta of the unitary operator
+def special_u_2sensor():
+
+    logs = ['result/5.1.2022/varying_theta_2sensor_minerror']
+    X = []
+    y_guess = []
+    y_hillclimb0 = []
+    y_hillclimb1 = []
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        
+
+        if output_by_method['Hill climbing'].start_seed == 0:
+            X.append(myinput.unitary_theta)
+            y_guess.append(output_by_method['Guess'].success)
+            y_hillclimb0.append(output_by_method['Hill climbing'].success)
+        if output_by_method['Hill climbing'].start_seed == 1:
+            y_hillclimb1.append(output_by_method['Hill climbing'].success)
+        
+        if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
+        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90]:
+            print('\ntheta =', myinput.unitary_theta)
+            print(output_by_method['Guess'].init_state)
+            print('guess success probability =', output_by_method['Guess'].success)
+            print(output_by_method['Hill climbing'].init_state)
+            print('hill climbing probability =', output_by_method['Hill climbing'].success)
+            print('---')
+
+    y_hillclimb = [max(y0, y1) for y0, y1 in zip(y_hillclimb0, y_hillclimb1)]
+    fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+    fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, y_guess, label='Guess, Evaluate by SDP')
+    ax.plot(X, y_hillclimb, label='Hill climbing')
+    ax.legend()
+    ax.set_xlabel('Theta (in degrees)')
+    ax.set_ylabel('Success Probability')
+    ax.set_title('2 Sensors Initial State Opimization Problem')
+    ax.set_ylim([0.3, 1.05])
+    ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+    filename = 'result/5.1.2022/varying_theta_2sensors'
+    fig.savefig(filename)
+
+
+# min error discrimination, 2 sensors, varying the theta of the unitary operator
+def special_u_4sensor():
+    logs = ['result/4.30.2022/varying_theta_4sensor_minerror.guess']
+    y_guess = defaultdict(list)
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        y_guess[myinput.unitary_theta] = output_by_method['Guess'].success
+    tmp = []
+    X = []
+    for theta, success in sorted(y_guess.items()):
+        X.append(theta)
+        tmp.append(success)
+    y_guess = tmp
+
+    logs = ['result/5.1.2022/varying_theta_4sensor_minerror.randomneighbor', \
+            'result/4.30.2022/varying_theta_4sensor_minerror.randomneighbor']
+
+    y_hillclimb0 = defaultdict(list)
+    y_hillclimb1 = defaultdict(list)
+    data = Logger.read_log(logs)
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        
+        if output_by_method['Hill climbing'].start_seed == 0:
+            y_hillclimb0[(myinput.unitary_theta, 0)] = output_by_method['Hill climbing'].success
+        if output_by_method['Hill climbing'].start_seed == 1:
+            y_hillclimb1[(myinput.unitary_theta, 1)] = output_by_method['Hill climbing'].success
+
+    y_hillclimb = []
+    for theta in range(1, 180):
+        y_hillclimb.append(max(y_hillclimb0[(theta, 0)], y_hillclimb1[(theta, 1)]))
+        
+    fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+    fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, y_guess, label='Guess, Evaluate by SDP')
+    ax.plot(X, y_hillclimb, label='Hill climbing')
+    ax.legend()
+    ax.set_xlabel('Theta (in degrees)')
+    ax.set_ylabel('Success Probability')
+    ax.set_title('4 Sensors Initial State Opimization Problem')
+    # ax.set_ylim([0.3, 1.05])
+    ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+    filename = 'result/5.1.2022/varying_theta_4sensors'
+    fig.savefig(filename)
+
 
 # unambiguous discrimination, 3 sensors, varying the theta of the unitary operator
 def special_u_2():
@@ -373,6 +468,7 @@ def print_results():
             print('---')
 
 
+# comparing simulated annealing and hill climbing
 def simulated_hillclimb_compare():
     # logs = ['result/4.27.2022/varying_theta_3sensor_minerror', 'result/4.28.2022/varying_theta_3sensor_minerror']
     logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
@@ -444,6 +540,7 @@ def simulated_hillclimb_compare():
     fig.savefig('result/4.28.2022/sa-hc-seed1.bugfix.png')
 
 
+# 
 def hillclimb_bugfix():
     logs = ['result/4.6.2022/varying_theta']
     data = Logger.read_log(logs)
@@ -521,6 +618,7 @@ def hillclimb_bugfix():
     fig.savefig('result/4.28.2022/hillclimbbugfix-seed1.bugfix.png')
 
 
+# comparing hill climbing and guess
 def hillclimb_guess_compare():
     logs = ['result/4.6.2022/varying_theta']
     data = Logger.read_log(logs)
@@ -598,6 +696,7 @@ def hillclimb_guess_compare():
     fig.savefig('result/4.28.2022/hillclimb-guess-seed1.bugfix.png')
 
 
+# shows the iterations of simulated annealing and hill climbing
 def simulatedanneal_hillclimb_iterations():
     logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
     data = Logger.read_log(logs)
@@ -658,8 +757,9 @@ def simulatedanneal_hillclimb_iterations():
     fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed1.png')
 
 
+# comparing different neighbor finding strategies in hill climbing
 def hillclimb_neighbor_compare():
-    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.randomneighbor']
+    logs = ['result/4.30.2022/varying_theta_4sensor_minerror.randomneighbor']
     data = Logger.read_log(logs)
     hillclimb_randomneighbor = {}       # (theta, start_seed) --> success
     for experiment in data:
@@ -671,7 +771,7 @@ def hillclimb_neighbor_compare():
             success = output_by_method['Hill climbing'].success
             hillclimb_randomneighbor[(theta, start_seed)] = success
 
-    logs = ['result/4.29.2022/varying_theta_3sensor_minerror.realimag.100iter']
+    logs = ['result/4.30.2022/varying_theta_4sensor_minerror.realimag']
     data = Logger.read_log(logs)
     hillclimb_realimag = {}
     for experiment in data:
@@ -686,7 +786,7 @@ def hillclimb_neighbor_compare():
     polar_minus_realimag_0 = []
     polar_minus_realimag_1 = []
     zeros = []
-    for theta in range(1, 90):
+    for theta in range(1, 180, 3):
         zeros.append(0)
         for start_seed in [0, 1]:
             hillclimb_randomneighbor_success = hillclimb_randomneighbor[(theta, start_seed)]
@@ -708,10 +808,10 @@ def hillclimb_neighbor_compare():
     fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
     ax.plot(polar_minus_realimag_0)
     ax.plot(zeros)
-    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylim([-0.0003, 0.0003])
     ax.set_ylabel('Success probability')
     ax.set_title('Hill Climb Randomneighbor Minus Realimag')
-    fig.savefig('result/4.29.2022/hillclimb-randomneighbor-realimag-seed0.png')
+    fig.savefig('result/4.30.2022/hillclimb-randomneighbor-realimag-seed0.png')
 
     print('Start seed 1')
     print(f'avg. = {np.average(polar_minus_realimag_1)}')
@@ -725,10 +825,10 @@ def hillclimb_neighbor_compare():
     fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
     ax.plot(polar_minus_realimag_1)
     ax.plot(zeros)
-    ax.set_ylim([-0.0002, 0.0002])
+    ax.set_ylim([-0.0003, 0.0003])
     ax.set_ylabel('Success probability')
     ax.set_title('Hill Climbing Randomneighbor Minus Realimag')
-    fig.savefig('result/4.29.2022/hillclimb-randomneighbor-realimag-seed1.png')
+    fig.savefig('result/4.30.2022/hillclimb-randomneighbor-realimag-seed1.png')
 
 
 
@@ -740,7 +840,10 @@ if __name__ == '__main__':
     # vary_priors()
     # vary_numsensors()
     # vary_startseed()
+
     # special_u()
+    # special_u_2sensor()
+    special_u_4sensor()
     # special_u_2()
 
     # print_results()
@@ -754,4 +857,4 @@ if __name__ == '__main__':
     # hillclimb_guess_compare()
 
     # simulatedanneal_hillclimb_iterations()
-    hillclimb_neighbor_compare()
+    # hillclimb_neighbor_compare()

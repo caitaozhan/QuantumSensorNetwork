@@ -286,14 +286,14 @@ class OptimizeInitialState(QuantumState):
             best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
         except Exception as e:
             raise e
-        scores = [round(best_score, 6)]
+        scores = [round(best_score, 7)]
         terminate = False
         iteration = 0
         while terminate is False or iteration < min_iteration:
             iteration += 1
             before_score = best_score
             for i in range(N):
-                neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i], random_neighbor)
+                neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
                 best_step = -1
                 for j in range(len(neighbors)):
                     try:
@@ -314,7 +314,7 @@ class OptimizeInitialState(QuantumState):
                 else: # best_step in [2, 3]:
                     qstate = neighbors[best_step]
                     amp_step[i] *= decrease_rate
-            scores.append(round(best_score, 6))
+            scores.append(round(best_score, 7))
             if best_score - before_score < epsilon:
                 terminate = True
             else:
@@ -357,7 +357,7 @@ class OptimizeInitialState(QuantumState):
             best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
         except Exception as e:
             raise e
-        scores = [round(best_score, 6)]
+        scores = [round(best_score, 7)]
         terminate = False
         iteration = 0
         while terminate is False or iteration < min_iteration:
@@ -381,7 +381,7 @@ class OptimizeInitialState(QuantumState):
                 else:
                     qstate = neighbors[best_step]
                     step_size[i] *= decrease_rate
-            scores.append(round(best_score, 6))
+            scores.append(round(best_score, 7))
             if best_score - before_score < epsilon:
                 terminate = True
             else:
@@ -424,7 +424,7 @@ class OptimizeInitialState(QuantumState):
             best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
         except Exception as e:
             raise e
-        scores = [round(best_score, 6)]
+        scores = [round(best_score, 7)]
         terminate = False
         iteration = 0
         while terminate is False or iteration < min_iteration:
@@ -452,7 +452,7 @@ class OptimizeInitialState(QuantumState):
                 else: # best_step in [2, 3]:
                     qstate = neighbors[best_step]
                     imag_step[i] *= decrease_rate
-            scores.append(round(best_score, 6))
+            scores.append(round(best_score, 7))
             if best_score - before_score < epsilon:
                 terminate = True
             else:
@@ -505,7 +505,7 @@ class OptimizeInitialState(QuantumState):
         init_temperature = self.generate_init_temperature(qstate, init_step, N, unitary_operator, priors, povm, eval_metric)
         temperature = init_temperature
         score1  = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
-        scores = [round(score1, 8)]
+        scores = [round(score1, 7)]
         terminate  = False
         eval_count = 0
         stuck_count = 0
@@ -513,8 +513,8 @@ class OptimizeInitialState(QuantumState):
         while terminate is False or eval_count < min_evaluation:
             previous_score = score1
             stepsize = init_step * temperature / init_temperature
-            for _ in range(4):
-                for i in range(N):
+            for i in range(N):
+                for _ in range(4):
                     neighbor = self.find_SA_neighbor(qstate, i, stepsize)
                     try:
                         score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
@@ -533,7 +533,7 @@ class OptimizeInitialState(QuantumState):
                             score1 = score2
                         else:                       # qstate no change
                             pass
-            scores.append(round(score2, 8))
+            scores.append(round(score2, 7))
             if previous_score >= score2 - epsilon:
                 stuck_count += 1
             else:
