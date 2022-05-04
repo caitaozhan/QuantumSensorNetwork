@@ -56,25 +56,24 @@ if __name__ == '__main__':
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
 
-    base_args = ["-us", "5", "-m", "Hill climbing", "-mi", "50", "-rn", "True"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "50", "-rn", "True"]
 
-    ''' 5 sensors experiment, in case it crashes again
+    # 5 sensors experiment, in case it crashes again
     num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
     output_dir  = 'result/5.3.2022'
     output_file = 'varying_theta_5sensor_minerror'
-    thetas      = [i for i in range(19, 180)]
+    thetas      = [i for i in range(26, 180)]
     start_seed  = [0]
-    '''
 
-    num_sensor  = 2
-    equal       = False
-    eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/5.3.2022'
-    output_file = 'varying_startseed_2sensor_minerror'
-    thetas      = [1]
-    start_seed  = [i for i in range(10)]
+    # num_sensor  = 2
+    # equal       = False
+    # eval_metric = 'min error'  # 'min error' or 'unambiguous'
+    # output_dir  = 'result/5.3.2022'
+    # output_file = 'varying_startseed_2sensor_minerror'
+    # thetas      = [1]
+    # start_seed  = [i for i in range(10)]
 
 
     ps = []
@@ -83,7 +82,7 @@ if __name__ == '__main__':
         for y in start_seed:
             args = set_numsensor_prior(base_args, num_sensor, equal)
             args = set_eval_metric(args, eval_metric)
-            # args = set_unitary_theta(args, x)
+            args = set_unitary_theta(args, x)
             args = set_startseed(args, y)
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
@@ -94,12 +93,13 @@ if __name__ == '__main__':
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
+            time.sleep(10)
             task = tasks.pop(0)
             print(task, f'{len(tasks)} tasks still in queue')
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
             # ps.append(Popen(task))
         else:
-            time.sleep(10)
+            time.sleep(1)
             new_ps = []
             for p in ps:
                 if p.poll() is None:

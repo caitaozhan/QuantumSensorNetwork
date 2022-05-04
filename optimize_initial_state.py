@@ -488,10 +488,11 @@ class OptimizeInitialState(QuantumState):
             unitary_operator -- describe the interaction with the environment
             priors    -- prior probabilities
             init_step -- the initial step size
+            step_decrease_rate -- the rate that the steps are decreasing at each iteration
             epsilon   -- for termination
             max_stuck -- frozen criteria
-            cooling_rate   -- cooling rate
-            min_iteration -- minimal number of iterations
+            cooling_rate   -- cooling rate, the rate of the std of the previous iteration scores
+            min_iteration  -- minimal number of iterations
             eval_metric    -- 'min error' or 'unambiguous'
         Return:
             list -- a list of scores at each iteration

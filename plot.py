@@ -876,7 +876,7 @@ if __name__ == '__main__':
 
     # upperbound()
 
-    # simulated_hillclimb_compare()
+    simulated_hillclimb_compare()
 
     # hillclimb_bugfix()
 
@@ -885,4 +885,4 @@ if __name__ == '__main__':
     # simulatedanneal_hillclimb_iterations()
     # hillclimb_neighbor_compare()
 
-    varystartseed()
+    # varystartseed()
