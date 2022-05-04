@@ -139,7 +139,7 @@ if __name__ == '__main__':
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
         # when not specifying the theta, generate a random unitary that has some random thetas
-        unitary_operator = random_unitary(dims=2**num_sensor, seed=unitary_seed)  # BUG in num_sensor?
+        unitary_operator = random_unitary(dims=2, seed=unitary_seed)
     povm = Povm()
     outputs = []
 

@@ -122,6 +122,7 @@ class Utility:
         if equal:
             return [1./num_sensor]*num_sensor
         else:
+            np.random.seed(num_sensor)
             p = []
             for _ in range(num_sensor):
                 p.append(np.random.rand())

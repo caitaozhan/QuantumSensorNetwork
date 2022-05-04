@@ -1,3 +1,4 @@
+from distutils.log import Log
 import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ from utility import Utility
 class Plot:
 
     plt.rcParams['font.size'] = 65
-    plt.rcParams['lines.linewidth'] = 8
+    plt.rcParams['lines.linewidth'] = 5
     
     @staticmethod
     def hillclimbing(scores: list, constant: float = None):
@@ -831,6 +832,31 @@ def hillclimb_neighbor_compare():
     fig.savefig('result/4.30.2022/hillclimb-randomneighbor-realimag-seed1.png')
 
 
+# vary startseed: does the landspace has many hills with same height?
+def varystartseed():
+    logs = ['result/5.3.2022/varying_startseed_2sensor_minerror']
+    figname = 'result/5.3.2022/2sensor_hillclimbing_iterations'
+    data = Logger.read_log(logs)
+    successes = []
+    scores = []
+    for experiment in data:
+        # myinput = experiment[0]
+        output_by_method = experiment[1]
+        print(output_by_method['Hill climbing'].init_state)
+        successes.append(output_by_method['Hill climbing'].success)
+        scores.append(output_by_method['Hill climbing'].scores)
+    print(f'mean = {np.mean(successes)}')
+    print(f'std. = {np.std(successes)}')
+    fig, ax = plt.subplots(1, 1, figsize=(30, 20))
+    for i in range(10):
+        ax.plot(scores[i], label=f'start seed={i}')
+    ax.legend()
+    ax.set_xlabel('Iterations')
+    ax.set_ylabel('Success Probability')
+    ax.set_title('The Landscape has Many Hills with the SAME Height')
+    fig.savefig(figname)
+
+
 
 if __name__ == '__main__':
     # scores = [0.789991, 0.832989, 0.845341, 0.852194, 0.857062, 0.859864, 0.860891, 0.860928, 0.861471, 0.861524, 0.861533, 0.861536, 0.861537, 0.861541, 0.861543, 0.861763, 0.861993, 0.862333, 0.862427, 0.86244, 0.862667, 0.862849, 0.862851, 0.862853, 0.862854, 0.862854, 0.862855, 0.862856, 0.862856, 0.862857, 0.862857, 0.862857, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.862858, 0.86286, 0.862944, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862949, 0.862955, 0.862989, 0.863003, 0.863005]
@@ -843,7 +869,7 @@ if __name__ == '__main__':
 
     # special_u()
     # special_u_2sensor()
-    special_u_4sensor()
+    # special_u_4sensor()
     # special_u_2()
 
     # print_results()
@@ -858,3 +884,5 @@ if __name__ == '__main__':
 
     # simulatedanneal_hillclimb_iterations()
     # hillclimb_neighbor_compare()
+
+    varystartseed()

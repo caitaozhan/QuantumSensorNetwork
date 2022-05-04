@@ -56,15 +56,26 @@ if __name__ == '__main__':
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
 
-    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "50", "-rn", "True"]
+    base_args = ["-us", "5", "-m", "Hill climbing", "-mi", "50", "-rn", "True"]
 
-    num_sensor  = 4
+    ''' 5 sensors experiment, in case it crashes again
+    num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/5.1.2022'
-    output_file = 'varying_theta_4sensor_minerror'
-    thetas      = [x for x in range(2, 180, 3)] + [x for x in range(3, 180, 3)]
-    start_seed  = [0, 1]
+    output_dir  = 'result/5.3.2022'
+    output_file = 'varying_theta_5sensor_minerror'
+    thetas      = [i for i in range(19, 180)]
+    start_seed  = [0]
+    '''
+
+    num_sensor  = 2
+    equal       = False
+    eval_metric = 'min error'  # 'min error' or 'unambiguous'
+    output_dir  = 'result/5.3.2022'
+    output_file = 'varying_startseed_2sensor_minerror'
+    thetas      = [1]
+    start_seed  = [i for i in range(10)]
+
 
     ps = []
     tasks = []
@@ -72,14 +83,14 @@ if __name__ == '__main__':
         for y in start_seed:
             args = set_numsensor_prior(base_args, num_sensor, equal)
             args = set_eval_metric(args, eval_metric)
-            args = set_unitary_theta(args, x)
+            # args = set_unitary_theta(args, x)
             args = set_startseed(args, y)
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 2
+    parallel = 1
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
@@ -88,7 +99,7 @@ if __name__ == '__main__':
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
             # ps.append(Popen(task))
         else:
-            time.sleep(0.5)
+            time.sleep(10)
             new_ps = []
             for p in ps:
                 if p.poll() is None:
