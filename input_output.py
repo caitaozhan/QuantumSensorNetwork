@@ -32,9 +32,10 @@ class Default:
     random_neighbor = False   # random neighbor or predefined direction neighbor
 
     # below are for simulated annealing
-    init_step = 0.1       # initial step size
-    max_stuck = 2         # max stuck in a same temperature
-    cooling_rate = 0.96   # the annealing cooling rate
+    init_step = 0.1                  # initial step size
+    max_stuck = 2                    # max stuck in a same temperature
+    cooling_rate = 0.96              # the annealing cooling rate
+    stepsize_decreasing_rate = 0.96  # the stepsize decreasing rate
 
     # below are for both hill climbing and simulated annealing
     min_iteration = 100   # minimum interation

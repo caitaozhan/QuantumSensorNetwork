@@ -480,15 +480,15 @@ class OptimizeInitialState(QuantumState):
         normalized_vector = self.normalize_state(state_vector)
         return QuantumState(self.num_sensor, normalized_vector)
 
-    def simulated_annealing(self, seed: int, unitary_operator: Operator, priors: list, init_step: float, epsilon: float, \
-                                  max_stuck: int, cooling_rate: float, min_iteration: int, eval_metric: str):
+    def simulated_annealing(self, seed: int, unitary_operator: Operator, priors: list, init_step: float, stepsize_decreasing_rate: float, \
+                                  epsilon: float, max_stuck: int, cooling_rate: float, min_iteration: int, eval_metric: str):
         '''use the simulated annealing to optimize the initial state
         Args:
             seed             -- random seed
             unitary_operator -- describe the interaction with the environment
             priors    -- prior probabilities
             init_step -- the initial step size
-            step_decrease_rate -- the rate that the steps are decreasing at each iteration
+            stepsize_decreasing_rate -- the rate that the steps are decreasing at each iteration
             epsilon   -- for termination
             max_stuck -- frozen criteria
             cooling_rate   -- cooling rate, the rate of the std of the previous iteration scores
@@ -510,15 +510,18 @@ class OptimizeInitialState(QuantumState):
         terminate  = False
         eval_count = 0
         stuck_count = 0
+        std_ratio = 1
+        stepsize = init_step
         min_evaluation = min_iteration * 4*N
         while terminate is False or eval_count < min_evaluation:
             previous_score = score1
-            stepsize = init_step * temperature / init_temperature
+            scores_iteration = []
             for i in range(N):
                 for _ in range(4):
                     neighbor = self.find_SA_neighbor(qstate, i, stepsize)
                     try:
                         score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+                        scores_iteration.append(score2)
                         eval_count += 1
                     except Exception as e:
                         score2 = -100
@@ -543,9 +546,10 @@ class OptimizeInitialState(QuantumState):
             if stuck_count == max_stuck:
                 terminate = True
             
-            # check optimal
-
-            temperature *= cooling_rate
+            std = np.std(scores_iteration[-10:])
+            std_ratio *= cooling_rate
+            temperature = min(temperature*cooling_rate, std*std_ratio)
+            stepsize *= stepsize_decreasing_rate
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'

@@ -472,7 +472,7 @@ def print_results():
 # comparing simulated annealing and hill climbing
 def simulated_hillclimb_compare():
     # logs = ['result/4.27.2022/varying_theta_3sensor_minerror', 'result/4.28.2022/varying_theta_3sensor_minerror']
-    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    logs = ['result/5.4.2022/simulatedanneal_hillclimb']
     data = Logger.read_log(logs)
     simulated = {}   # (theta, start_seed) --> success
     hillclimb = {}
@@ -489,11 +489,13 @@ def simulated_hillclimb_compare():
             success = output_by_method['Simulated annealing'].success
             simulated[(theta, start_seed)] = success
 
+    X = []
     sa_minus_hc = []
     sa_minus_hc0 = []
     sa_minus_hc1 = []
     zeros = []
-    for theta in range(1, 90):
+    for theta in range(1, 90, 5):
+        X.append(theta)
         zeros.append(0)
         for start_seed in [0, 1]:
             simulated_success = simulated[(theta, start_seed)]
@@ -508,37 +510,37 @@ def simulated_hillclimb_compare():
     print(f'avg. = {np.average(sa_minus_hc)}')
     print(f'std. = {np.std(sa_minus_hc)}')
     fig, ax = plt.subplots(1, 1, figsize=(30, 15))
-    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
     ax.plot(sa_minus_hc)
     ax.plot(zeros*2)
-    ax.set_ylim([-0.005, 0.025])
+    ax.set_ylim([-0.0001, 0.0001])
     ax.set_ylabel('Success probability')
     ax.set_title('Simulated Anneal - Hill Climb')
-    fig.savefig('result/4.28.2022/sa-hc-seed0-1.bugfix.png')
+    fig.savefig('result/5.4.2022/sa-hc-seed0-1')
 
     print('Start seed 0')
     print(f'avg. = {np.average(sa_minus_hc0)}')
     print(f'std. = {np.std(sa_minus_hc0)}')
     fig, ax = plt.subplots(1, 1, figsize=(30, 15))
-    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
-    ax.plot(sa_minus_hc0)
-    ax.plot(zeros)
-    ax.set_ylim([-0.005, 0.01])
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, sa_minus_hc0)
+    ax.plot(X, zeros)
+    ax.set_ylim([-0.0001, 0.0001])
     ax.set_ylabel('Success probability')
     ax.set_title('Simulated Anneal - Hill Climb')
-    fig.savefig('result/4.28.2022/sa-hc-seed0.bugfix.png')
+    fig.savefig('result/5.4.2022/sa-hc-seed0.png')
 
     print('Start seed 1')
     print(f'avg. = {np.average(sa_minus_hc1)}')
     print(f'std. = {np.std(sa_minus_hc1)}')
     fig, ax = plt.subplots(1, 1, figsize=(30, 15))
-    fig.subplots_adjust(left=0.17, right=0.96, top=0.9, bottom=0.1)
-    ax.plot(sa_minus_hc1)
-    ax.plot(zeros)
-    ax.set_ylim([-0.005, 0.01])
+    fig.subplots_adjust(left=0.2, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, sa_minus_hc1)
+    ax.plot(X, zeros)
+    ax.set_ylim([-0.0001, 0.0001])
     ax.set_ylabel('Success probability')
     ax.set_title('Simulated Anneal - Hill Climb')
-    fig.savefig('result/4.28.2022/sa-hc-seed1.bugfix.png')
+    fig.savefig('result/5.4.2022/sa-hc-seed1.png')
 
 
 # 
@@ -699,7 +701,8 @@ def hillclimb_guess_compare():
 
 # shows the iterations of simulated annealing and hill climbing
 def simulatedanneal_hillclimb_iterations():
-    logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    # logs = ['result/4.28.2022/varying_theta_3sensor_minerror.bugfix']
+    logs = ['result/5.4.2022/simulatedanneal_hillclimb']
     data = Logger.read_log(logs)
     simulated = {}   # (theta, start_seed) --> scores
     hillclimb = {}
@@ -716,26 +719,26 @@ def simulatedanneal_hillclimb_iterations():
             scores = output_by_method['Simulated annealing'].scores
             simulated[(theta, start_seed)] = scores
 
-    theta = 60
+    theta = 37
     start_seed = 0
     simulated0_score = simulated[(theta, start_seed)]
     hillclimb0_score = hillclimb[(theta, start_seed)]
     start_seed = 1
-    simulated1_score = simulated[(theta, start_seed)]
-    hillclimb1_score = hillclimb[(theta, start_seed)]
+    # simulated1_score = simulated[(theta, start_seed)]
+    # hillclimb1_score = hillclimb[(theta, start_seed)]
 
     print(f'simulated seed 0 max = {max(simulated0_score)} at {simulated0_score.index(max(simulated0_score))}')
-    print(f'simulated seed 1 max = {max(simulated1_score)} at {simulated1_score.index(max(simulated1_score))}')
+    # print(f'simulated seed 1 max = {max(simulated1_score)} at {simulated1_score.index(max(simulated1_score))}')
 
-    print('Start seed both 0 and 1')
-    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
-    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
-    ax.plot(simulated0_score, label='Seed 0')
-    ax.plot(simulated1_score, label='Seed 1')
-    ax.set_ylabel('Success probability')
-    ax.set_title('Simulated Seed 0 and 1')
-    ax.legend()
-    fig.savefig('result/4.28.2022/simulated-iterations-seed0-1.png')
+    # print('Start seed both 0 and 1')
+    # fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    # fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    # ax.plot(simulated0_score, label='Seed 0')
+    # ax.plot(simulated1_score, label='Seed 1')
+    # ax.set_ylabel('Success probability')
+    # ax.set_title('Simulated Seed 0 and 1')
+    # ax.legend()
+    # fig.savefig('result/4.28.2022/simulated-iterations-seed0-1.png')
 
     print('Start seed 0')
     fig, ax = plt.subplots(1, 1, figsize=(30, 15))
@@ -745,17 +748,17 @@ def simulatedanneal_hillclimb_iterations():
     ax.set_ylabel('Success probability')
     ax.set_title('Simulated & Hill Climb Seed 0')
     ax.legend()
-    fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed0.png')
+    fig.savefig('result/5.4.2022/simulatedanneal_hillclimb')
 
-    print('Start seed 1')
-    fig, ax = plt.subplots(1, 1, figsize=(30, 15))
-    fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
-    ax.plot(hillclimb1_score, label='Hill Climb')
-    ax.plot(simulated1_score, label='Simulated Anneal')
-    ax.set_ylabel('Success probability')
-    ax.set_title('Simulated & Hill Climb Seed 1')
-    ax.legend()
-    fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed1.png')
+    # print('Start seed 1')
+    # fig, ax = plt.subplots(1, 1, figsize=(30, 15))
+    # fig.subplots_adjust(left=0.15, right=0.96, top=0.9, bottom=0.1)
+    # ax.plot(hillclimb1_score, label='Hill Climb')
+    # ax.plot(simulated1_score, label='Simulated Anneal')
+    # ax.set_ylabel('Success probability')
+    # ax.set_title('Simulated & Hill Climb Seed 1')
+    # ax.legend()
+    # fig.savefig('result/4.28.2022/simulated-vs-hillclimb-iterations-seed1.png')
 
 
 # comparing different neighbor finding strategies in hill climbing
@@ -883,6 +886,7 @@ if __name__ == '__main__':
     # hillclimb_guess_compare()
 
     # simulatedanneal_hillclimb_iterations()
+
     # hillclimb_neighbor_compare()
 
     # varystartseed()

@@ -118,6 +118,7 @@ if __name__ == '__main__':
     parser.add_argument('-is', '--init_step', type=float, nargs=1, default=[Default.init_step], help='initial step')
     parser.add_argument('-st', '--max_stuck', type=int, nargs=1, default=[Default.max_stuck], help='max stuck in a same temperature')
     parser.add_argument('-cr', '--cooling_rate', type=float, nargs=1, default=[Default.cooling_rate], help='the cooling rate')
+    parser.add_argument('-sd', '--stepsize_decreasing_rate', type=float, nargs=1, default=[Default.stepsize_decreasing_rate], help='the decreasing rate for stepsize')
 
     # below are for both hill climbing and simulated annealing
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
@@ -175,13 +176,14 @@ if __name__ == '__main__':
     if 'Simulated annealing' in methods:
         start_seed   = args.start_seed[0]
         init_step    = args.init_step[0]
+        stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
         max_stuck    = args.max_stuck[0]
         cooling_rate = args.cooling_rate[0]
         min_iteration = args.min_iteration[0]
         epsilon = Default.EPSILON_OPT
         start_time   = time.time()
-        scores = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, epsilon, \
-                                                   max_stuck, cooling_rate, min_iteration, eval_metric)
+        scores = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
+                                                   epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 7)
