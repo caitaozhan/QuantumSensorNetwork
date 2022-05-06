@@ -939,8 +939,8 @@ def hillclimb_neighbor_compare():
 
 # vary startseed: does the landspace has many hills with same height?
 def varystartseed():
-    logs = ['result/5.3.2022/varying_startseed_2sensor_minerror']
-    figname = 'result/5.3.2022/2sensor_hillclimbing_iterations'
+    logs = ['result/5.3.2022/varying_startseed_3sensor_minerror']
+    figname = 'result/5.3.2022/3sensor_hillclimbing_iterations'
     data = Logger.read_log(logs)
     successes = []
     scores = []
@@ -990,8 +990,8 @@ if __name__ == '__main__':
     # hillclimb_guess_compare()
 
     # simulatedanneal_hillclimb_compare()
-    simulatedanneal_hillclimb_iterations()
+    # simulatedanneal_hillclimb_iterations()
 
     # hillclimb_neighbor_compare()
 
-    # varystartseed()
+    varystartseed()
