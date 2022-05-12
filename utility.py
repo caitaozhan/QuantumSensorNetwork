@@ -34,11 +34,11 @@ class Utility:
         print(describe)
         for row in matrix:
             for item in row:
-                real = f'{item.real:.4f}'
-                imag = f'{item.imag:.4f}'
+                real = f'{item.real:.5f}'
+                imag = f'{item.imag:.5f}'
                 if imag[0] != '-':
                     imag = '+' + imag
-                print(f'({real:>7}{imag:>7}i)', end=' ')
+                print(f'({real:>8}{imag:>8}i)', end=' ')
             print()
 
     @staticmethod
