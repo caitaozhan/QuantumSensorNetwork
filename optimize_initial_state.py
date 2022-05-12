@@ -30,35 +30,6 @@ class OptimizeInitialState(QuantumState):
         parent = super().__str__()
         return s + parent
 
-    def set_statevector_from_str(self, s: str):
-        '''set the self._state_vector from the __str__() string
-        Args:
-            s -- the __str__() string
-            Example:
-
-            Guess
-            Initial state:
-            |000>:  0.31088  0.3194i
-            |001>:  0.42490 -0.0000i
-            |010>:  0.42490 -0.0000i
-            |011>: -0.19850  0.2039i
-            |100>:  0.42490 -0.0000i
-            |101>: -0.19850  0.2039i
-            |110>: -0.19850  0.2039i
-            |111>: -0.00349 -0.1295i
-        '''
-        statevector = []
-        s = s.split('\n')
-        for line in s:
-            if '>:' in line:
-                line = line.split()
-                real = line[1]
-                imag = line[2]
-                real = float(real.strip())
-                imag = float(imag[:-1].strip())
-                statevector.append(complex(real, imag))
-        self._state_vector = np.array(statevector)
-
     def check_state(self):
         '''check if the amplitudes norm_squared add up to one
         '''
@@ -168,7 +139,7 @@ class OptimizeInitialState(QuantumState):
                 raise e
         else:
             raise Exception(f'unknown eval_metric: {eval_metric}!')
-        return povm.therotical_success
+        return povm.theoretical_success
 
     def find_neighbors(self, init_state: QuantumState, i: int, mod_step: list, amp_step: float):
         '''find four neighbors of the initial state

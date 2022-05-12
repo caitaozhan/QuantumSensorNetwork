@@ -42,7 +42,7 @@ def main2():
         quantum_states.append(optis_copy)
     # Optimizing the POVM
     povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
-    guess_success = povm.therotical_success
+    guess_success = povm.theoretical_success
     print(f'SDP error = {povm.theoretical_error}')
     povm.two_state_minerror(quantum_states, priors, debug=False)   # the measurement operators summation is not Identity... But the theoretical error is correct
     print(f'MED error = {povm.theoretical_error}')

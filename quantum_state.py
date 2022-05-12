@@ -73,3 +73,31 @@ class QuantumState:
                 string += f'|{state}>: {amplitude}\n'
         return string
 
+    def set_statevector_from_str(self, s: str):
+        '''set the self._state_vector from the __str__() string
+        Args:
+            s -- the __str__() string
+            Example:
+
+            Guess
+            Initial state:
+            |000>:  0.31088  0.3194i
+            |001>:  0.42490 -0.0000i
+            |010>:  0.42490 -0.0000i
+            |011>: -0.19850  0.2039i
+            |100>:  0.42490 -0.0000i
+            |101>: -0.19850  0.2039i
+            |110>: -0.19850  0.2039i
+            |111>: -0.00349 -0.1295i
+        '''
+        statevector = []
+        s = s.split('\n')
+        for line in s:
+            if '>:' in line:
+                line = line.split()
+                real = line[1]
+                imag = line[2]
+                real = float(real.strip())
+                imag = float(imag[:-1].strip())
+                statevector.append(complex(real, imag))
+        self._state_vector = np.array(statevector)

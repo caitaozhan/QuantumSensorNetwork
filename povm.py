@@ -29,7 +29,7 @@ class Povm:
         return self._theoretical_error
 
     @property
-    def therotical_success(self):
+    def theoretical_success(self):
         return self._theoretical_success
 
     @property
