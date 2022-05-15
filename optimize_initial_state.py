@@ -3,7 +3,6 @@ Optimizing initial state
 '''
 
 import copy
-from matplotlib.pyplot import cool
 import numpy as np
 import math
 from qiskit_textbook.tools import random_state
@@ -29,25 +28,6 @@ class OptimizeInitialState(QuantumState):
         s = f'\n{self.optimize_method}\nInitial state:\n'
         parent = super().__str__()
         return s + parent
-
-    def check_state(self):
-        '''check if the amplitudes norm_squared add up to one
-        '''
-        summ = 0
-        for amp in self._state_vector:
-            summ += Utility.norm_squared(amp)
-        return True if abs(summ - 1) < Default.EPSILON else False
-
-    def normalize_state(self, state: np.array):
-        '''Normalize a state vector
-        Return:
-            np.array -- the normalized state
-        '''
-        state_copy = np.array(state)
-        magnitude_squared = 0
-        for a in state_copy:
-            magnitude_squared += abs(a)**2
-        return state_copy / np.sqrt(magnitude_squared)
 
     def upperbound(self, unitary_operator: Operator, priors: list):
         '''an upper bound from equation (10) of this paper: https://arxiv.org/pdf/1509.04592.pdf

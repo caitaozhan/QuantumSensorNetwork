@@ -3,6 +3,7 @@ import math
 from qiskit.quantum_info.operators.operator import Operator
 from qiskit_textbook.tools import random_state
 from utility import Utility
+from input_output import Default
 
 
 class QuantumState:
@@ -40,6 +41,25 @@ class QuantumState:
                 raise Exception('state_vector is None!')
             self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...
         return self._density_matrix
+
+    def check_state(self):
+        '''check if the amplitudes norm_squared add up to one
+        '''
+        summ = 0
+        for amp in self._state_vector:
+            summ += Utility.norm_squared(amp)
+        return True if abs(summ - 1) < Default.EPSILON else False
+
+    def normalize_state(self, state: np.array):
+        '''Normalize a state vector
+        Return:
+            np.array -- the normalized state
+        '''
+        state_copy = np.array(state)
+        magnitude_squared = 0
+        for a in state_copy:
+            magnitude_squared += abs(a)**2
+        return state_copy / np.sqrt(magnitude_squared)
 
     def init_random_state(self, seed: int = None):
         '''init a random quantum state'''

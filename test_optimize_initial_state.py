@@ -1,8 +1,10 @@
-'''Optimize the initial state
+'''
+Optimize the initial state
 '''
 
 from qiskit.quantum_info import random_unitary
 from optimize_initial_state import OptimizeInitialState
+from optimize_initial_state_nonentangled import OptimizeInitialStateNonentangled
 
 
 def test1():
@@ -14,6 +16,13 @@ def test1():
     print(optis)
 
 
+def test2():
+    num_sensor = 3
+    optis_ne = OptimizeInitialStateNonentangled(num_sensor=num_sensor)
+    optis_ne.init_random_state()
+    print(optis_ne)
+
+
 
 if __name__ == '__main__':
-    test1()
+    test2()
