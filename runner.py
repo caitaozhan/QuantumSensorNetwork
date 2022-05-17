@@ -55,8 +55,8 @@ if __name__ == '__main__':
 
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
-
-    base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
+    # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
+    base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
 
     # 5 sensors experiment, in case it crashes again
     num_sensor  = 3
@@ -64,10 +64,10 @@ if __name__ == '__main__':
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
     # output_dir  = 'result/5.3.2022'
     # output_file = 'varying_theta_5sensor_minerror'
-    output_dir  = 'result-tmp'
-    output_file = 'foo'
-    thetas      = [i for i in range(1, 2, 5)]
-    start_seed  = [0, 1]
+    output_dir  = 'result/5.16.2022'
+    output_file = 'varying_theta_3sensor_ne'
+    thetas      = [i for i in range(1, 180)]
+    start_seed  = [i for i in range(0, 2)]
 
     # num_sensor  = 2
     # equal       = False
@@ -91,11 +91,10 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 2
+    parallel = 6
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
-            time.sleep(1)
             task = tasks.pop(0)
             print(task, f'{len(tasks)} tasks still in queue')
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))

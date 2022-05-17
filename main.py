@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 import copy
 from qiskit.quantum_info import random_unitary
+from optimize_initial_state_nonentangled import OptimizeInitialStateNonentangled
 from quantum_state import QuantumState
 from optimize_initial_state import OptimizeInitialState
 from povm import Povm
@@ -135,7 +136,6 @@ if __name__ == '__main__':
     eval_metric    = args.eval_metric[0]
 
     problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed, unitary_theta)
-    opt_initstate = OptimizeInitialState(num_sensor)
     if unitary_theta:
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
@@ -145,6 +145,7 @@ if __name__ == '__main__':
     outputs = []
 
     if "Guess" in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
         opt_initstate.guess(unitary_operator)
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
         success = round(success, 7)
@@ -153,6 +154,7 @@ if __name__ == '__main__':
         outputs.append(guess_output)
 
     if "Hill climbing" in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
         start_seed = args.start_seed[0]
         epsilon = Default.EPSILON_OPT
         mod_step = [args.mod_step[0]] * 2**num_sensor
@@ -174,6 +176,7 @@ if __name__ == '__main__':
         outputs.append(hillclimb_output)
 
     if 'Simulated annealing' in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
         start_seed   = args.start_seed[0]
         init_step    = args.init_step[0]
         stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
@@ -191,6 +194,28 @@ if __name__ == '__main__':
         simulateanneal_output = SimulatedAnnealOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, init_step,\
                                                       max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(simulateanneal_output)
+
+    if "Hill climbing (NE)" in methods:
+        opt_initstate_ne = OptimizeInitialStateNonentangled(num_sensor)
+        start_seed = args.start_seed[0]
+        epsilon = Default.EPSILON_OPT
+        mod_step = [args.mod_step[0]] * 2
+        amp_step = [args.amp_step[0]] * 2
+        decrease_rate = args.decrease_rate[0]
+        min_iteration = args.min_iteration[0]
+        random_neighbor = True    # args.random_neighbor[0], currently only support random_neighbor
+        realimag_neighbor = False # args.realimag_neighbor[0], currently not supported
+        start_time = time.time()
+        scores = opt_initstate_ne.hill_climbing(start_seed, unitary_operator, priors, epsilon, \
+                                                mod_step, decrease_rate, min_iteration, eval_metric)
+        runtime = round(time.time() - start_time, 2)
+        success = scores[-1]
+        error = round(1 - success, 7)
+        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
+        hillclimb_output = HillclimbOutput(experiement_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
+                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate_ne), scores, runtime, eval_metric, \
+                                           random_neighbor, realimag_neighbor)
+        outputs.append(hillclimb_output)
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

@@ -18,8 +18,9 @@ def test1():
 
 def test2():
     num_sensor = 3
+    seed = 0
     optis_ne = OptimizeInitialStateNonentangled(num_sensor=num_sensor)
-    optis_ne.init_random_state()
+    optis_ne.init_random_state(seed)
     print(optis_ne)
 
 

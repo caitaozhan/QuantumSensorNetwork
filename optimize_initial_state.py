@@ -10,7 +10,6 @@ from qiskit.quantum_info.operators.operator import Operator
 from quantum_state import QuantumState
 from utility import Utility
 from povm import Povm
-from input_output import Default
 
 
 class OptimizeInitialState(QuantumState):
@@ -169,17 +168,9 @@ class OptimizeInitialState(QuantumState):
         array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
         return array
 
-    def _generate_random_direction(self):
-        '''generate a random direction
-        '''
-        real = 2 * np.random.random() - 1
-        imag = 2 * np.random.random() - 1
-        direction = real + 1j*imag
-        direction /= abs(direction)     # normalize
-        return direction
 
-    def find_neighbors_random(self, qstate: QuantumState, i: int, step_size: list):
-        '''find four random neighbors of
+    def find_neighbors_random(self, qstate: QuantumState, i: int, step_size: float):
+        '''find four random neighbors of qstate
         Args:
             qstate -- initial state
             i        -- ith element of the state vector to be modified
@@ -190,7 +181,7 @@ class OptimizeInitialState(QuantumState):
         array = []
         for _ in range(4):
             state_vector = qstate.state_vector.copy()
-            direction = self._generate_random_direction()
+            direction = self.generate_random_direction()
             state_vector[i] += direction * step_size
             array.append(QuantumState(self.num_sensor, self.normalize_state(state_vector)))
         return array

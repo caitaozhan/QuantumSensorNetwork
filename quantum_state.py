@@ -61,6 +61,15 @@ class QuantumState:
             magnitude_squared += abs(a)**2
         return state_copy / np.sqrt(magnitude_squared)
 
+    def generate_random_direction(self):
+        '''generate a random direction
+        '''
+        real = 2 * np.random.random() - 1
+        imag = 2 * np.random.random() - 1
+        direction = real + 1j*imag
+        direction /= abs(direction)     # normalize
+        return direction
+
     def init_random_state(self, seed: int = None):
         '''init a random quantum state'''
         if seed is not None:

@@ -961,6 +961,34 @@ def varystartseed():
     ax.set_title('The Landscape has Many Hills with the SAME Height')
     fig.savefig(figname)
 
+def nonentangled_3sensors(guess_3s, hillclimb_3s):
+    logs = ['result/5.16.2022/varying_theta_3sensor_ne']
+    figname = 'result/5.16.2022/varying_theta_3sensor_ne'
+    data = Logger.read_log(logs)
+    success_dict = {}
+    for experiment in data:
+        myinput = experiment[0]
+        output_by_method = experiment[1]
+        if output_by_method['Hill climbing'].method == 'Hill climbing (NE)' and output_by_method['Hill climbing'].start_seed == 0:
+            success_dict[myinput.unitary_theta] = output_by_method['Hill climbing'].success
+    
+    successes = [success for _, success in sorted(success_dict.items())]
+    X = [i for i in range(1, 180)]
+
+    fig, ax = plt.subplots(1, 1, figsize=(35, 25))
+    fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
+    ax.plot(X, guess_3s, label='Guess')
+    ax.plot(X, hillclimb_3s, label='Hill climbing')
+    ax.plot(X, successes, label='Hill climbing (Non-entangled)')
+    ax.legend()
+    ax.set_xlabel('Theta (in degrees)')
+    ax.set_ylabel('Success Probability')
+    ax.set_title('3 Sensors Initial State Opimization Problem')
+    # ax.set_ylim([0.3, 1.05])
+    ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+    filename = 'result/5.16.2022/varying_theta_3sensors_nonentangled'
+    fig.savefig(filename)
 
 
 if __name__ == '__main__':
@@ -972,13 +1000,14 @@ if __name__ == '__main__':
     # vary_numsensors()
     # vary_startseed()
 
-    # draw = False
+    draw = False
     # guess_2s, hillclimb_2s = special_u_2sensor(draw)
-    # guess_3s, hillclimb_3s = special_u_3sensor(draw)
+    guess_3s, hillclimb_3s = special_u_3sensor(draw)
     # guess_4s, hillclimb_4s = special_u_4sensor(draw)
     # guess_5s, hillclimb_5s = special_u_5sensor(draw)
     # special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
     # special_u_2()
+    nonentangled_3sensors(guess_3s, hillclimb_3s)
 
     # print_results()
 
@@ -994,4 +1023,6 @@ if __name__ == '__main__':
 
     # hillclimb_neighbor_compare()
 
-    varystartseed()
+    # varystartseed()
+
+    
