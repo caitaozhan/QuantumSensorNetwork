@@ -56,16 +56,15 @@ if __name__ == '__main__':
     command = ['python', 'main.py']
     # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
-    base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
+    # base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
+    base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
 
     # 5 sensors experiment, in case it crashes again
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    # output_dir  = 'result/5.3.2022'
-    # output_file = 'varying_theta_5sensor_minerror'
-    output_dir  = 'result/5.16.2022'
-    output_file = 'varying_theta_3sensor_ne'
+    output_dir  = 'result/5.26.2022'
+    output_file = 'varying_theta_3sensors_genetic'
     thetas      = [i for i in range(1, 180)]
     start_seed  = [i for i in range(0, 2)]
 
@@ -76,7 +75,6 @@ if __name__ == '__main__':
     # output_file = 'varying_startseed_2sensor_minerror'
     # thetas      = [1]
     # start_seed  = [i for i in range(10)]
-
 
     ps = []
     tasks = []
@@ -91,7 +89,7 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 6
+    parallel = 2
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:

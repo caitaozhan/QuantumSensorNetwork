@@ -5,6 +5,9 @@ Optimizing initial state
 import copy
 import numpy as np
 import math
+from itertools import accumulate
+import random
+from bisect import bisect_left
 from qiskit_textbook.tools import random_state
 from qiskit.quantum_info.operators.operator import Operator
 from quantum_state import QuantumState
@@ -439,10 +442,11 @@ class OptimizeInitialState(QuantumState):
         Return:
             list -- a list of scores at each iteration
         '''
-        print('\nStart simulated annealing...')
+        print('Start simulated annealing...')
         np.random.seed(seed)
+        random.seed(seed)
         qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
-        print(f'Random start:\n{qstate}')
+        # print(f'Random start:\n{qstate}')
         povm = Povm()
         N = 2**self.num_sensor
         init_temperature = self.generate_init_temperature(qstate, init_step, N, unitary_operator, priors, povm, eval_metric)
@@ -495,4 +499,152 @@ class OptimizeInitialState(QuantumState):
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
+        return scores
+
+    def _compute_rank(self, fitness: list) -> list:
+        '''
+        Args:
+            fitness -- a list of fitness
+        '''
+        fitness_rank = {}
+        for i, fit in enumerate(sorted(fitness)):
+            fitness_rank[fit] = i + 1
+        rank = []
+        for fit in fitness:
+            rank.append(fitness_rank[fit])
+        return rank
+
+    def _selection(self, population: list, rank: list) -> list:
+        '''Rank selection
+        Args:
+            population -- a population of quantum states
+            rank -- the worst quantum state has a rank of 1, the best has a rank of len(population)
+        Return:
+            a list of two quantum states that are selected
+        '''
+        prefix_sum = list(accumulate(rank))
+        upperbound = prefix_sum[-1]
+        parents = []
+        while len(parents) < 2:
+            num = random.randint(1, upperbound)
+            parent = bisect_left(prefix_sum, num)
+            if parent not in parents:
+                parents.append(parent)
+        return [population[i] for i in parents]
+
+    def _crossover(self, parents: list) -> list:
+        '''2 point crossover
+        Args:
+            parents -- two quantum states
+        Return:
+            a list of two new offspring quantum states
+        '''
+        child0_state_vector = np.copy(parents[0].state_vector)
+        child1_state_vector = np.copy(parents[1].state_vector)
+        size = len(child0_state_vector)
+        point1, point2 = random.sample(range(size + 1), 2)
+        if point1 > point2:
+            point1, point2 = point2, point1
+        for i in range(point1, point2):
+            child0_state_vector[i], child1_state_vector[i] = child1_state_vector[i], child0_state_vector[i]
+        child0 = QuantumState(parents[0].num_sensor, self.normalize_state(child0_state_vector))
+        child1 = QuantumState(parents[1].num_sensor, self.normalize_state(child1_state_vector))
+        return [child0, child1]
+
+    def _mutation(self, childs: list, mutation_rate: float, stepsize: float):
+        '''randomly select one point and do a random neighbor, modify inplace
+        Args:
+            childs -- two quantum states
+            mutation_rate -- the probability of happening mutation for an individual
+            stepsize -- the step size for a mutation
+        '''
+        for child in childs:
+            if random.random() < mutation_rate:
+                size = len(child.state_vector)
+                point = random.randint(0, size - 1)
+                child.state_vector[point] += self.generate_random_direction() * stepsize
+                child.state_vector = self.normalize_state(child.state_vector)
+            
+    def genetic_algorithm(self, seed: int, unitary_operator: Operator, priors: list, epsilon: float, population_size: int, mutation_rate: float, \
+                                crossover_rate: float, init_step: float, stepsize_decreasing_rate: float, min_iteration: int, eval_metric: str):
+        '''use genetic algorithm to optimize the initial state
+        Args:
+            seed             -- random seed
+            unitary_operator -- describe the interaction with the environment
+            priors           -- prior probabilities
+            epsilon          -- for termination
+            population_size  -- the size of the population, i.e. number of solutions
+            mutation_rate    -- the probability of doing mutation once during a offspring production
+            crossover_rate   -- the probability of doing crossover once during a offspring production 
+            init_step -- the initial step size
+            stepsize_decreasing_rate -- the rate that the steps are decreasing at each iteration
+            min_iteration    -- minimal number of iterations
+            eval_metric      -- 'min error' or 'unambiguous'
+        Return:
+            list -- a list of scores at each iteration
+        '''
+        print('Start Genetic algorithm...')
+        # initialize a population
+        np.random.seed(seed)
+        population = []
+        fitness = []
+        povm = Povm()
+        for _ in range(population_size):
+            qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+            population.append(qstate)
+            fitness.append(self._evaluate(qstate, unitary_operator, priors, povm, eval_metric))
+        scores = [round(max(fitness), 7)]
+        best_fitness = max(fitness)
+        iteration = 0
+        stepsize = init_step
+        terminate = False
+        while terminate is False or iteration < min_iteration:
+            before_fitness = best_fitness
+            iteration += 1
+            rank = self._compute_rank(fitness)
+            child_fitness = []
+            child_population = []
+            while len(child_population) < population_size:
+                # selection
+                parents = self._selection(population, rank)
+                # crossover
+                if random.random() < crossover_rate:
+                    childs = self._crossover(parents)
+                else:
+                    childs = [QuantumState(p.num_sensor, np.array(p.state_vector)) for p in parents]
+                # mutation
+                self._mutation(childs, mutation_rate, stepsize)
+                child_population.extend(childs)
+
+            for qstate in child_population:
+                child_fitness.append(self._evaluate(qstate, unitary_operator, priors, povm, eval_metric))
+            
+            # mix parent and child together and select the top 50%
+            fitness.extend(child_fitness)
+            threshold = sorted(fitness)[population_size - 1]
+            new_population = []
+            new_fitness = []
+            for qstate, fit in zip(population + child_population, fitness):
+                if fit > threshold:
+                    new_population.append(qstate)
+                    new_fitness.append(fit)
+
+            stepsize *= stepsize_decreasing_rate
+            population = new_population
+            fitness = new_fitness
+            best_fitness = max(fitness)
+            scores.append(round(best_fitness, 7))
+            if best_fitness - before_fitness < epsilon:
+                terminate = True
+            else:
+                terminate = False
+
+        best_qstate  = population[0]
+        best_fitness = fitness[0]
+        for i in range(1, population_size):
+            if fitness[i] > best_fitness:
+                best_fitness = fitness[i]
+                best_qstate = population[i]
+        self._state_vector = best_qstate.state_vector
+        self._optimze_method = 'Genetic algorithm'
         return scores

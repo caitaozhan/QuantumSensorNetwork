@@ -1,98 +1,16 @@
 '''The main
 '''
 
-import numpy as np
 import argparse
-import copy
 from qiskit.quantum_info import random_unitary
 from optimize_initial_state_nonentangled import OptimizeInitialStateNonentangled
-from quantum_state import QuantumState
 from optimize_initial_state import OptimizeInitialState
 from povm import Povm
 from utility import Utility
 import time
-from plot import Plot
-from input_output import Default, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
+from input_output import Default, GeneticOutput, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
 from logger import Logger
-
-
-'''Two sensors
-'''
-def main2():
-    print('Two sensors\n')
-    seed = 2
-    num_sensor = 2
-    povm = Povm()
-    unitary_operator = random_unitary(dims=2, seed=seed)
-    Utility.print_matrix('Unitary matrix', unitary_operator._data)
-    optis = OptimizeInitialState(num_sensor)
-
-    # 1: optimize the initial state: Guess
-    optis.guess(unitary_operator)
-    print(optis)
-    # generate the quantums states for SDP, equal prior, then do the SDP
-    # priors = [random.uniform(0.1, 0.9)]
-    priors = [0.45]
-    priors.append(1 - priors[0])
-    print('priors:', priors)
-    quantum_states = []
-    for i in range(num_sensor):
-        evolve_operator = Utility.evolve_operator(unitary_operator, num_sensor, i)
-        optis_copy = copy.deepcopy(optis)
-        optis_copy.evolve(evolve_operator)
-        quantum_states.append(optis_copy)
-    # Optimizing the POVM
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
-    guess_success = povm.theoretical_success
-    print(f'SDP error = {povm.theoretical_error}')
-    povm.two_state_minerror(quantum_states, priors, debug=False)   # the measurement operators summation is not Identity... But the theoretical error is correct
-    print(f'MED error = {povm.theoretical_error}')
-
-
-    # 2: optimize the initial state: Hill climbing
-    mod_step = [0.1]*(2**num_sensor)
-    amp_step = [0.1]*(2**num_sensor)
-    decrease_rate = 0.96
-    iteration = 100
-    startState = QuantumState(num_sensor, optis.state_vector)
-    scores = optis.hill_climbing(startState=startState, seed=0, unitary_operator=unitary_operator, priors=priors, epsilon=Default.EPSILON_OPT, \
-                                 mod_step=mod_step, amp_step=amp_step, decrease_rate=decrease_rate, min_iteration=iteration)
-    print(optis)
-    quantum_states = []
-    for i in range(num_sensor):
-        evolve_operator = Utility.evolve_operator(unitary_operator, num_sensor, i)
-        optis_copy = copy.deepcopy(optis)
-        optis_copy.evolve(evolve_operator)
-        quantum_states.append(optis_copy)
-    # Optimizing the POVM
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
-    print(f'SDP error = {povm.theoretical_error}')
-    povm.two_state_minerror(quantum_states, priors, debug=False)   # the measurement operators summation is not Identity... But the theoretical error is correct
-    print(f'MED error = {povm.theoretical_error}')
-    Plot.hillclimbing(scores, guess_success)
-
-    # 3: do random guess for the initial state
-    repeat = 1000
-    print(f'\nOptimization method is Random.\nRepeat {repeat} times.')
-    errors = []
-    elapse = 0
-    for i in range(repeat):
-        # random intial state
-        optis.random(i, unitary_operator)
-        quantum_states = []
-        for i in range(num_sensor):
-            evolve_operator = Utility.evolve_operator(unitary_operator, num_sensor, i)
-            optis_copy = copy.deepcopy(optis)
-            optis_copy.evolve(evolve_operator)
-            quantum_states.append(optis_copy)
-        # Optimizing the POVM
-        start = time.time()
-        povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
-        elapse += (time.time() - start)
-        errors.append(povm.theoretical_error)
-    print(f'min error = {np.min(errors)}\nmax error = {np.max(errors)}\navg error = {np.average(errors)}')
-    print(f'SDP time elpase = {elapse:.3}s')
-
+from plot import Plot
 
 
 if __name__ == '__main__':
@@ -125,17 +43,26 @@ if __name__ == '__main__':
     parser.add_argument('-mi', '--min_iteration', type=int, nargs=1, default=[Default.min_iteration], help='minimum number of iteration in hill climbing')
     parser.add_argument('-em', '--eval_metric', type=str, nargs=1, default=[Default.eval_metric], help='a state is evaluated by min error or unambiguous')
 
+    # below are for both genetic algorithm and pariticle swarm optimization
+    parser.add_argument('-ps', '--population_size', type=int, nargs=1, default=[Default.population_size], help='the size of the population, i.e. number of solutions')
+
+    # below are for genetic algorihm
+    parser.add_argument('-mu', '--mutation_rate', type=float, nargs=1, default=[Default.mutation_rate], help='the probability of doing mutation once during a offspring production')
+    parser.add_argument('-co', '--crossover_rate', type=float, nargs=1, default=[Default.crossover_rate], help='the probability of doing crossover once during a offspring production')
+
+    # below are for particle swarm optimization
+
 
     args = parser.parse_args()
-    experiement_id = args.experiment_id[0]
-    num_sensor     = args.num_sensor[0]
-    priors         = args.priors
-    unitary_seed   = args.unitary_seed[0]
-    unitary_theta  = args.unitary_theta[0]
-    methods        = args.methods
-    eval_metric    = args.eval_metric[0]
+    experiment_id = args.experiment_id[0]
+    num_sensor    = args.num_sensor[0]
+    priors        = args.priors
+    unitary_seed  = args.unitary_seed[0]
+    unitary_theta = args.unitary_theta[0]
+    methods       = args.methods
+    eval_metric   = args.eval_metric[0]
 
-    problem_input = ProblemInput(experiement_id, num_sensor, priors, unitary_seed, unitary_theta)
+    problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta)
     if unitary_theta:
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
@@ -150,9 +77,9 @@ if __name__ == '__main__':
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
         success = round(success, 7)
         error = round(1-success, 7)
-        guess_output = GuessOutput(experiement_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
+        guess_output = GuessOutput(experiment_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(guess_output)
-
+        
     if "Hill climbing" in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
         start_seed = args.start_seed[0]
@@ -170,7 +97,7 @@ if __name__ == '__main__':
         success = scores[-1]
         error = round(1 - success, 7)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
+        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
                                            random_neighbor, realimag_neighbor)
         outputs.append(hillclimb_output)
@@ -191,7 +118,7 @@ if __name__ == '__main__':
         success = scores[-1]
         error = round(1 - success, 7)
         real_iteration = len(scores) - 1
-        simulateanneal_output = SimulatedAnnealOutput(experiement_id, opt_initstate.optimize_method, error, success, start_seed, init_step,\
+        simulateanneal_output = SimulatedAnnealOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, init_step, stepsize_decreasing_rate,\
                                                       max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(simulateanneal_output)
 
@@ -212,10 +139,31 @@ if __name__ == '__main__':
         success = scores[-1]
         error = round(1 - success, 7)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiement_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
+        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate_ne), scores, runtime, eval_metric, \
                                            random_neighbor, realimag_neighbor)
         outputs.append(hillclimb_output)
+
+    if "Genetic algorithm" in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
+        start_seed    = args.start_seed[0]
+        epsilon       = Default.EPSILON
+        min_iteration = args.min_iteration[0]
+        population_size = args.population_size[0]
+        crossover_rate  = args.crossover_rate[0]
+        mutation_rate   = args.mutation_rate[0]
+        init_step       = args.init_step[0]
+        stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
+        start_time = time.time()
+        scores = opt_initstate.genetic_algorithm(start_seed, unitary_operator, priors, epsilon, population_size, mutation_rate, \
+                                                 crossover_rate, init_step, stepsize_decreasing_rate, min_iteration, eval_metric)
+        success = scores[-1]
+        error = round(1 - success, 7)
+        runtime = round(time.time() - start_time, 2)
+        real_iteration = len(scores) - 1
+        genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate,\
+                                       start_seed, init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+        outputs.append(genetic_output)
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

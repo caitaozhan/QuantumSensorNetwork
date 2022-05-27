@@ -18,13 +18,30 @@ class Plot:
             scores -- a list of scores, each score is one evaluation value during an iteration
             constant -- value from a guess
         '''
-        constant = [constant for _ in range(len(scores))]
         fig, ax = plt.subplots(1, 1, figsize=(35, 20))
         ax.plot(scores, label='Hill Climbing')
-        ax.plot(constant, label='Guess')
+        if constant:
+            constant = [constant for _ in range(len(scores))]
+            ax.plot(constant, label='Guess')
         ax.set_xlabel('Iteration')
         ax.set_ylabel('Discrimination Success Probability')
-        ax.set_ylim([0.7, 0.9])
+        # ax.set_ylim([0.7, 0.9])
+        fig.legend(loc='upper center', ncol=2)
+        fig.savefig('tmp.png')
+
+    @staticmethod
+    def hillclimbing(scores1: list, scores2: list):
+        '''
+        Args:
+            scores1 -- a list of scores, each score is one evaluation value during an iteration
+            scores2 -- a list of scores, each score is one evaluation value during an iteration
+        '''
+        fig, ax = plt.subplots(1, 1, figsize=(35, 20))
+        ax.plot(scores1, label='Hill Climbing')
+        ax.plot(scores2, label='Genetic algorithm')
+        ax.set_xlabel('Iteration')
+        ax.set_ylabel('Discrimination Success Probability')
+        # ax.set_ylim([0.7, 0.9])
         fig.legend(loc='upper center', ncol=2)
         fig.savefig('tmp.png')
 
