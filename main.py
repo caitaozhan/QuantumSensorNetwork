@@ -8,7 +8,7 @@ from optimize_initial_state import OptimizeInitialState
 from povm import Povm
 from utility import Utility
 import time
-from input_output import Default, GeneticOutput, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
+from input_output import Default, GeneticOutput, ParticleSwarmOutput, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
 from logger import Logger
 from plot import Plot
 
@@ -51,6 +51,9 @@ if __name__ == '__main__':
     parser.add_argument('-co', '--crossover_rate', type=float, nargs=1, default=[Default.crossover_rate], help='the probability of doing crossover once during a offspring production')
 
     # below are for particle swarm optimization
+    parser.add_argument('-w', '--weight', type=float, nargs=1, default=[Default.weight], help='the velocity inertia')
+    parser.add_argument('-e1', '--eta1', type=int, nargs=1, default=[Default.eta1], help='cognitive constant')
+    parser.add_argument('-e2', '--eta2', type=int, nargs=1, default=[Default.eta2], help='social constant')
 
 
     args = parser.parse_args()
@@ -101,6 +104,7 @@ if __name__ == '__main__':
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
                                            random_neighbor, realimag_neighbor)
         outputs.append(hillclimb_output)
+        hillclimb_scores = scores
 
     if 'Simulated annealing' in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
@@ -164,6 +168,29 @@ if __name__ == '__main__':
         genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate,\
                                        start_seed, init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(genetic_output)
+
+    if "Particle swarm" in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
+        start_seed    = args.start_seed[0]
+        epsilon       = Default.EPSILON
+        min_iteration = args.min_iteration[0]
+        population_size = args.population_size[0]
+        w    = args.weight[0]
+        eta1 = args.eta1[0]
+        eta2 = args.eta2[0]
+        init_step = args.init_step[0]
+        start_time = time.time()
+        scores = opt_initstate.particle_swarm_optimization(start_seed, unitary_operator, priors, epsilon, population_size, w, \
+                                                           eta1, eta2, init_step, min_iteration, eval_metric)
+        success = scores[-1]
+        error = round(1 - success, 7)
+        runtime = round(time.time() - start_time, 2)
+        real_iteration = len(scores) - 1
+        particleswarm_output = ParticleSwarmOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, w, eta1, eta2, start_seed, \
+                                                   init_step, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+        outputs.append(particleswarm_output)
+        Plot.hillclimbing(hillclimb_scores, scores)
+
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

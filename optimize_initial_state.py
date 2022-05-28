@@ -648,3 +648,94 @@ class OptimizeInitialState(QuantumState):
         self._state_vector = best_qstate.state_vector
         self._optimze_method = 'Genetic algorithm'
         return scores
+
+
+    def particle_swarm_optimization(self, seed: int, unitary_opeartor: Operator, priors: list, epsilon: float, population_size: int, \
+                                    w: float, eta1: float, eta2: float, init_step_size: float, min_iteration, eval_metric: str):
+        '''use particle swarm optimization to optimize the initial state
+        Args:
+            seed             -- random seed
+            unitary_operator -- describe the interaction with the environment
+            priors           -- prior probabilities
+            epsilon          -- for termination
+            population_size  -- the size of the population, i.e. number of solutions
+            w                -- inertia weight
+            eta1             -- cognitive constant
+            eta2             -- social constant
+            init_step        -- the initial step size
+            min_iteration    -- minimal number of iterations
+            eval_metric      -- 'min error' or 'unambiguous'
+        Return:
+            list -- a list of scores at each iteration
+        '''
+        class Particle:
+            def __init__(self, qstate: QuantumState, fitness: float, velocity: complex):
+                self.qstate = qstate       # current state
+                self.fitness = fitness
+                self.velocity = velocity
+                self.pbest = qstate        # personal best state
+                self.pbest_fitness = fitness
+                self.dimension = len(qstate.state_vector)
+
+            def update_velocity(self, gbest: QuantumState):
+                '''update the velocity of the particle
+                '''
+                for i in range(self.dimension):
+                    r1 = random.random()
+                    r2 = random.random()
+                    v_cognitive = eta1 * r1 * (self.pbest.state_vector[i] - self.qstate.state_vector[i])
+                    v_social    = eta2 * r2 * (gbest.state_vector[i] - self.qstate.state_vector[i])
+                    self.velocity[i] = w * self.velocity[i] + v_cognitive + v_social
+
+            def update_position(self):
+                '''update the position (qstate) of the particle, also the fitness value
+                '''
+                for i in range(self.dimension):
+                    self.qstate.state_vector[i] += self.velocity[i]
+                self.qstate.state_vector = self.qstate.normalize_state(self.qstate.state_vector)
+            
+            def update_fitness(self, fitness):
+                self.fitness = fitness
+
+        print('Start particle swarm optimization...')
+        np.random.seed(seed)
+        random.seed(seed)
+        povm = Povm()
+        swarm = []
+        gbest = None        # globel best qstate
+        gbest_fitness = 0   # the fitness of the globel best qstate
+        for _ in range(population_size):
+            qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))   # random initialization
+            fitness = self._evaluate(qstate, unitary_opeartor, priors, povm, eval_metric)
+            if fitness > gbest_fitness:
+                gbest = qstate
+                gbest_fitness = fitness
+            velocity = [init_step_size * self.generate_random_direction() for _ in range(2**self.num_sensor)]
+            particle = Particle(qstate, fitness, velocity)
+            swarm.append(particle)
+
+        scores = [round(gbest_fitness, 7)]
+        iteration = 0
+        terminate = False
+        while terminate is False or iteration < min_iteration:
+            iteration += 1
+            for particle in swarm:
+                particle.update_velocity(gbest)
+                particle.update_position()
+                particle.update_fitness(self._evaluate(particle.qstate, unitary_opeartor, priors, povm, eval_metric))
+                if particle.fitness > particle.pbest_fitness:
+                    particle.pbest = QuantumState(self.num_sensor, np.copy(particle.qstate.state_vector))
+                    particle.pbest_fitness = particle.fitness
+                    if particle.fitness > gbest_fitness:
+                        gbest = QuantumState(self.num_sensor, np.copy(particle.qstate.state_vector))
+                        gbest_fitness = particle.fitness
+            scores.append(round(gbest_fitness, 7))
+            if scores[-1] - scores[-2] < epsilon:
+                terminate = True
+            else:
+                terminate = False
+
+        self._optimze_method = 'Particle swarm'
+        self._state_vector = gbest.state_vector
+        return scores
+

@@ -37,7 +37,7 @@ class Default:
     cooling_rate = 0.96              # the annealing cooling rate
     stepsize_decreasing_rate = 0.96  # the stepsize decreasing rate
 
-    # below are for both hill climbing and simulated annealing
+    # below are for hill climbing, simulated annealing, genetic algorithm, and particle swarm optimization
     min_iteration = 100   # minimum interation
     eval_metric = 'min error'
 
@@ -46,6 +46,10 @@ class Default:
     mutation_rate  = 1
     crossover_rate = 1
 
+    # below are for particle swarm optimization
+    weight = 0.5   # inertia
+    eta1 = 1       # cognative constant
+    eta2 = 1       # social constant
 
 
 @dataclass
@@ -309,5 +313,65 @@ class GeneticOutput:
         outdict = json.loads(json_str)
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['population_size'], outdict['crossover_rate'], outdict['mutation_rate'], \
-                   outdict['start_seed'], outdict['stepsize_decreasing_rate'], outdict['min_iteration'], \
+                   outdict['start_seed'], outdict['init_step'], outdict['stepsize_decreasing_rate'], outdict['min_iteration'], \
+                   outdict['real_iteration'], outdict['init_state'], outdict['scores'], outdict['runtime'], outdict['eval_metric'])
+
+
+@dataclass
+class ParticleSwarmOutput:
+    '''encapsulate the Particle swarm optimization method's information
+    '''
+    experiment_id: int
+    method: str
+    error: float
+    success: float          # also 1 - error, also the last value of scores
+    population_size: int    # number of individual solutions in a population
+    w: float                # inertia weight
+    eta1: float             # cognitive constant
+    eta2: float             # social constant
+    start_seed: int         # the seed that affects the starting point of hill climbing
+    init_step: float        # the initial amplitude step size
+    min_iteration: int      # the minimum iteration for hill climbing
+    real_iteration: int     # number of iterations in reality
+    init_state: str         # the initial state found
+    scores: List[float]     # the evaluation value of each iteration
+    runtime: float          # run time
+    eval_metric: str        # 'min error' or 'unambiguous'
+
+    def __str__(self):
+        return self.to_json_str()
+    
+    def to_json_str(self) -> str:
+        '''return json formatting str
+        '''
+        outputdict = {
+            'experiment_id': self.experiment_id,
+            'error': self.error,
+            'method': self.method,
+            'eval_metric': self.eval_metric,
+            'population_size': self.population_size,
+            'w': self.w,
+            'eta1': self.eta1,
+            'eta2': self.eta2,
+            'min_iteration': self.min_iteration,
+            'real_iteration': self.real_iteration,
+            'runtime': self.runtime,
+            'success': self.success,
+            'start_seed': self.start_seed,
+            'init_step': self.init_step,
+            'init_state': self.init_state,
+            'scores': self.scores
+        }
+        return json.dumps(outputdict)
+    
+    @classmethod
+    def from_json_str(cls, json_str) -> "GeneticOutput":
+        '''init a Genetic algorithm output object from json string
+        Args:
+            json_str -- a string of json
+        '''
+        outdict = json.loads(json_str)
+        return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
+                   outdict['population_size'], outdict['w'], outdict['eta1'], outdict['eta2'], \
+                   outdict['start_seed'], outdict['init_step'], outdict['min_iteration'], \
                    outdict['real_iteration'], outdict['init_state'], outdict['scores'], outdict['runtime'], outdict['eval_metric'])

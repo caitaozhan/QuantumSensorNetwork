@@ -38,7 +38,7 @@ class Plot:
         '''
         fig, ax = plt.subplots(1, 1, figsize=(35, 20))
         ax.plot(scores1, label='Hill Climbing')
-        ax.plot(scores2, label='Genetic algorithm')
+        ax.plot(scores2, label='Particle Swarm Optimization')
         ax.set_xlabel('Iteration')
         ax.set_ylabel('Discrimination Success Probability')
         # ax.set_ylim([0.7, 0.9])
