@@ -104,7 +104,6 @@ if __name__ == '__main__':
                                            args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
                                            random_neighbor, realimag_neighbor)
         outputs.append(hillclimb_output)
-        hillclimb_scores = scores
 
     if 'Simulated annealing' in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
@@ -189,7 +188,6 @@ if __name__ == '__main__':
         particleswarm_output = ParticleSwarmOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, w, eta1, eta2, start_seed, \
                                                    init_step, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(particleswarm_output)
-        Plot.hillclimbing(hillclimb_scores, scores)
 
 
     log_dir = args.output_dir[0]
