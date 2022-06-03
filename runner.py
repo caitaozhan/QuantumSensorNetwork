@@ -54,20 +54,21 @@ if __name__ == '__main__':
     # print('start working')
 
     command = ['python', 'main.py']
-    # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "150"]
+    base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "-mi", "100", "-rn", "True"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
     # base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
-    base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
+    # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 3
+    num_sensor  = 2
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/5.27.2022'
-    output_file = 'varying_theta_3sensors_particle'
+    output_dir  = 'result/6.3.2022'
+    # output_file = 'varying_theta_3sensors_particle'
+    output_file = 'varying_theta_2sensors'
     thetas      = [i for i in range(1, 180)]
-    start_seed  = [i for i in range(0, 2)]
+    start_seed  = [0]
 
     # num_sensor  = 2
     # equal       = False
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 2
+    parallel = 5
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
@@ -99,7 +100,7 @@ if __name__ == '__main__':
             ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
             # ps.append(Popen(task))
         else:
-            time.sleep(1)
+            time.sleep(0.05)
             new_ps = []
             for p in ps:
                 if p.poll() is None:

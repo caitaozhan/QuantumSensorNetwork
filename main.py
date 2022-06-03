@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     if "Guess" in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
-        opt_initstate.guess(unitary_operator)
+        opt_initstate.guess(unitary_operator, unitary_theta)
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
         success = round(success, 7)
         error = round(1-success, 7)

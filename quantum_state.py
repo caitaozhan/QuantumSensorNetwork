@@ -95,9 +95,9 @@ class QuantumState:
         for index, amplitude in enumerate(self.state_vector):
             state = Utility.integer2bit(index, num_of_bit)
             if type(amplitude) is np.complex128:
-                real = f'{amplitude.real:.5f}'
-                imag = f'{amplitude.imag:.5f}'
-                string += f'|{state}>: {real:>8} {imag:>8}i\n'
+                real = f'{amplitude.real:.6f}'
+                imag = f'{amplitude.imag:.6f}'
+                string += f'|{state}>: {real:>9} {imag:>9}i\n'
             else:
                 string += f'|{state}>: {amplitude}\n'
         return string

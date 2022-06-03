@@ -179,34 +179,23 @@ def special_u_2sensor(draw: bool):
         draw: if False, then don't plot, only return the plotting data
     '''
 
-    logs = ['result/5.1.2022/varying_theta_2sensor_minerror']
+    logs = ['result/6.3.2022/varying_theta_2sensor_minerror']
     X = []
     y_guess = []
-    y_hillclimb0 = []
-    y_hillclimb1 = []
+    y_hillclimb = []
+    
+    unsorted = []
     data = Logger.read_log(logs)
     for experiment in data:
         myinput = experiment[0]
         output_by_method = experiment[1]
-        
+        unsorted.append([myinput.unitary_theta, output_by_method['Guess'].success, output_by_method['Hill climbing'].success])
 
-        if output_by_method['Hill climbing'].start_seed == 0:
-            X.append(myinput.unitary_theta)
-            y_guess.append(output_by_method['Guess'].success)
-            y_hillclimb0.append(output_by_method['Hill climbing'].success)
-        if output_by_method['Hill climbing'].start_seed == 1:
-            y_hillclimb1.append(output_by_method['Hill climbing'].success)
-        
-        if myinput.unitary_theta in [40, 50, 60, 70, 80, 90] and output_by_method['Hill climbing'].start_seed == 0:
-        # if myinput.unitary_theta in [40, 50, 60, 70, 80, 90]:
-            print('\ntheta =', myinput.unitary_theta)
-            print(output_by_method['Guess'].init_state)
-            print('guess success probability =', output_by_method['Guess'].success)
-            print(output_by_method['Hill climbing'].init_state)
-            print('hill climbing probability =', output_by_method['Hill climbing'].success)
-            print('---')
-
-    y_hillclimb = [max(y0, y1) for y0, y1 in zip(y_hillclimb0, y_hillclimb1)]
+    aftersort = sorted(unsorted)
+    for x, guess, hill in aftersort:
+        X.append(x)
+        y_guess.append(guess)
+        y_hillclimb.append(hill)
 
     if draw is False:
         return y_guess, y_hillclimb
@@ -222,7 +211,7 @@ def special_u_2sensor(draw: bool):
     ax.set_ylim([0.3, 1.05])
     ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    filename = 'result/5.1.2022/varying_theta_2sensors'
+    filename = 'result/6.3.2022/varying_theta_2sensors'
     fig.savefig(filename)
 
 
@@ -1018,13 +1007,13 @@ if __name__ == '__main__':
     # vary_startseed()
 
     draw = False
-    # guess_2s, hillclimb_2s = special_u_2sensor(draw)
+    guess_2s, hillclimb_2s = special_u_2sensor(draw)
     guess_3s, hillclimb_3s = special_u_3sensor(draw)
-    # guess_4s, hillclimb_4s = special_u_4sensor(draw)
-    # guess_5s, hillclimb_5s = special_u_5sensor(draw)
-    # special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
+    guess_4s, hillclimb_4s = special_u_4sensor(draw)
+    guess_5s, hillclimb_5s = special_u_5sensor(draw)
+    special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
     # special_u_2()
-    nonentangled_3sensors(guess_3s, hillclimb_3s)
+    # nonentangled_3sensors(guess_3s, hillclimb_3s)
 
     # print_results()
 
