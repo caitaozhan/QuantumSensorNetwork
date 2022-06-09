@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "5", "-m", "Guess", "Hill climbing", "Particle swarm",  "-mi", "100", "-rn", "True", "-ps", "128"]
+    base_args = ["-us", "5", "-m", "Guess", "Hill climbing", "Particle swarm",  "-mi", "50", "-rn", "True", "-ps", "128"]
 
     # 5 sensors experiment, in case it crashes again
     num_sensor  = 5
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 5
+    parallel = 1
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
