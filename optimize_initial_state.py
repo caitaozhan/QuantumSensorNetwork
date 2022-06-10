@@ -729,7 +729,8 @@ class OptimizeInitialState(QuantumState):
         scores = [round(gbest_fitness, 7)]
         iteration = 0
         terminate = False
-        while terminate is False or iteration < min_iteration:
+        # while terminate is False or iteration < min_iteration:
+        while iteration < min_iteration:
             iteration += 1
             for particle in swarm:
                 particle.update_velocity(gbest)
