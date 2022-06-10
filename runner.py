@@ -60,16 +60,16 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "5", "-m", "Hill climbing", "Particle swarm", "-mi", "100", "-rn", "True", "-ps", "128"]
+    base_args = ["-us", "2", "-m", "Guess"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 5
+    num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result/6.9.2022'
+    output_dir  = 'result/6.10.2022'
     # output_file = 'varying_theta_3sensors_particle'
-    output_file = 'varying_theta_5sensors'
-    thetas      = [i for i in range(60, 66)]
+    output_file = 'varying_theta_3sensors'
+    thetas      = [i for i in range(60, 180)]
     start_seed  = [0]
 
     # num_sensor  = 2

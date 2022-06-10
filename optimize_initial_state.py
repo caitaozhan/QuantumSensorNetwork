@@ -75,11 +75,26 @@ class OptimizeInitialState(QuantumState):
             RAD = 180 / np.pi
             coeff1 = np.sqrt(1 / (2*(1 - np.cos(2*unitary_theta/RAD))))
             coeff2 = np.sqrt(-np.cos(2*unitary_theta/RAD) / (2*(1 - np.cos(2*unitary_theta/RAD))))
-            psi1 = coeff1 * np.kron(v1, v2)
-            psi2 = coeff1 * np.kron(v2, v1)
-            psi3 = coeff2 * np.kron(v1, v1)
-            psi4 = coeff2 * np.kron(v2, v2)
-            self._state_vector = np.sum([psi1, psi2, psi3, psi4], axis=0)
+            psi0 = coeff1 * np.kron(v1, v2)
+            psi1 = coeff1 * np.kron(v2, v1)
+            psi2 = coeff2 * np.kron(v1, v1)
+            psi3 = coeff2 * np.kron(v2, v2)
+            self._state_vector = np.sum([psi0, psi1, psi2, psi3], axis=0)
+        elif self.num_sensor == 3 and 60 <= unitary_theta <= 120:
+            RAD = 180 / np.pi
+            coeff1 = np.sqrt(1 / (4*(1 - np.cos(2*unitary_theta/RAD))))
+            coeff2squared = (-2*np.cos(2*unitary_theta/RAD) - 1) / (4*(1 - np.cos(2*unitary_theta/RAD)))
+            coeff2squared = 0 if coeff2squared < 0 else coeff2squared
+            coeff2 = np.sqrt(coeff2squared)
+            psi0 = coeff2 * np.kron(v2, np.kron(v2, v2))
+            psi1 = coeff1 * np.kron(v2, np.kron(v2, v1))
+            psi2 = coeff1 * np.kron(v2, np.kron(v1, v2))
+            psi3 = coeff1 * np.kron(v2, np.kron(v1, v1))
+            psi4 = coeff1 * np.kron(v1, np.kron(v2, v2))
+            psi5 = coeff1 * np.kron(v1, np.kron(v2, v1))
+            psi6 = coeff1 * np.kron(v1, np.kron(v1, v2))
+            psi7 = coeff2 * np.kron(v1, np.kron(v1, v1))
+            self._state_vector = np.sum([psi0, psi1, psi2, psi3, psi4, psi5, psi6, psi7], axis=0)
         else:
             tensors = []
             for i in range(self.num_sensor):
