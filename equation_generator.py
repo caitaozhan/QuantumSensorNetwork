@@ -109,6 +109,19 @@ def theorem(n):
     print(']')
 
 
+def theorem2(n):
+    from math import comb
+    lst = []
+    for i in range(1, n):
+        a = comb(i, 2) + comb(n-i, 2)
+        b = i * (n-i)
+        lst.append(a/b)
+    print(n, f'{min(lst):.3f}', end=' ')
+    print('[', end=' ')
+    for e in lst:
+        print(f'{e:.3f}', end=',')
+    print(']')
+
 def main1(num_sensor):
     eg = EquationGenerator(num_sensor)
     eg.set_z()
@@ -116,25 +129,27 @@ def main1(num_sensor):
     eg.analyze_equations()
     eg.rewrite_equations()
 
-    # for key in eg.z:
-    #     print(eg.z[key])
-    #     print(eg.z_e[key])
-    #     print(eg.equations[key])
-    #     print()
+    for key in eg.z:
+        print(eg.z[key])
+        print(eg.z_e[key])
+        print(eg.equations[key])
+        print()
+
     print(f'n={num_sensor}. The partitions:', end=' ')
     for key in eg.coeff_partition:
         print(key, end='  ')
     print()
-    # print('The partitioned coefficients:')
-    # for key in eg.coeff_partition:
-    #     print(key, ':', eg.coeff_partition[key], f', length = {len(eg.coeff_partition[key])}')
-    # print()
+
+    print('The partitioned coefficients:')
+    for key in eg.coeff_partition:
+        print(key, ':', eg.coeff_partition[key], f', length = {len(eg.coeff_partition[key])}')
+    print()
 
 
 if __name__ == '__main__':
     # num_sensor = int(sys.argv[1])
-    for n in range(4, 21):
-        main1(n)
+    # for n in range(4, 5):
+    #     main1(n)
 
-    # for n in range(4, 21):
-    #     theorem(n)
+    for n in range(3, 30):
+        theorem2(n)
