@@ -91,7 +91,7 @@ class OptimizeInitialState(QuantumState):
         T = 0.5 * np.arccos(-(1 - 1/math.ceil(self.num_sensor/2)))
         T *= RAD
         if T - Default.EPSILON <= unitary_theta <= 180 - T + Default.EPSILON:  # orthogonal situation
-            a, b, c, partition = eg.optimal_solution()
+            a, b, c, partition = eg.optimal_solution_nomerge()
             coeff1 = np.sqrt(1 / (c - a*np.cos(2*unitary_theta/RAD) - b))  # for the symmetric partition
             coeff2squared = (-a*np.cos(2*unitary_theta/RAD) - b) / (2*(c - a*np.cos(2*unitary_theta/RAD) - b))  # for partition 0 and n
             coeff2squared = 0 if coeff2squared < 0 else coeff2squared

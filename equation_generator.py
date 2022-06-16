@@ -97,8 +97,9 @@ class EquationGenerator:
 
     def optimal_solution(self):
         '''return the coefficients for orthogonal situation
+           This version do the mergings of two partition that has the same minimal RHS/LHS
         Return:
-            (float, float, float)
+            (float, float, float, list)
         '''
         n = self.num_sensor
         if n % 2 == 0:
@@ -113,7 +114,26 @@ class EquationGenerator:
         a = c * (LHS/(LHS + RHS))      # a is the number of x on the left hand side
         b = c * (RHS/(LHS + RHS))      # b is the number of x on the right hand side
         
-        # print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {partition}')
+        print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
+        return a, b, c, partition
+
+
+    def optimal_solution_nomerge(self):
+        '''return the coefficients for orthogonal situation
+           This version do not do the merging comparing
+        Return:
+            (float, float, float, list)
+        '''
+        n = self.num_sensor
+        c = comb(n, floor(n/2))          # c is total number of x (x is on the partition with the smallest RHS/LHS)
+        partition = self.get_partition(floor(n/2))
+        partition.sort()
+        RHS = ceil(n/2) - 1
+        LHS = ceil(n/2)
+        a = c * (LHS/(LHS + RHS))      # a is the number of x on the left hand side
+        b = c * (RHS/(LHS + RHS))      # b is the number of x on the right hand side
+        
+        print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
         return a, b, c, partition
 
     def get_partition(self, ones: int) -> list:
@@ -193,12 +213,13 @@ def main1(num_sensor):
 
 def main2(n):
     eg = EquationGenerator(num_sensor=n)
-    eg.optimal_solution()
+    # eg.optimal_solution()
+    eg.optimal_solution_nomerge()
 
 
 if __name__ == '__main__':
     # num_sensor = int(sys.argv[1])
-    for n in range(3, 6):
+    for n in range(3, 11):
         main2(n)
         # print('--------')
 
