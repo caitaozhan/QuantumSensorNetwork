@@ -93,7 +93,7 @@ class ProblemInput:
 
 @dataclass
 class GuessOutput:
-    '''encapsulate the Guess method's output
+    '''encapsulate the Guess method's output or Theorem's output
     '''
     experiment_id: int
     method: str

@@ -2,6 +2,7 @@
 Automatically generate euqations
 '''
 
+from math import comb, ceil, floor
 import sys
 from collections import defaultdict, Counter
 
@@ -94,9 +95,50 @@ class EquationGenerator:
                 right[variable] += 1
             self.equations[key] = {'LHS': left, 'RHS': right}
 
+    def optimal_solution(self):
+        '''return the coefficients for orthogonal situation
+        Return:
+            (float, float, float)
+        '''
+        n = self.num_sensor
+        if n % 2 == 0:
+            c = comb(n, n//2)          # c is total number of x (x is on the partition with the smallest RHS/LHS)
+            partition = self.get_partition(n//2)
+        else:
+            c = comb(n, ceil(n/2)) + comb(n, floor(n/2))
+            partition = self.get_partition(ceil(n/2)) + self.get_partition(floor(n/2))
+        partition.sort()
+        RHS = ceil(n/2) - 1
+        LHS = ceil(n/2)
+        a = c * (LHS/(LHS + RHS))      # a is the number of x on the left hand side
+        b = c * (RHS/(LHS + RHS))      # b is the number of x on the right hand side
+        
+        # print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {partition}')
+        return a, b, c, partition
+
+    def get_partition(self, ones: int) -> list:
+        '''get the coefficients (binary format) that has ones number of 1
+        Args:
+            ones -- number of 1
+        Return:
+            list of coefficients in the paritition that has ones number of 1
+        '''
+        def dfs(stack, i, counter):
+            if i == self.num_sensor:
+                if counter == ones:
+                    ans.append(''.join(stack))
+                return
+            
+            dfs(stack + ['0'], i+1, counter)
+            dfs(stack + ['1'], i+1, counter+1)
+
+        ans = []
+        dfs(stack=[], i=0, counter=0)
+        return ans
+
+
 
 def theorem(n):
-    from math import comb
     lst = []
     for k in range(2, n-1):
         a = comb(n-2, k-2) + comb(n-2, k)
@@ -110,7 +152,6 @@ def theorem(n):
 
 
 def theorem2(n):
-    from math import comb
     lst = []
     for i in range(1, n):
         a = comb(i, 2) + comb(n-i, 2)
@@ -129,27 +170,37 @@ def main1(num_sensor):
     eg.analyze_equations()
     eg.rewrite_equations()
 
-    for key in eg.z:
-        print(eg.z[key])
-        print(eg.z_e[key])
-        print(eg.equations[key])
-        print()
+    # for key in eg.z:
+    #     print(eg.z[key])
+    #     print(eg.z_e[key])
+    #     print(eg.equations[key])
+    #     print()
 
     print(f'n={num_sensor}. The partitions:', end=' ')
     for key in eg.coeff_partition:
         print(key, end='  ')
     print()
 
-    print('The partitioned coefficients:')
-    for key in eg.coeff_partition:
-        print(key, ':', eg.coeff_partition[key], f', length = {len(eg.coeff_partition[key])}')
-    print()
+    # print('The partitioned coefficients:')
+    # for key in eg.coeff_partition:
+    #     print(key, ':', eg.coeff_partition[key], f', length = {len(eg.coeff_partition[key])}')
+    # print()
+
+    for key in eg.z:
+        print(eg.equations[key])
+        print()
+        break
+
+def main2(n):
+    eg = EquationGenerator(num_sensor=n)
+    eg.optimal_solution()
 
 
 if __name__ == '__main__':
     # num_sensor = int(sys.argv[1])
-    # for n in range(4, 5):
-    #     main1(n)
+    for n in range(3, 6):
+        main2(n)
+        # print('--------')
 
-    for n in range(3, 30):
-        theorem2(n)
+    # for n in range(3, 30):
+    #     theorem2(n)

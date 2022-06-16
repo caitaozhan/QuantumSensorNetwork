@@ -10,9 +10,11 @@ import random
 from bisect import bisect_left
 from qiskit_textbook.tools import random_state
 from qiskit.quantum_info.operators.operator import Operator
+from input_output import Default
 from quantum_state import QuantumState
 from utility import Utility
 from povm import Povm
+from equation_generator import EquationGenerator
 
 
 class OptimizeInitialState(QuantumState):
@@ -55,6 +57,60 @@ class OptimizeInitialState(QuantumState):
         np.random.seed(seed)
         self._state_vector = random_state(nqubits=self.num_sensor)
         self._method = 'Random'
+
+    def eigenvector(self, v1: np.array, v2: np.array, ev: str) -> np.array:
+        '''generate the eigenvector
+        Args:
+            v1 -- u+
+            v2 -- u-
+            j  -- the eigenvector to generate in binary string
+        Return:
+            eigenvector
+        '''
+        tensor = 1
+        for i in ev:
+            if i == '1':
+                tensor = np.kron(tensor, v1)
+            else:
+                tensor = np.kron(tensor, v2)
+        return tensor
+
+    def theorem(self, unitary_operator: Operator, unitary_theta: float):
+        '''implementing the theorem
+        '''
+        e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
+        theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
+        theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
+        v1 = e_vectors[:, 0]    # v1 is positive
+        v2 = e_vectors[:, 1]    # v2 is negative
+        if theta1 < theta2:
+            v1, v2, = v2, v1
+
+        eg = EquationGenerator(self.num_sensor)
+        RAD = 180 / np.pi
+        T = 0.5 * np.arccos(-(1 - 1/math.ceil(self.num_sensor/2)))
+        T *= RAD
+        if T - Default.EPSILON <= unitary_theta <= 180 - T + Default.EPSILON:  # orthogonal situation
+            a, b, c, partition = eg.optimal_solution()
+            coeff1 = np.sqrt(1 / (c - a*np.cos(2*unitary_theta/RAD) - b))  # for the symmetric partition
+            coeff2squared = (-a*np.cos(2*unitary_theta/RAD) - b) / (2*(c - a*np.cos(2*unitary_theta/RAD) - b))  # for partition 0 and n
+            coeff2squared = 0 if coeff2squared < 0 else coeff2squared
+            coeff2 = np.sqrt(coeff2squared)
+            states = []
+            for ev in partition:
+                e_vector = self.eigenvector(v1, v2, ev)
+                states.append(coeff1 * e_vector)
+            for ev in ['0'*self.num_sensor, '1'*self.num_sensor]:
+                e_vector = self.eigenvector(v1, v2, ev)
+                states.append(coeff2 * e_vector)
+            self._state_vector = np.sum(states, axis=0)
+        else:                                    # non-orthogonal situation
+            raise Exception('Not implemented')
+
+        if self.check_state() is False:
+            raise Exception(f'{self} is not a valid quantum state')
+        self._optimze_method = 'Theorem'
+
 
     def guess(self, unitary_operator: Operator, unitary_theta: float):
         '''do an eigenvalue decomposition, the two eigen vectors are |v> and |u>,
@@ -118,6 +174,27 @@ class OptimizeInitialState(QuantumState):
         '''
         qstate = QuantumState(self.num_sensor, self.state_vector)
         return self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+
+    def evaluate_orthogonal(self, unitary_operator: Operator):
+        '''verify if all |psi> are mutually orthogonal
+        '''
+        init_state = QuantumState(self.num_sensor, self.state_vector)
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+
+        for i in range(self.num_sensor):
+            for j in range(i + 1, self.num_sensor):
+                q1 = quantum_states[i].state_vector
+                q2 = quantum_states[j].state_vector
+                dot = np.dot(np.conj(q1), q2)
+                if abs(dot) > Default.EPSILON:
+                    return 0
+        return 1
+
 
     def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the initial state

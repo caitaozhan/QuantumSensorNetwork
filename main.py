@@ -74,6 +74,16 @@ if __name__ == '__main__':
     povm = Povm()
     outputs = []
 
+    if "Theorem" in methods:
+        opt_initstate = OptimizeInitialState(num_sensor)
+        opt_initstate.theorem(unitary_operator, unitary_theta)
+        # success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
+        success = opt_initstate.evaluate_orthogonal(unitary_operator)
+        success = round(success, 7)
+        error = round(1-success, 7)
+        theorem_output = GuessOutput(experiment_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
+        outputs.append(theorem_output)  # Theorem and Guess share the same output format
+
     if "Guess" in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
         opt_initstate.guess(unitary_operator, unitary_theta)
