@@ -55,6 +55,9 @@ if __name__ == '__main__':
     parser.add_argument('-e1', '--eta1', type=int, nargs=1, default=[Default.eta1], help='cognitive constant')
     parser.add_argument('-e2', '--eta2', type=int, nargs=1, default=[Default.eta2], help='social constant')
 
+    # below are for theorem when theta < T (temporary putting in experiment_id, may be removed)
+    parser.add_argument('-pa', '--partition', type=int, nargs=1, default=[1], help='the partition used to give positive coefficients')
+
 
     args = parser.parse_args()
     experiment_id = args.experiment_id[0]
@@ -75,13 +78,14 @@ if __name__ == '__main__':
     outputs = []
 
     if "Theorem" in methods:
+        partition = args.partition[0]
         opt_initstate = OptimizeInitialState(num_sensor)
-        opt_initstate.theorem(unitary_operator, unitary_theta)
-        # success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
-        success = opt_initstate.evaluate_orthogonal(unitary_operator)
+        opt_initstate.theorem(unitary_operator, unitary_theta, partition)
+        success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
+        # success = opt_initstate.evaluate_orthogonal(unitary_operator)
         success = round(success, 7)
         error = round(1-success, 7)
-        theorem_output = GuessOutput(experiment_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
+        theorem_output = GuessOutput(partition, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(theorem_output)  # Theorem and Guess share the same output format
 
     if "Guess" in methods:

@@ -3,6 +3,7 @@ Automatically generate euqations
 '''
 
 from math import comb, ceil, floor
+import numpy as np
 import sys
 from collections import defaultdict, Counter
 
@@ -125,7 +126,7 @@ class EquationGenerator:
             (float, float, float, list)
         '''
         n = self.num_sensor
-        c = comb(n, floor(n/2))          # c is total number of x (x is on the partition with the smallest RHS/LHS)
+        c = comb(n, floor(n/2))        # c is total number of x (x is on the partition with the smallest RHS/LHS)
         partition = self.get_partition(floor(n/2))
         partition.sort()
         RHS = ceil(n/2) - 1
@@ -135,6 +136,39 @@ class EquationGenerator:
         
         print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
         return a, b, c, partition
+
+    def optimal_solution_smallerT_i(self, theta: float, i: int):
+        '''Gives the |Sl|, LHS, RHS, and partition for the i_th partition
+        Args:
+            theta -- the theta (in degrees) of the unitary operator
+            i     -- the i_th partition
+        Return:
+            list
+        '''
+        n = self.num_sensor
+        c = comb(n, i)
+        partition = self.get_partition(i)
+        partition.sort()
+        RHS = comb(i, 2) + comb(n-i, 2)
+        LHS = comb(i, 1) * comb(n-i, 1)
+        a = c * (LHS/(LHS + RHS))   # L_l
+        b = c * (RHS/(LHS + RHS))   # R_l
+        RAD = 180 / np.pi
+        value = b + np.cos(2*theta/RAD)*a
+        print(f'theta={theta}, i={i}, cos(2theta)*L_l+R_l={value:0.3f}, L_l={int(a)}, R_l={int(b)}, cos(2thata)={np.cos(2*theta/RAD):.3f}, partition={0}')
+        return partition
+
+    def optimal_solution_smallerT(self):
+        '''Gives the |Sl|, LHS, RHS, and partition for the i_th partition
+        Return:
+            list
+        '''
+        n = self.num_sensor
+        i = floor(n/2)
+        partition = self.get_partition(i)
+        partition.sort()
+        return partition
+
 
     def get_partition(self, ones: int) -> list:
         '''get the coefficients (binary format) that has ones number of 1
@@ -184,6 +218,8 @@ def theorem2(n):
     print(']')
 
 def main1(num_sensor):
+    '''list all the equations
+    '''
     eg = EquationGenerator(num_sensor)
     eg.set_z()
     eg.set_equations()
@@ -212,15 +248,26 @@ def main1(num_sensor):
         break
 
 def main2(n):
+    '''return the optimal solution for [T, 180-T]
+    '''
     eg = EquationGenerator(num_sensor=n)
     # eg.optimal_solution()
     eg.optimal_solution_nomerge()
 
+def main3(n):
+    '''return the optimal solution for [0, T]
+    '''
+    eg = EquationGenerator(n)
+    for theta in range(35, 70, 10):
+        for i in range(n+1):
+            eg.optimal_solution_smallerT_i(theta, i)
+        print('---')
+
 
 if __name__ == '__main__':
     # num_sensor = int(sys.argv[1])
-    for n in range(3, 11):
-        main2(n)
+    for n in range(5, 6):
+        main3(n)
         # print('--------')
 
     # for n in range(3, 30):

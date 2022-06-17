@@ -75,7 +75,7 @@ class OptimizeInitialState(QuantumState):
                 tensor = np.kron(tensor, v2)
         return tensor
 
-    def theorem(self, unitary_operator: Operator, unitary_theta: float):
+    def theorem(self, unitary_operator: Operator, unitary_theta: float, partition_i: int):
         '''implementing the theorem
         '''
         e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
@@ -90,22 +90,29 @@ class OptimizeInitialState(QuantumState):
         RAD = 180 / np.pi
         T = 0.5 * np.arccos(-(1 - 1/math.ceil(self.num_sensor/2)))
         T *= RAD
-        if T - Default.EPSILON <= unitary_theta <= 180 - T + Default.EPSILON:  # orthogonal situation
+        if T - Default.EPSILON <= unitary_theta <= 180 - T + Default.EPSILON:  # mutual orthogonal situation
             a, b, c, partition = eg.optimal_solution_nomerge()
-            coeff1 = np.sqrt(1 / (c - a*np.cos(2*unitary_theta/RAD) - b))  # for the symmetric partition
-            coeff2squared = (-a*np.cos(2*unitary_theta/RAD) - b) / (2*(c - a*np.cos(2*unitary_theta/RAD) - b))  # for partition 0 and n
+            coeff1 = np.sqrt(1 / (c - a*np.cos(2*unitary_theta/RAD) - b))                                   # for the symmetric partition, no merging
+            coeff2squared = (-a*np.cos(2*unitary_theta/RAD) - b) / (c - a*np.cos(2*unitary_theta/RAD) - b)  # for partition 0, no merging
             coeff2squared = 0 if coeff2squared < 0 else coeff2squared
             coeff2 = np.sqrt(coeff2squared)
             states = []
             for ev in partition:
                 e_vector = self.eigenvector(v1, v2, ev)
                 states.append(coeff1 * e_vector)
-            for ev in ['0'*self.num_sensor, '1'*self.num_sensor]:
+            for ev in ['0'*self.num_sensor]:
                 e_vector = self.eigenvector(v1, v2, ev)
                 states.append(coeff2 * e_vector)
             self._state_vector = np.sum(states, axis=0)
-        else:                                    # non-orthogonal situation
-            raise Exception('Not implemented')
+        else:                                                                  # non mutual orthogonal situation
+            # partition = eg.optimal_solution_smallerT_i(unitary_theta, partition_i)
+            partition = eg.optimal_solution_smallerT()
+            coeff = np.sqrt(1/len(partition))
+            states = []
+            for ev in partition:
+                e_vector = self.eigenvector(v1, v2, ev)
+                states.append(coeff * e_vector)
+            self._state_vector = np.sum(states, axis=0)
 
         if self.check_state() is False:
             raise Exception(f'{self} is not a valid quantum state')
