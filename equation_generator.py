@@ -154,8 +154,8 @@ class EquationGenerator:
         a = c * (LHS/(LHS + RHS))   # L_l
         b = c * (RHS/(LHS + RHS))   # R_l
         RAD = 180 / np.pi
-        value = b + np.cos(2*theta/RAD)*a
-        print(f'theta={theta}, i={i}, cos(2theta)*L_l+R_l={value:0.3f}, L_l={int(a)}, R_l={int(b)}, cos(2thata)={np.cos(2*theta/RAD):.3f}, partition={0}')
+        value = (b + np.cos(2*theta/RAD)*a)/c
+        print(f'theta={theta}, i={i}, (cos(2theta)*L_l+R_l)/size={value:0.3f} -- L_l={int(a)}, R_l={int(b)}, cos(2theta)={np.cos(2*theta/RAD):.3f}')
         return partition
 
     def optimal_solution_smallerT(self):
@@ -258,7 +258,7 @@ def main3(n):
     '''return the optimal solution for [0, T]
     '''
     eg = EquationGenerator(n)
-    for theta in range(35, 70, 10):
+    for theta in range(1, 71, 2):
         for i in range(n+1):
             eg.optimal_solution_smallerT_i(theta, i)
         print('---')
@@ -266,7 +266,7 @@ def main3(n):
 
 if __name__ == '__main__':
     # num_sensor = int(sys.argv[1])
-    for n in range(5, 6):
+    for n in range(10,11):
         main3(n)
         # print('--------')
 
