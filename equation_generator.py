@@ -134,7 +134,7 @@ class EquationGenerator:
         a = c * (LHS/(LHS + RHS))      # a is the number of x on the left hand side
         b = c * (RHS/(LHS + RHS))      # b is the number of x on the right hand side
         
-        print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
+        # print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
         return a, b, c, partition
 
     def optimal_solution_smallerT_i(self, theta: float, i: int):

@@ -202,6 +202,28 @@ class OptimizeInitialState(QuantumState):
                     return 0
         return 1
 
+    def get_innerproducts(self, unitary_operator: Operator):
+        '''get the innerproduct between every pair of <\phi_i|\phi_j>
+        '''
+        init_state = QuantumState(self.num_sensor, self.state_vector)
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+
+        innerprods = []
+        for i in range(self.num_sensor):
+            for j in range(i + 1, self.num_sensor):
+                q1 = quantum_states[i].state_vector
+                q2 = quantum_states[j].state_vector
+                dot = np.dot(np.conj(q1), q2)
+                innerprods.append((i, j, round(abs(dot), 6)))
+        dot = innerprods[0][2]
+        conjecture = (self.num_sensor-1)/self.num_sensor * (1 - math.sqrt(1-dot**2))
+        print(f'conjuecture = {conjecture}')
+        return innerprods
 
     def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the initial state

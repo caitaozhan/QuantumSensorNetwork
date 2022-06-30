@@ -68,14 +68,14 @@ if __name__ == '__main__':
     base_args = ["-us", "2", "-m", "Theorem"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 5
+    num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    # output_dir  = 'result-tmp/'
-    output_dir  = 'result/6.17.2022'
-    output_file = 'varying_theta_5sensors_theorem'
-    # output_file = 'foo2'
-    thetas      = [i for i in range(66, 180)]
+    output_dir  = 'result-tmp/'
+    # output_dir  = 'result/6.17.2022'
+    # output_file = 'varying_theta_5sensors_theorem_unequalprior'
+    output_file = 'foo2'
+    thetas      = [i for i in range(1, 82, 10)]
     start_seed  = [0]
     # partition   = [i for i in range(num_sensor+1)]
     partition   = [0]
@@ -91,16 +91,15 @@ if __name__ == '__main__':
     ps = []
     tasks = []
     for x in thetas:
-        y = 0
-        for partition_i in partition:
-        # for y in start_seed:
-            args = set_numsensor_prior(base_args, num_sensor, equal)
-            args = set_eval_metric(args, eval_metric)
-            args = set_unitary_theta(args, x)
-            args = set_startseed(args, y)
-            args = set_log(args, output_dir, output_file)
-            args = set_partition(args, partition_i)
-            tasks.append(command + args)
+        for y in start_seed:
+            for partition_i in partition:
+                args = set_numsensor_prior(base_args, num_sensor, equal)
+                args = set_eval_metric(args, eval_metric)
+                args = set_unitary_theta(args, x)
+                args = set_startseed(args, y)
+                args = set_log(args, output_dir, output_file)
+                args = set_partition(args, partition_i)
+                tasks.append(command + args)
     
     print(f'total number of tasks = {len(tasks)}')
     
