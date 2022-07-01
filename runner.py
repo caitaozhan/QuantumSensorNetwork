@@ -59,26 +59,24 @@ if __name__ == '__main__':
     # print('start working')
 
     command = ['python', 'main.py']
-    # base_args = ["-us", "2", "-m", "Guess", "Hill climbing", "",  "-mi", "100", "-rn", "True"]
+    # base_args = ["-us", "2", "-m", "Guess", "Hill climbing",  "-mi", "100", "-rn", "True"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
     # base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "2", "-m", "Theorem"]
+    base_args = ["-us", "2", "-m", "Guess", "Theorem", "Hill climbing", "-mi", "100", "-rn", "True"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 4
-    equal       = True
+    num_sensor  = 5
+    equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
-    output_dir  = 'result-tmp/'
-    # output_dir  = 'result/6.17.2022'
-    # output_file = 'varying_theta_5sensors_theorem_unequalprior'
-    output_file = 'foo2'
-    thetas      = [i for i in range(1, 82, 10)]
+    # output_dir  = 'result-tmp/'
+    output_dir  = 'result/6.30.2022'
+    output_file = 'varying_theta_5sensors_theorem_unequalprior'
+    # output_file = 'foo2'
+    thetas      = [i for i in range(11, 52, 20)]
     start_seed  = [0]
-    # partition   = [i for i in range(num_sensor+1)]
-    partition   = [0]
 
     # num_sensor  = 2
     # equal       = False
@@ -92,14 +90,12 @@ if __name__ == '__main__':
     tasks = []
     for x in thetas:
         for y in start_seed:
-            for partition_i in partition:
-                args = set_numsensor_prior(base_args, num_sensor, equal)
-                args = set_eval_metric(args, eval_metric)
-                args = set_unitary_theta(args, x)
-                args = set_startseed(args, y)
-                args = set_log(args, output_dir, output_file)
-                args = set_partition(args, partition_i)
-                tasks.append(command + args)
+            args = set_numsensor_prior(base_args, num_sensor, equal)
+            args = set_eval_metric(args, eval_metric)
+            args = set_unitary_theta(args, x)
+            args = set_startseed(args, y)
+            args = set_log(args, output_dir, output_file)
+            tasks.append(command + args)
     
     print(f'total number of tasks = {len(tasks)}')
     
