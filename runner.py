@@ -68,12 +68,12 @@ if __name__ == '__main__':
     base_args = ["-us", "2", "-m", "Guess", "Theorem", "Hill climbing", "-mi", "100", "-rn", "True"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 5
+    num_sensor  = 4
     equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous'
     # output_dir  = 'result-tmp/'
     output_dir  = 'result/6.30.2022'
-    output_file = 'varying_theta_5sensors_theorem_unequalprior'
+    output_file = 'varying_theta_4sensors_theorem_unequalprior'
     # output_file = 'foo2'
     thetas      = [i for i in range(11, 52, 20)]
     start_seed  = [0]
