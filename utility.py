@@ -150,3 +150,13 @@ class Utility:
         else:
             raise Exception('Failed to generate an unitary matrix')
 
+    @staticmethod
+    def trace_norm(density_matrix: np.array):
+        '''definition of trace norm: https://www.quantiki.org/wiki/trace-norm
+           for density matrix, the trace norm is the summation of the absolute value of eigenvalues
+        '''
+        e_vals, _ = np.linalg.eig(density_matrix)
+        summ = 0
+        for e_val in e_vals:
+            summ += abs(e_val)
+        return summ

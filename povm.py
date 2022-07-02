@@ -65,8 +65,8 @@ class Povm:
         M0 = np.outer(eigenvectors[:, eig1], np.conj(eigenvectors[:, eig1]))
         M1 = np.outer(eigenvectors[:, eig2], np.conj(eigenvectors[:, eig2]))
 
-        if eigenvals[eig1] < 0:  # positive and negative parts
-            M0, M1 = M1, M0
+        if eigenvals[eig1] < 0:  # positive and negative parts NOTE: python's complex datatype cannot be compared with complex or int. Only numpy.complex128 can compare
+            M0, M1 = M1, M0                                        # how numpy.complex128 compare: first compare the the real part, then compare the imaginary part
         self._operators = [Operator(M0), Operator(M1)]
         self._theoretical_error = 1 - (1 + abs(eigenvals[eig1]) + abs(eigenvals[eig2])) / 2
         self._method = 'Minimum Error'

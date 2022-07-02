@@ -34,7 +34,7 @@ class OptimizeInitialState(QuantumState):
         return s + parent
 
     def upperbound(self, unitary_operator: Operator, priors: list):
-        '''an upper bound from equation (10) of this paper: https://arxiv.org/pdf/1509.04592.pdf
+        '''an upper bound from equation (10) of paper: https://arxiv.org/pdf/1509.04592.pdf
         '''
         init_state = QuantumState(self.num_sensor, self.state_vector)
         quantum_states = []
@@ -50,6 +50,25 @@ class OptimizeInitialState(QuantumState):
                 psi_j = quantum_states[j].state_vector
                 summ += 2 * np.sqrt(abs(((priors[i] + priors[j])/2)**2 - priors[i]*priors[j]*(abs(np.dot(np.conj(psi_i), psi_j)))**2))
         return 1./self.num_sensor + 1./(2*self.num_sensor)*summ
+    
+    def upperbound_new(self, unitary_operator: Operator, priors: list):
+        '''a new upper bound from equation (53) of paper: https://journals.aps.org/pra/pdf/10.1103/PhysRevA.105.032410
+        '''
+        init_state = QuantumState(self.num_sensor, self.state_vector)
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+        summ = 0
+        for i in range(self.num_sensor):
+            for j in range(i + 1, self.num_sensor):
+                rho_i = quantum_states[i].density_matrix
+                rho_j = quantum_states[j].density_matrix                
+                density_matrix = priors[i] * rho_i - priors[j] * rho_j
+                summ += Utility.trace_norm(density_matrix)
+        return 1/self.num_sensor * (1 + summ)
 
     def random(self, seed, unitary_operator: Operator):
         '''ignore the unitary operator and randomly initialize a quantum state

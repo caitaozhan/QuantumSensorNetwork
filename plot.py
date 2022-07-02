@@ -507,17 +507,21 @@ def upperbound():
             y_hillclimb_success.append(y_hillclimb1[i][0])
     
     y_guess_ub = []
+    y_guess_ubnew = []
     for unitary_theta, init_state_str in zip(X, y_guess):
         opt_initstate = OptimizeInitialState(num_sensor)
         opt_initstate.set_statevector_from_str(init_state_str)
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
         y_guess_ub.append(opt_initstate.upperbound(unitary_operator, priors))
+        y_guess_ubnew.append(opt_initstate.upperbound_new(unitary_operator, priors))
     y_hillclimb_ub = []
+    y_hillclimb_ubnew = []
     for unitary_theta, init_state in zip(X, y_hillclimb):
         opt_initstate = OptimizeInitialState(num_sensor)
         opt_initstate.set_statevector_from_str(init_state)
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
         y_hillclimb_ub.append(opt_initstate.upperbound(unitary_operator, priors))
+        y_hillclimb_ubnew.append(opt_initstate.upperbound_new(unitary_operator, priors))
     
     y_theory = []
     for x in X:
@@ -527,24 +531,26 @@ def upperbound():
     fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
     ax.plot(X, y_theory, label='Guess')
     ax.plot(X, y_guess_ub, label='Guess, Upper bound')
+    ax.plot(X, y_guess_ubnew, label='Guess, Upper bound new')
     ax.legend()
     ax.set_xlabel('Theta (in degrees)')
     ax.set_ylabel('Success Probability')
     ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    filename = 'result/4.6.2022/varying_theta_guess_upperbound'
+    filename = 'result/7.1.2022/varying_theta_guess_upperbound'
     fig.savefig(filename)
 
     fig, ax = plt.subplots(1, 1, figsize=(35, 25))
     fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
     ax.plot(X, y_hillclimb_success, label='Hill climbing')
     ax.plot(X, y_hillclimb_ub, label='Hill climbing, Upper bound')
+    ax.plot(X, y_hillclimb_ubnew, label='Hill climbing, Upper bound new')
     ax.legend()
     ax.set_xlabel('Theta (in degrees)')
     ax.set_ylabel('Success Probability')
     ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    filename = 'result/4.6.2022/varying_theta_hillclimbing_upperbound'
+    filename = 'result/7.1.2022/varying_theta_hillclimbing_upperbound'
     fig.savefig(filename)
 
 
@@ -1006,18 +1012,18 @@ if __name__ == '__main__':
     # vary_numsensors()
     # vary_startseed()
 
-    draw = False
-    guess_2s, hillclimb_2s = special_u_2sensor(draw)
-    guess_3s, hillclimb_3s = special_u_3sensor(draw)
-    guess_4s, hillclimb_4s = special_u_4sensor(draw)
-    guess_5s, hillclimb_5s = special_u_5sensor(draw)
-    special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
+    # draw = False
+    # guess_2s, hillclimb_2s = special_u_2sensor(draw)
+    # guess_3s, hillclimb_3s = special_u_3sensor(draw)
+    # guess_4s, hillclimb_4s = special_u_4sensor(draw)
+    # guess_5s, hillclimb_5s = special_u_5sensor(draw)
+    # special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
     # special_u_2()
     # nonentangled_3sensors(guess_3s, hillclimb_3s)
 
     # print_results()
 
-    # upperbound()
+    upperbound()
 
 
     # hillclimb_bugfix()
