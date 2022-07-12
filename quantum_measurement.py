@@ -10,6 +10,7 @@ from input_output import Default
 from qiskit.quantum_info.operators.operator import Operator
 from povm import Povm
 
+
 class QuantumMeasurement:
     '''Encapsulate the quantum measurement process
     '''

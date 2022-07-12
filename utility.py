@@ -125,7 +125,7 @@ class Utility:
             np.random.seed(num_sensor)
             p = []
             for _ in range(num_sensor):
-                p.append(np.random.rand())
+                p.append(np.random.rand()**2)
             p = np.array(p)
             return p / np.sum(p)
 

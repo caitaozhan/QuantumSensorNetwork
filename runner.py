@@ -65,17 +65,17 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "2", "-m", "Guess", "Theorem", "Hill climbing", "-mi", "100", "-rn", "True"]
+    base_args = ["-us", "2", "-m", "Theorem", "Hill climbing", "-mi", "100", "-rn", "True"]
 
     # 5 sensors experiment, in case it crashes again
-    num_sensor  = 4
+    num_sensor  = 3
     equal       = False
-    eval_metric = 'min error'  # 'min error' or 'unambiguous'
+    eval_metric = 'computational'  # 'min error' or 'unambiguous' or 'computational'
     # output_dir  = 'result-tmp/'
-    output_dir  = 'result/6.30.2022'
-    output_file = 'varying_theta_4sensors_theorem_unequalprior'
+    output_dir  = 'result/7.11.2022'
+    output_file = 'varying_theta_3sensors_computational'
     # output_file = 'foo2'
-    thetas      = [i for i in range(11, 52, 20)]
+    thetas      = [i for i in range(51, 52, 100)]
     start_seed  = [0]
 
     # num_sensor  = 2

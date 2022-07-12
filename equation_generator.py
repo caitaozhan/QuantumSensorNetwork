@@ -127,7 +127,7 @@ class EquationGenerator:
         '''
         n = self.num_sensor
         c = comb(n, floor(n/2))        # c is total number of x (x is on the partition with the smallest RHS/LHS)
-        partition = self.get_partition(floor(n/2))
+        partition = self.get_partition(floor(n/2)) # the middle partition
         partition.sort()
         RHS = ceil(n/2) - 1
         LHS = ceil(n/2)
@@ -159,7 +159,7 @@ class EquationGenerator:
         return partition
 
     def optimal_solution_smallerT(self):
-        '''Gives the |Sl|, LHS, RHS, and partition for the i_th partition
+        '''Always pick the middle partition
         Return:
             list
         '''

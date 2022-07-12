@@ -3,13 +3,16 @@ Positive operator valued measurement
 '''
 
 import math
-from tabnanny import verbose
+import random
 import numpy as np
 import cvxpy as cp
+from itertools import accumulate
+from bisect import bisect_left
 from scipy.linalg import sqrtm
 from qiskit.quantum_info.operators.operator import Operator
 from utility import Utility
 from input_output import Default
+
 
 class Povm:
     '''encapsulate positive operator valued measurement
@@ -42,10 +45,73 @@ class Povm:
             string += str(M.data) + '\n\n'
         return string
 
-    def computational_basis(self):
-        M0 = np.outer([1, 0], [1, 0])
-        M1 = np.outer([0, 1], [0, 1])
-        self._operators = [Operator(M0), Operator(M1)]
+    def _sample(self, prefix):
+        '''sample from a prefix sum array (the total summation is one)
+        Return:
+            int: the index of the randomly picked quantum state
+        '''
+        pick = random.random()
+        return bisect_left(prefix, pick)
+
+    def simulate(self, quantum_states: list, priors: list, seed: int = 0, repeat: int = 10_000):
+        '''repeat the single-shot measurement many times
+        Return:
+            float: the error probability
+        '''
+        memory = {}
+        def compute_prob(pick: int, density_operator: Operator, i: int, Pi: Operator):
+            '''use memory to save time
+            '''
+            if (pick, i) in memory:
+                return memory[(pick, i)]
+            tmp = Pi.dot(density_operator)
+            prob = np.trace(tmp.data)
+            memory[(pick, i)] = prob
+            return prob
+
+        random.seed(seed)
+        prior_prefix = list(accumulate(priors))
+        index = 0
+        error_count = 0
+        while index < repeat:
+            # step 1: alice sample a quantum state during preparation, and send to bob
+            pick = self._sample(prior_prefix)
+            prepared_quantum_state = quantum_states[pick]
+
+            # step 2: bob receives the quantum state and does the measurement
+            probs = []
+            for i, Pi in enumerate(self._operators):
+                density_operator = Operator(prepared_quantum_state.density_matrix)
+                # tmp = Pi.dot(density_operator)
+                # prob = np.trace(tmp.data)
+                prob = compute_prob(pick, density_operator, i, Pi)
+                probs.append(prob)
+            
+            # step 3: collect the error stats
+            probs_prefix = list(accumulate(probs))
+            measure = self._sample(probs_prefix)
+            if pick != measure:
+                error_count += 1
+            index += 1
+
+        return 1.*error_count / repeat
+
+
+    def computational_basis(self, num_sensor: int, quantum_states: list, priors: list):
+        '''using a fixed computational basis, get the success probability empirically through simulation
+        '''
+        self._operators = []
+        vec_template = [0] * 2**num_sensor
+        for i in range(2**num_sensor):
+            vec = vec_template.copy()
+            vec[i] = 1
+            M = Operator(np.outer(vec, vec))
+            self._operators.append(M)
+
+        self._theoretical_error = self.simulate(quantum_states, priors)
+        self._theoretical_success = 1 - self._theoretical_error
+        self._method = 'computational'
+
 
     def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = True):
         '''for two state (single sensor) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.

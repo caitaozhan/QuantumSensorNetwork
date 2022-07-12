@@ -256,6 +256,8 @@ class OptimizeInitialState(QuantumState):
                 povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=True)
             except Exception as e:
                 raise e
+        elif eval_metric == 'computational':
+            povm.computational_basis(self.num_sensor, quantum_states, priors)
         else:
             raise Exception(f'unknown eval_metric: {eval_metric}!')
         return povm.theoretical_success
