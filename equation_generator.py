@@ -176,6 +176,7 @@ class EquationGenerator:
             ones -- number of 1
         Return:
             list of coefficients in the paritition that has ones number of 1
+            eg: ['001', '010', '100']
         '''
         def dfs(stack, i, counter):
             if i == self.num_sensor:
