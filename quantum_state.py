@@ -84,6 +84,21 @@ class QuantumState:
         squared_sum = np.sum(np.power(self._state_vector, 2))
         self._state_vector /= np.sqrt(squared_sum)
 
+    def init_random_state_realnumber_partition(self, seed: int, partitions: list, varying: int):
+        '''init a random quantum state with real number amplitudes
+           coefficients at each partition except the partition i are the same. In partition varying, the coefficients are different.
+        '''
+        if seed is not None:
+            np.random.seed(seed)
+        self._state_vector = np.random.random(2**self.num_sensor)
+        for i, partition in enumerate(partitions):
+            if i != varying:
+                fixed = self._state_vector[partition[0]]   # every coefficient in the partition equals to the first coefficient
+                for j in partition:
+                    self._state_vector[j] = fixed
+        squared_sum = np.sum(np.power(self._state_vector, 2))
+        self._state_vector /= np.sqrt(squared_sum)
+
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
         Args:

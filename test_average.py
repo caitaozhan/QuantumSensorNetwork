@@ -103,7 +103,12 @@ def main2(debug, seed):
     povm = Povm()
     # 1. random initial state and random unitary operator
     init_state = QuantumState(num_sensor)
-    init_state.init_random_state_realnumber(seed)
+    eg = EquationGenerator(num_sensor)
+    partitions = []
+    for i in range(num_sensor+1):
+        partition = eg.get_partition(i)
+        partitions.append([int(bin_string, 2) for bin_string in partition])
+    init_state.init_random_state_realnumber_partition(seed, partitions, varying=1)
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
     print(f'Initial state:\n{init_state}')
     Utility.print_matrix('Unitary operator:', U.data)
@@ -118,7 +123,6 @@ def main2(debug, seed):
     povm.semidefinite_programming_minerror(quantum_states, priors, debug)
     print(f'the probability of error is {povm.theoretical_error:.5f}')
     # 3. average the coefficients of same partitions
-    eg = EquationGenerator(num_sensor)
     init_state_avg = deepcopy(init_state)
     for i in range(num_sensor+1):
         partition = eg.get_partition(i)
