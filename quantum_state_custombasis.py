@@ -6,21 +6,28 @@ from utility import Utility
 from input_output import Default
 
 
-class QuantumState:
+class QuantumStateCustomBasis:
     '''Encapsulate a (pure) quantum state, i.e. a complex vector in the Hilbert space.
-       Using two-level quantum state, i.e., qubits
+       Two-level quantum state, i.e., qubits
        One quantum sensor is represented by a single qubit quantum state
        N quantum sensor are represented by a N qubit quantum state
+       The coefficients of this 
     '''
-    def __init__(self, num_sensor: int, state_vector: np.array = None):
+    def __init__(self, num_sensor: int, custom_basis: list, state_vector_custom: np.array = None, state_vector: np.array = None):
         '''
         Args:
             num_sensor: number of sensor (i.e, detector)
+            custom_basis: custom basis (not the computationali basis)
+            state_vector_custom: a state vector of dimension 2**num_sensor (coefficients in the custom basis)
             state_vector: a state vector of dimension 2**num_sensor (coefficients in the computational basis)
         '''
         self._num_sensor = num_sensor
+        self._custom_basis = custom_basis
+        self._state_vector_custom = state_vector_custom
         self._state_vector = state_vector
         self._density_matrix = None
+        if self._state_vector_custom is not None:
+            self.custom2computational()
 
     @property
     def num_sensor(self):
@@ -29,6 +36,18 @@ class QuantumState:
     @property
     def state_vector(self):
         return self._state_vector
+    
+    @property
+    def state_vector_custom(self):
+        return self._state_vector_custom
+    
+    @property
+    def custom_basis(self):
+        return self._custom_basis
+
+    @state_vector_custom.setter
+    def state_vector_custom(self, vector: np.array):
+        self._state_vector_custom = vector
 
     @state_vector.setter
     def state_vector(self, vector: np.array):
@@ -41,6 +60,13 @@ class QuantumState:
                 raise Exception('state_vector is None!')
             self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...
         return self._density_matrix
+
+    def custom2computational(self):
+        '''from coefficients in the custom basis to the coefficients in the computational basis
+        '''
+        self._state_vector = self._state_vector_custom[0] * self._custom_basis[0]
+        for i in range(1, 2**self.num_sensor):
+            self._state_vector += self._state_vector_custom[i] * self._custom_basis[i]
 
     def check_state(self):
         '''check if the amplitudes norm_squared add up to one
@@ -74,15 +100,17 @@ class QuantumState:
         '''init a random quantum state'''
         if seed is not None:
             np.random.seed(seed)
-        self._state_vector = random_state(self.num_sensor)
+        self._state_vector_custom = random_state(self.num_sensor)
+        self.custom2computational()
 
     def init_random_state_realnumber(self, seed: int = None):
         '''init a random quantum state with real number amplitudes'''
         if seed is not None:
             np.random.seed(seed)
-        self._state_vector = np.random.random(2**self.num_sensor)
-        squared_sum = np.sum(np.power(self._state_vector, 2))
-        self._state_vector /= np.sqrt(squared_sum)
+        self._state_vector_custom = np.random.random(2**self.num_sensor)
+        squared_sum = np.sum(np.power(self._state_vector_custom, 2))
+        self._state_vector_custom /= np.sqrt(squared_sum)
+        self.custom2computational()
 
     def init_random_state_realnumber_partition(self, seed: int, partitions: list, varying: int):
         '''init a random quantum state with real number amplitudes
@@ -90,14 +118,16 @@ class QuantumState:
         '''
         if seed is not None:
             np.random.seed(seed)
-        self._state_vector = np.random.random(2**self.num_sensor)
+        self._state_vector_custom = np.random.random(2**self.num_sensor)
         for i, partition in enumerate(partitions):
             if i != varying:
-                fixed = self._state_vector[partition[0]]   # every coefficient in the partition equals to the first coefficient
+                fixed = self._state_vector_custom[partition[0]]   # every coefficient in the partition equals to the first coefficient
                 for j in partition:
-                    self._state_vector[j] = fixed
-        squared_sum = np.sum(np.power(self._state_vector, 2))
-        self._state_vector /= np.sqrt(squared_sum)
+                    self._state_vector_custom[j] = fixed
+        squared_sum = np.sum(np.power(self._state_vector_custom, 2))
+        self._state_vector_custom /= np.sqrt(squared_sum)
+        self.custom2computational()
+        # print('init_random_state_realnumber_partition', self.check_state())
 
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
@@ -111,8 +141,35 @@ class QuantumState:
         else:
             raise Exception('state_vector and operator dimension not equal')
 
-    def __str__(self):
+    def custombasis2string(self):
         string = ''
+        for vec in self.custom_basis:
+            string += '['
+            for c in vec:
+                real = f'{c.real:.3f}'
+                imag = f'{c.imag:.3f}'
+                if imag[0] != '-':
+                    imag = '+' + imag
+                c_str = f'{real:>6}{imag:>6}i '
+                string += c_str
+            string += ']\n'
+        return string
+
+    def __str__(self):
+        string = '\nCustom Basis:\n'
+        string += self.custombasis2string()
+        string += '\nCoefficients in custom basis:\n'
+        index = 0
+        num_of_bit = math.ceil(math.log2(len(self.state_vector_custom)))
+        for index, amplitude in enumerate(self.state_vector_custom):
+            state = Utility.integer2bit(index, num_of_bit)
+            if type(amplitude) is np.complex128:
+                real = f'{amplitude.real:.6f}'
+                imag = f'{amplitude.imag:.6f}'
+                string += f'|{state}>: {real:>9} {imag:>9}i\n'
+            else:
+                string += f'|{state}>: {amplitude:.6f}\n'
+        string += '\nCoefficients in computational basis:\n'
         index = 0
         num_of_bit = math.ceil(math.log2(len(self.state_vector)))
         for index, amplitude in enumerate(self.state_vector):

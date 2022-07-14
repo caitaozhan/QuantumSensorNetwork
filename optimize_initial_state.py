@@ -82,7 +82,7 @@ class OptimizeInitialState(QuantumState):
         Args:
             v1 -- u+
             v2 -- u-
-            j  -- the eigenvector to generate in binary string
+            ev -- the eigenvector to generate in binary string, e.g., '0001'
         Return:
             eigenvector
         '''
