@@ -76,6 +76,14 @@ class QuantumState:
             np.random.seed(seed)
         self._state_vector = random_state(self.num_sensor)
 
+    def init_random_state_realnumber(self, seed: int = None):
+        '''init a random quantum state with real number amplitudes'''
+        if seed is not None:
+            np.random.seed(seed)
+        self._state_vector = np.random.random(2**self.num_sensor)
+        squared_sum = np.sum(np.power(self._state_vector, 2))
+        self._state_vector /= np.sqrt(squared_sum)
+
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
         Args:

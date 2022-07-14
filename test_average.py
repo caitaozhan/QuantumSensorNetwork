@@ -11,40 +11,36 @@ from copy import deepcopy
 from equation_generator import EquationGenerator
 
 
-def permute_init_state(init_state: QuantumState, permutation: list) -> list:
-    '''permute an initial state
-    Args:
-        init_state -- initial quantum state
-        permutation -- eg. [[1,2,4], [1,4,2], [2,1,4], [2,4,1], [4,1,2], [4,2,1]]
-    Return:
-        a list of initial states by permutation        
+def permutation(init_state: QuantumState):
+    '''001 --> 100, 010 --> 001, 100 --> 010
     '''
-    num_sensor = init_state.num_sensor
-    n = len(permutation)
-    init_states = []
-    index = sorted(permutation[0])
-    for k in range(n):
-        state_vector_copy = np.array(init_state.state_vector)
-        for i, j in zip(index, permutation[k]):
-            state_vector_copy[i] = init_state.state_vector[j]
-        init_state_new = QuantumState(num_sensor, state_vector_copy)
-        init_states.append((init_state_new, permutation[k]))
-    return init_states
+    n = init_state.num_sensor
+    mapping = [0]*2**n
+    for i in range(2**n):
+        bin_str = bin(i)[2:]
+        bin_str = '0' * (n-len(bin_str)) + bin_str
+        bin_str_permute = bin_str[-1] + bin_str[:-1]
+        j = int(bin_str_permute, 2)
+        mapping[i] = j
+    state_vector = np.array(init_state.state_vector)
+    for i in range(2**n):
+        state_vector[mapping[i]] = init_state.state_vector[i]
+    return QuantumState(n, state_vector)
 
-def average_init_state(init_state: QuantumState, permutation: list) -> QuantumState:
+
+def average_init_state(init_state: QuantumState, partition: list) -> QuantumState:
     '''averaging the same partition coefficients for an initial state
     Args:
         init_state -- initial quantum state
-        permutation -- eg. [[1,2,4], [1,4,2], [2,1,4], [2,4,1], [4,1,2], [4,2,1]]
+        partition -- eg. [1,2,4]
     Return:
         a quantum state after averaging
     '''
-    index = sorted(permutation[0])
     state_vector_copy = np.array(init_state.state_vector)
-    coeff = init_state.state_vector[index]
+    coeff = init_state.state_vector[partition]
     probs = [np.abs(co)**2 for co in coeff]
     abs_avg = np.sqrt(np.average(probs))
-    for i in index:
+    for i in partition:
         ratio = abs_avg / abs(state_vector_copy[i]) 
         state_vector_copy[i] *= ratio
     qstate = QuantumState(init_state.num_sensor, state_vector_copy)
@@ -52,7 +48,9 @@ def average_init_state(init_state: QuantumState, permutation: list) -> QuantumSt
     return qstate
 
 
-def main(debug, seed):
+def main1(debug, seed):
+    '''confirm that the permutations of an initial state has the same probability of error
+    '''
     print(f'seed is {seed}')
     unitary_theta = 44
     num_sensor = 3
@@ -74,34 +72,60 @@ def main(debug, seed):
         quantum_states.append(qstate)
     povm.semidefinite_programming_minerror(quantum_states, priors, debug)
     print(f'the probability of error is {povm.theoretical_error:.5f}')
-    # 3. do permutations
-    eg = EquationGenerator(num_sensor)
-    init_state_permutation = []
-    for i in range(num_sensor+1):
-        partition = eg.get_partition(i)
-        partition = [int(bin_string, 2) for bin_string in partition]
-        permutation = list(permutations(partition))
-        init_state_permutation.extend(permute_init_state(init_state, permutation))
-    # 4. do SDP for each new permutated initial state
-    for init_state, permutation in init_state_permutation:
-        quantum_states = []
-        for i in range(num_sensor):
-            evolve_operator = Utility.evolve_operator(U, num_sensor, i)
-            qstate = deepcopy(init_state)
-            qstate.evolve(evolve_operator)
-            quantum_states.append(qstate)
-        povm.semidefinite_programming_minerror(quantum_states, priors, debug)
-        print(f'the probability of error is {povm.theoretical_error:.5f} for permutation {permutation}')
+    # 3. do permutation
+    init_state_permutation = permutation(init_state)
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state_permutation)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
+    print(f'the probability of error is {povm.theoretical_error:.5f}')
+    init_state_permutation = permutation(init_state_permutation)
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state_permutation)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
+    print(f'the probability of error is {povm.theoretical_error:.5f}')
+    
+
+def main2(debug, seed):
+    '''test the averaging the coefficients in each partition will lead to a better initial state
+    '''
+    print(f'seed is {seed}')
+    unitary_theta = 50
+    num_sensor = 3
+    priors = [1/3, 1/3, 1/3]
+    povm = Povm()
+    # 1. random initial state and random unitary operator
+    init_state = QuantumState(num_sensor)
+    init_state.init_random_state_realnumber(seed)
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    print(f'Initial state:\n{init_state}')
+    Utility.print_matrix('Unitary operator:', U.data)
     print()
-    # 5. average the same partitions
+    # 2. the initial state evolves to different quantum states to be discriminated and do SDP
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
+    print(f'the probability of error is {povm.theoretical_error:.5f}')
+    # 3. average the coefficients of same partitions
+    eg = EquationGenerator(num_sensor)
     init_state_avg = deepcopy(init_state)
     for i in range(num_sensor+1):
         partition = eg.get_partition(i)
         partition = [int(bin_string, 2) for bin_string in partition]
-        permutation = list(permutations(partition))
-        init_state_avg = average_init_state(init_state_avg, permutation)
-    # 6. do SDP for the new averaged initial state
-    print('the averaged initial state:')
+        init_state_avg = average_init_state(init_state_avg, partition)
+    # 4. do SDP for the new averaged initial state
+    print('\nthe averaged initial state:')
     print(init_state_avg)
     quantum_states = []
     for i in range(num_sensor):
@@ -113,99 +137,71 @@ def main(debug, seed):
     print(f'the probability of error is {povm.theoretical_error:.5f} for the averaged initial state')
 
 
+
 if __name__ == '__main__':
     debug = False
-    seed = 2           # when seed is 1 or 2, the averaged initial state gets lower error.
-    main(debug, seed)  # but when seed is 3, the averaged initial state gets higher error
-
+    seed = 3
+    # main1(debug, seed)
+    main2(debug, seed)
 
 '''
 seed is 2
 Initial state:
-|000>: -0.071703 -0.531088i
-|001>:  0.055635 -0.072456i
-|010>: -0.089209 -0.190070i
-|011>: -0.330871  0.133615i
-|100>: -0.224440 -0.261215i
-|101>:  0.135702  0.032647i
-|110>: -0.409367  0.015211i
-|111>: -0.353511  0.319651i
+|000>: 0.36932730689470566
+|001>: 0.02196187462715846
+|010>: 0.4656140740606537
+|011>: 0.3687576302080315
+|100>: 0.3560897329016312
+|101>: 0.27982361540357986
+|110>: 0.17335599223189854
+|111>: 0.5245787900654866
 
 Unitary operator:
-( 0.71934+0.58648i) ( 0.26676-0.25968i) 
-(-0.26676-0.25968i) ( 0.71934-0.58648i) 
+( 0.64279+0.64675i) ( 0.29418-0.28636i) 
+(-0.29418-0.28636i) ( 0.64279-0.64675i) 
 
-the probability of error is 0.25056
-the probability of error is 0.25056 for permutation (0,)
-the probability of error is 0.25056 for permutation (1, 2, 4)
-the probability of error is 0.23713 for permutation (1, 4, 2)
-the probability of error is 0.24754 for permutation (2, 1, 4)
-the probability of error is 0.23626 for permutation (2, 4, 1)
-the probability of error is 0.25006 for permutation (4, 1, 2)
-the probability of error is 0.25202 for permutation (4, 2, 1)
-the probability of error is 0.25056 for permutation (3, 5, 6)
-the probability of error is 0.24754 for permutation (3, 6, 5)
-the probability of error is 0.23713 for permutation (5, 3, 6)
-the probability of error is 0.23626 for permutation (5, 6, 3)
-the probability of error is 0.25006 for permutation (6, 3, 5)
-the probability of error is 0.25202 for permutation (6, 5, 3)
-the probability of error is 0.25056 for permutation (7,)
+the probability of error is 0.15527
 
 the averaged initial state:
-|000>: -0.071703 -0.531088i
-|001>:  0.145417 -0.189383i
-|010>: -0.101449 -0.216148i
-|011>: -0.300282  0.121262i
-|100>: -0.155607 -0.181104i
-|101>:  0.314859  0.075748i
-|110>: -0.323619  0.012025i
-|111>: -0.353511  0.319651i
+|000>: 0.36932730689470566
+|001>: 0.3386633962006395
+|010>: 0.3386633962006395
+|011>: 0.2853861393602709
+|100>: 0.3386633962006395
+|101>: 0.2853861393602709
+|110>: 0.2853861393602709
+|111>: 0.5245787900654866
 
-the probability of error is 0.19720 for the averaged initial state
+the probability of error is 0.15273 for the averaged initial state
 '''
-
 
 '''
 seed is 3
 Initial state:
-|000>:  0.047057  0.192821i
-|001>: -0.193699  0.010030i
-|010>:  0.364013  0.367113i
-|011>: -0.346845 -0.271200i
-|100>: -0.415506 -0.054832i
-|101>: -0.435507 -0.039988i
-|110>:  0.138162 -0.205202i
-|111>:  0.163277  0.084172i
+|000>: 0.328587899151045
+|001>: 0.42245768227297303
+|010>: 0.1735441920996522
+|011>: 0.30474293535918684
+|100>: 0.532702761595381
+|101>: 0.5346989553511666
+|110>: 0.07492006257949849
+|111>: 0.12363427969339942
 
 Unitary operator:
-( 0.71934+0.00927i) (-0.63356+0.28472i) 
-( 0.63356+0.28472i) ( 0.71934-0.00927i) 
+( 0.64279+0.01022i) (-0.69867+0.31398i) 
+( 0.69867+0.31398i) ( 0.64279-0.01022i) 
 
-the probability of error is 0.12949
-the probability of error is 0.12949 for permutation (0,)
-the probability of error is 0.12949 for permutation (1, 2, 4)
-the probability of error is 0.14862 for permutation (1, 4, 2)
-the probability of error is 0.20373 for permutation (2, 1, 4)
-the probability of error is 0.20409 for permutation (2, 4, 1)
-the probability of error is 0.19440 for permutation (4, 1, 2)
-the probability of error is 0.17742 for permutation (4, 2, 1)
-the probability of error is 0.12949 for permutation (3, 5, 6)
-the probability of error is 0.20373 for permutation (3, 6, 5)
-the probability of error is 0.14862 for permutation (5, 3, 6)
-the probability of error is 0.20409 for permutation (5, 6, 3)
-the probability of error is 0.19440 for permutation (6, 3, 5)
-the probability of error is 0.17742 for permutation (6, 5, 3)
-the probability of error is 0.12949 for permutation (7,)
+the probability of error is 0.14242
 
 the averaged initial state:
-|000>:  0.047057  0.192821i
-|001>: -0.399693  0.020697i
-|010>:  0.281802  0.284202i
-|011>: -0.303851 -0.237583i
-|100>: -0.396788 -0.052362i
-|101>: -0.384093 -0.035267i
-|110>:  0.215419 -0.319946i
-|111>:  0.163277  0.084172i
+|000>: 0.328587899151045
+|001>: 0.40511739538653835
+|010>: 0.4051173953865383
+|011>: 0.3579498313459948
+|100>: 0.40511739538653835
+|101>: 0.3579498313459948
+|110>: 0.3579498313459948
+|111>: 0.12363427969339942
 
-the probability of error is 0.16932 for the averaged initial state
+the probability of error is 0.17601 for the averaged initial state
 '''
