@@ -111,6 +111,7 @@ class QuantumStateCustomBasis:
         squared_sum = np.sum(np.power(self._state_vector_custom, 2))
         self._state_vector_custom /= np.sqrt(squared_sum)
         self.custom2computational()
+        # print(f'init_random_state_realnumber(): {self.check_state()}')
 
     def init_random_state_realnumber_partition(self, seed: int, partitions: list, varying: int):
         '''init a random quantum state with real number amplitudes

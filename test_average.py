@@ -3,6 +3,7 @@ average the coefficients
 '''
 
 import numpy as np
+import matplotlib.pyplot as plt
 from qiskit.quantum_info.operators.operator import Operator
 from quantum_state_custombasis import QuantumStateCustomBasis
 from quantum_state import QuantumState
@@ -11,6 +12,56 @@ from utility import Utility
 from copy import deepcopy
 from equation_generator import EquationGenerator
 
+
+plt.rcParams['font.size'] = 40
+plt.rcParams['lines.linewidth'] = 4
+
+
+def plot_errors(errors, i, j):
+    X = [abs(c1 - c2) for c1, c2, _ in errors]
+    y = [error for _, _, error in errors]
+    fig, ax = plt.subplots(1, 1, figsize=(20, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, bottom=0.1, top=0.96)
+    ax.set_xlabel(f'|C{i} - C{j}|')
+    ax.set_ylabel('Error')
+    ax.plot(X, y)
+    fig.savefig(f'tmp-|C{i} - C{j}|')
+
+
+def plot_errors_steps(errors: list, theta: int, seed: int):
+    fig, ax = plt.subplots(1, 1, figsize=(20, 15))
+    fig.subplots_adjust(left=0.15, right=0.96, bottom=0.1, top=0.9)
+    X = [i for i in range(len(errors))]
+    ax.plot(X, errors)
+    ax.set_xlabel('Steps')
+    ax.set_ylabel('Error')
+    ax.set_title(f'Theta={theta}, Seed={seed}')
+    fig.savefig(f'tmp/babystep-theta{theta}-seed{seed}.png')
+
+
+class Step:
+    '''different coefficients will have a different step towards the partition average
+    '''
+    def __init__(self, total_step: int, init_state_custom: QuantumStateCustomBasis, eg: EquationGenerator):
+        self.total_step = total_step
+        self.init_state_custom = init_state_custom
+        self.eg = eg
+        self.stepsize_squared = None
+        self.init_stepsize_squared()
+
+    def init_stepsize_squared(self):
+        num_sensor = self.init_state_custom.num_sensor
+        self.stepsize_squared = [0] * 2**num_sensor
+        for p in range(num_sensor+1):
+            partition = self.eg.get_partition(p)
+            partition = [int(bin_string, 2) for bin_string in partition]
+            coeffs = self.init_state_custom.state_vector_custom[partition]
+            coeff_squared_avg = np.average([coeff**2 for coeff in coeffs])
+            for i in partition:
+                self.stepsize_squared[i] = (coeff_squared_avg - self.init_state_custom.state_vector_custom[i]**2) / self.total_step
+
+    def size_squared(self, i):
+        return self.stepsize_squared[i]
 
 
 def basis(v1: np.array, v2: np.array, string: str) -> np.array:
@@ -91,6 +142,47 @@ def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> 
     return qstate
 
 
+def evaluate(init_state_custom: QuantumStateCustomBasis, U: Operator, priors: list, povm: Povm):
+    quantum_states = []
+    num_sensor = init_state_custom.num_sensor
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state_custom)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+    return povm.theoretical_error
+
+
+def modify(init_state_custom: QuantumStateCustomBasis, delta: float, i: float, j: float) -> bool:
+    '''modify the coefficients at index i and j, make their squared values closer together by plus/misus delta
+       return whether the coefficients at i and j are equaled
+    '''
+    equaled = False
+    c1sq = init_state_custom.state_vector_custom[i] ** 2
+    c2sq = init_state_custom.state_vector_custom[j] ** 2
+    if c1sq < c2sq:
+        c1sq += delta
+        c2sq -= delta
+        if c1sq > c2sq:
+            equaled = True
+            c1sq = (c1sq + c2sq) / 2
+            c2sq = c1sq
+        init_state_custom.state_vector_custom[i] = np.sqrt(c1sq)
+        init_state_custom.state_vector_custom[j] = np.sqrt(c2sq)
+    if c1sq > c2sq:
+        c1sq -= delta
+        c2sq += delta
+        if c1sq < c2sq:
+            equaled = True
+            c1sq = (c1sq + c2sq) / 2
+            c2sq = c1sq
+        init_state_custom.state_vector_custom[i] = np.sqrt(c1sq)
+        init_state_custom.state_vector_custom[j] = np.sqrt(c2sq)
+    init_state_custom.custom2computational()
+    # print(init_state_custom.check_state())
+    return equaled
+
 def main1(debug, seed):
     '''confirm that the permutations of an initial state has the same probability of error
     '''
@@ -138,12 +230,13 @@ def main1(debug, seed):
 
 def main2(debug, seed, unitary_theta):
     '''test the averaging the coefficients in each partition will lead to a better initial state
+       here only one partition has varying coefficients
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
     num_sensor = 3
     priors = [1/3, 1/3, 1/3]
     povm = Povm()
-    varying_partition = 1
+    varying_partition = 2
     # 1. random initial state and random unitary operator
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
     if debug:
@@ -190,9 +283,155 @@ def main2(debug, seed, unitary_theta):
         print(f'the probability of error is {povm.theoretical_error:.5f} for the averaged initial state')
     averaged = povm.theoretical_error
     if non_averaged > averaged:
-        print(True)
+        print(True, non_averaged - averaged )
     else:
         print(False)
+
+
+def main2_delta(debug, seed, unitary_theta):
+    '''instead of averaging in main2, here change small delta at a time
+       here only one partition has varying coefficients
+    '''
+    print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
+    num_sensor = 3
+    priors = [1/3, 1/3, 1/3]
+    povm = Povm()
+    varying_partition = 1
+    # 1. random initial state and random unitary operator
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    if debug:
+        Utility.print_matrix('\nUnitary operator:', U.data)
+    custom_basis = generate_custombasis(num_sensor, U)
+    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
+    eg = EquationGenerator(num_sensor)
+    partitions = []
+    for i in range(num_sensor+1):
+        partition = eg.get_partition(i)
+        partitions.append([int(bin_string, 2) for bin_string in partition])
+    init_state_custom.init_random_state_realnumber_partition(seed, partitions, varying=varying_partition)
+    if debug:
+        print(f'Initial state:\n{init_state_custom}')
+        print()
+    # 2. the initial state evolves to different quantum states to be discriminated and do SDP
+    errors = [] # (c1, c2, error)
+    i, j = 2, 4
+    equaled = False
+    delta = 0.001   # difference in the coefficient squared
+    while not equaled:
+        error = evaluate(init_state_custom, U, priors, povm)
+        c1sq = init_state_custom.state_vector_custom[i] ** 2
+        c2sq = init_state_custom.state_vector_custom[j] ** 2
+        errors.append((c1sq, c2sq, error))
+        equaled = modify(init_state_custom, delta, i, j)
+    
+    for c1sq, c2sq, error in errors:
+        print(c1sq, c2sq, abs(c1sq - c2sq), error)
+    plot_errors(errors, i, j)
+
+counter_false = 0
+counter_true = 0
+
+def main3(debug, seed, unitary_theta):
+    '''here all parititions has varying coefficients
+       do averaging all partitions
+    '''
+    print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
+    num_sensor = 3
+    priors = [1/3, 1/3, 1/3]
+    povm = Povm()
+    # 1. random initial state and random unitary operator
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    if debug:
+        Utility.print_matrix('\nUnitary operator:', U.data)
+    custom_basis = generate_custombasis(num_sensor, U)
+    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
+    eg = EquationGenerator(num_sensor)
+    partitions = []
+    for i in range(num_sensor+1):
+        partition = eg.get_partition(i)
+        partitions.append([int(bin_string, 2) for bin_string in partition])
+    init_state_custom.init_random_state_realnumber(seed)
+    if debug:
+        print(f'Initial state:\n{init_state_custom}')
+        print()
+    # 2. the initial state evolves to different quantum states to be discriminated and do SDP
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state_custom)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+    if debug:
+        print(f'the probability of error is {povm.theoretical_error:.7f}')
+    non_averaged = povm.theoretical_error
+    # 3. average the coefficients of same partitions
+    init_state_avg = deepcopy(init_state_custom)
+    for partition_to_average in [1, 2]:
+        partition = eg.get_partition(partition_to_average)
+        partition = [int(bin_string, 2) for bin_string in partition]
+        init_state_avg = average_init_state(init_state_avg, partition)
+    # 4. do SDP for the new averaged initial state
+    if debug:
+        print('\nthe averaged initial state:')
+        print(init_state_avg)
+    quantum_states = []
+    for i in range(num_sensor):
+        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
+        qstate = deepcopy(init_state_avg)
+        qstate.evolve(evolve_operator)
+        quantum_states.append(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+    if debug:
+        print(f'the probability of error is {povm.theoretical_error:.7f} for the averaged initial state')
+    averaged = povm.theoretical_error
+    if non_averaged > averaged:
+        print(True, non_averaged - averaged)
+        global counter_true
+        counter_true += 1
+    else:
+        print(False, non_averaged - averaged)
+        global counter_false
+        counter_false += 1
+
+
+def main3_delta(debug, seed, unitary_theta):
+    '''instead of averaging in main2, here change small delta at a time
+       here all parititions has varying coefficients
+    '''
+    print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
+    num_sensor = 3
+    priors = [1/3, 1/3, 1/3]
+    povm = Povm()
+    # 1. random initial state and random unitary operator
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    if debug:
+        Utility.print_matrix('\nUnitary operator:', U.data)
+    custom_basis = generate_custombasis(num_sensor, U)
+    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
+    init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
+    if debug:
+        print(f'Initial state:\n{init_state_custom}')
+        print()
+    # 2. the initial state evolves to different quantum states to be discriminated and do SDP
+    errors = [] # (c1, c2, error)
+    total_step = 10
+    eg = EquationGenerator(num_sensor)
+    step = Step(total_step, init_state_custom, eg)
+    errors = []
+    errors.append(evaluate(init_state_custom, U, priors, povm))
+    for i in range(total_step):
+        if debug:
+            print(i, end=' ')
+        for i in range(2**num_sensor):
+            current_squared = init_state_custom.state_vector_custom[i] ** 2
+            nxt_squared = current_squared + step.size_squared(i)
+            init_state_custom.state_vector_custom[i] = np.sqrt(nxt_squared)
+        init_state_custom.custom2computational()
+        errors.append(evaluate(init_state_custom, U, priors, povm))
+    if debug:
+        print(errors[0], errors[-1])
+    plot_errors_steps(errors, theta, seed)
 
 
 if __name__ == '__main__':
@@ -200,12 +439,24 @@ if __name__ == '__main__':
     # seed = 1
     # main1(debug, seed)
     # for unitary_theta in range(1, 90):
-    #     for seed in range(10):
-    #         main2(debug, seed, unitary_theta)  # all is True
+    #     for seed in range(20):
+    #         main3(debug, seed, unitary_theta)  # all is True
+    # print('false', counter_false)
+    # print('true', counter_true)
+    # debug = True
+    # main2(debug, seed=2, unitary_theta=40)
 
-    debug = True
-    main2(debug, seed=2, unitary_theta=40)
+    # main2_delta(debug, seed=2, unitary_theta=40)
 
+    seed = 7
+    theta = 41
+
+    # main3(debug, seed=seed, unitary_theta=theta)
+    # print('\n*********\n')
+    for theta in range(1, 10):
+        for seed in range(5, 7):
+            print(f'theta={theta}, seed={seed}')
+            main3_delta(debug, seed=seed, unitary_theta=theta)
 
 
 '''
