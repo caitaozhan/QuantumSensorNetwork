@@ -163,13 +163,13 @@ class QuantumStateCustomBasis:
         index = 0
         num_of_bit = math.ceil(math.log2(len(self.state_vector_custom)))
         for index, amplitude in enumerate(self.state_vector_custom):
-            state = Utility.integer2bit(index, num_of_bit)
+            # state = Utility.integer2bit(index, num_of_bit)
             if type(amplitude) is np.complex128:
                 real = f'{amplitude.real:.6f}'
                 imag = f'{amplitude.imag:.6f}'
-                string += f'|{state}>: {real:>9} {imag:>9}i\n'
+                string += f'|{index}>: {real:>9} {imag:>9}i\n'
             else:
-                string += f'|{state}>: {amplitude:.6f}\n'
+                string += f'|{index}>: {amplitude:.6f}\n'
         string += '\nCoefficients in computational basis:\n'
         index = 0
         num_of_bit = math.ceil(math.log2(len(self.state_vector)))
@@ -181,6 +181,7 @@ class QuantumStateCustomBasis:
                 string += f'|{state}>: {real:>9} {imag:>9}i\n'
             else:
                 string += f'|{state}>: {amplitude}\n'
+        string += '---'
         return string
 
     def set_statevector_from_str(self, s: str):

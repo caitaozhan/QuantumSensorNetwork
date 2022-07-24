@@ -4,6 +4,8 @@ average the coefficients
 
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import permutations
+from typing import List
 from qiskit.quantum_info.operators.operator import Operator
 from quantum_state_custombasis import QuantumStateCustomBasis
 from quantum_state import QuantumState
@@ -105,8 +107,8 @@ def generate_custombasis(num_sensor: int, U: Operator) -> list:
     return custombasis
 
 
-def permutation(init_state: QuantumState):
-    '''001 --> 100, 010 --> 001, 100 --> 010
+def permutation(init_state: QuantumState) -> QuantumState:
+    '''shift one bit to the right: 001 --> 100, 010 --> 001, 100 --> 010
     '''
     n = init_state.num_sensor
     mapping = [0]*2**n
@@ -120,6 +122,34 @@ def permutation(init_state: QuantumState):
     for i in range(2**n):
         state_vector[mapping[i]] = init_state.state_vector[i]
     return QuantumState(n, state_vector)
+
+
+def permutation_custombasis(init_state_custom: QuantumStateCustomBasis) -> List[QuantumStateCustomBasis]:
+    '''generate all the permutations for a QuantumStateCustomBasis
+       for num_sensor = 3, there will be 5 permutations (3! - 1)
+    '''
+    n = init_state_custom.num_sensor
+    index = [i for i in range(n)]
+    permutes = list(permutations(index))
+    permutes.pop(0)
+    init_state_custom_permutations = []
+    for permute in permutes:
+        mapping = [0]*2**n
+        for i in range(2**n):
+            bin_str = bin(i)[2:]
+            bin_str = '0' * (n-len(bin_str)) + bin_str
+            bin_str_permute = [''] * n
+            for j in range(n):
+                bin_str_permute[permute[j]] = bin_str[j]
+            bin_str_permute = ''.join(bin_str_permute)
+            mapping[i] = int(bin_str_permute, 2)
+        state_vector_custom = np.array(init_state_custom.state_vector_custom)
+        for i in range(2**n):
+            state_vector_custom[mapping[i]] = init_state_custom.state_vector_custom[i]
+        qstate = QuantumStateCustomBasis(n, init_state_custom.custom_basis, state_vector_custom)
+        qstate.custom2computational()
+        init_state_custom_permutations.append(qstate)
+    return init_state_custom_permutations        
 
 
 def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> QuantumState:
@@ -143,6 +173,8 @@ def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> 
 
 
 def evaluate(init_state_custom: QuantumStateCustomBasis, U: Operator, priors: list, povm: Povm):
+    '''evaluate an initial state
+    '''
     quantum_states = []
     num_sensor = init_state_custom.num_sensor
     for i in range(num_sensor):
@@ -182,6 +214,19 @@ def modify(init_state_custom: QuantumStateCustomBasis, delta: float, i: float, j
     init_state_custom.custom2computational()
     # print(init_state_custom.check_state())
     return equaled
+
+
+def average_two_states(qstate_custom1: QuantumStateCustomBasis, qstate_custom2: QuantumStateCustomBasis) -> QuantumStateCustomBasis:
+    n = qstate_custom1.num_sensor
+    state_vector_custom = [0]*2**n
+    for i in range(2**n):
+        coeff1 = qstate_custom1.state_vector_custom[i]
+        coeff2 = qstate_custom2.state_vector_custom[i]
+        state_vector_custom[i] = np.sqrt((coeff1**2 + coeff2**2) / 2)
+    qstate = QuantumStateCustomBasis(n, qstate_custom1.custom_basis, np.array(state_vector_custom))
+    qstate.custom2computational()
+    # print(qstate.check_state())
+    return qstate
 
 def main1(debug, seed):
     '''confirm that the permutations of an initial state has the same probability of error
@@ -414,8 +459,8 @@ def main3_delta(debug, seed, unitary_theta):
         print(f'Initial state:\n{init_state_custom}')
         print()
     # 2. the initial state evolves to different quantum states to be discriminated and do SDP
-    errors = [] # (c1, c2, error)
-    total_step = 10
+    errors = []
+    total_step = 100
     eg = EquationGenerator(num_sensor)
     step = Step(total_step, init_state_custom, eg)
     errors = []
@@ -434,9 +479,42 @@ def main3_delta(debug, seed, unitary_theta):
     plot_errors_steps(errors, theta, seed)
 
 
+def main4(debug, seed, unitary_theta):
+    '''similar to main1, but using QuantumStateCustomBasis
+    '''
+    print(f'unitary theta is {unitary_theta}, seed is {seed}')
+    num_sensor = 3
+    priors = [1/3, 1/3, 1/3]
+    povm = Povm()
+    # 1. random initial state and random unitary operator
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    if debug:
+        Utility.print_matrix('\nUnitary operator:', U.data)
+    custom_basis = generate_custombasis(num_sensor, U)
+    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
+    init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
+    print('\ninitial state:')
+    print('error', evaluate(init_state_custom, U, priors, povm))
+    if debug:
+        print(f'Initial state:\n{init_state_custom}')
+        print()
+    # 2. purmutate the initial state and evaluate them
+    init_state_custom_permute = permutation_custombasis(init_state_custom)
+    print('\npermutated states:')
+    for i, qstate in enumerate(init_state_custom_permute):
+        print(i, 'error', evaluate(qstate, U, priors, povm))
+    print('\naverage of initial state and the permutated states')
+    for i, qstate in enumerate(init_state_custom_permute):
+        qstate_avg = average_two_states(init_state_custom, qstate)
+        print(i, 'error', evaluate(qstate_avg, U, priors, povm))
+
+
+
+
+
 if __name__ == '__main__':
     debug = False
-    # seed = 1
+    seed = 1
     # main1(debug, seed)
     # for unitary_theta in range(1, 90):
     #     for seed in range(20):
@@ -448,15 +526,17 @@ if __name__ == '__main__':
 
     # main2_delta(debug, seed=2, unitary_theta=40)
 
-    seed = 7
-    theta = 41
+    seed = 1
+    theta = 2
 
     # main3(debug, seed=seed, unitary_theta=theta)
     # print('\n*********\n')
-    for theta in range(1, 10):
-        for seed in range(5, 7):
-            print(f'theta={theta}, seed={seed}')
-            main3_delta(debug, seed=seed, unitary_theta=theta)
+    # for theta in range(1, 10):
+    #     for seed in range(5, 7):
+    #         print(f'theta={theta}, seed={seed}')
+    #         main3_delta(debug, seed=seed, unitary_theta=theta)
+
+    main4(debug, seed, theta)
 
 
 '''
