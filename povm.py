@@ -270,7 +270,7 @@ class Povm:
         constraints.append(sum(PIs) == Identity) # POVM constraint
         objective = cp.real(sum(cp.trace(rho @ PI) for rho, PI in zip(rhos, PIs)))  # the objective function
         prob = cp.Problem(cp.Maximize(objective), constraints)
-        prob.solve(verbose=debug)
+        prob.solve(verbose=False)
         self._method = 'Semidefinite programming'
         if prob.status == 'optimal':
             self._theoretical_success = prob.value
