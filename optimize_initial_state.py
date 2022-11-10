@@ -622,8 +622,8 @@ class OptimizeInitialState(QuantumState):
                             score1 = score2
                         else:                       # qstate no change
                             pass
-            scores.append(round(score2, 7))
-            if previous_score >= score2 - epsilon:
+            scores.append(round(score1, 7))
+            if previous_score >= score1 - epsilon:
                 stuck_count += 1
             else:
                 stuck_count = 0

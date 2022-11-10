@@ -72,7 +72,7 @@ if __name__ == '__main__':
     equal       = False
     eval_metric = 'computational'  # 'min error' or 'unambiguous' or 'computational'
     # output_dir  = 'result-tmp/'
-    output_dir  = 'result/7.11.2022'
+    output_dir  = 'result/tmp'
     output_file = 'varying_theta_3sensors_computational'
     # output_file = 'foo2'
     thetas      = [i for i in range(51, 52, 100)]

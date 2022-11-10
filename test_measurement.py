@@ -149,12 +149,16 @@ def test6():
 # pretty good measurement of two random states, when is it optimal?
 def test7():
     for seed in range(10):
-        qs1 = QuantumState(num_sensor=1)
-        qs2 = QuantumState(num_sensor=1)
+        qs1 = QuantumState(num_sensor=4)
+        qs2 = QuantumState(num_sensor=4)
+        qs3 = QuantumState(num_sensor=4)
+        qs4 = QuantumState(num_sensor=4)
         qs1.init_random_state(seed=seed)
         qs2.init_random_state(seed=seed+10)
-        quantum_states = [qs1, qs2]
-        priors_list = [[0.1, 0.9], [0.25, 0.75], [0.5, 0.5], [0.7, 0.3], [0.95, 0.05]]
+        qs3.init_random_state(seed=seed+20)
+        qs4.init_random_state(seed=seed+30)
+        quantum_states = [qs1, qs2, qs3, qs4]
+        priors_list = [[1/4] * 4]
         for priors in priors_list:
             povm = Povm()
             povm.pretty_good_measurement(quantum_states, priors, debug=True)
@@ -162,18 +166,22 @@ def test7():
 
 # pretty good measurement of three random states, when is it optimal?
 def test8():
-    for seed in range(10):
-        qs1 = QuantumState(num_sensor=1)
-        qs2 = QuantumState(num_sensor=1)
-        qs3 = QuantumState(num_sensor=1)
-        qs1.init_random_state(seed=seed)
-        qs2.init_random_state(seed=seed+10)
-        qs3.init_random_state(seed=seed+20)
-        quantum_states = [qs1, qs2, qs3]
-        priors_list = [[0.1, 0.1, 0.8], [0.2, 0.3, 0.5], [1/3, 1/3, 1/3], [0.7, 0.2, 0.1], [0.9, 0.06, 0.04]]
-        for priors in priors_list:
-            povm = Povm()
-            povm.pretty_good_measurement(quantum_states, priors, debug=True)
+    seed = 0
+    quantum_states = []
+    for i in range(16):
+    # for i in range(3):
+    # for i in range(8):
+    # for i in range(4):
+        qs = QuantumState(num_sensor=5)
+        qs.init_random_state(seed=seed + i)
+        quantum_states.append(qs)
+    priors_list = [[1/16] * 16]
+    # priors_list = [[1/3] * 3]
+    # priors_list = [[1/8] * 8]
+    # priors_list = [[1/4] * 4]
+    for priors in priors_list:
+        povm = Povm()
+        povm.pretty_good_measurement(quantum_states, priors, debug=True)
 
 
 # semidefinite programming (min error) for |0> and |1>
@@ -308,10 +316,10 @@ if __name__ == '__main__':
     # test5()
     # test6()
     # test7()
-    # test8()
+    test8()
     # test9()
     # test10()
     # test11()
     # test12()
     # test13()
-    test14()
+    # test14()
