@@ -172,6 +172,15 @@ def vary_startseed():
     Plot.vary_startseed(data, filename)
 
 
+def n_sensor_analytical(N: int, theta: float):
+    '''Equation 26 in https://arxiv.org/pdf/2210.17254.pdf
+    '''
+    RAD = 180 / np.pi
+    term2 = 0.5 * (N - 2) * (1 - np.cos(2*theta/RAD))
+    term3 = np.sqrt(N-1) * np.abs(np.sin(2*theta/RAD))
+    return 1/N * (1 + term2 + term3)
+
+
 # min error discrimination, 2 sensors, varying the theta of the unitary operator
 def special_u_2sensor(draw: bool):
     '''
@@ -200,10 +209,16 @@ def special_u_2sensor(draw: bool):
     if draw is False:
         return y_guess, y_hillclimb
 
+    RAD = 180 / np.pi
+    y_mark = []
+    for x in X:
+        y_mark.append(0.5 + 0.5 * np.sin(2*x/RAD))
+
     fig, ax = plt.subplots(1, 1, figsize=(35, 25))
     fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
     ax.plot(X, y_guess, label='Guess, Evaluate by SDP')
     ax.plot(X, y_hillclimb, label='Hill climbing')
+    ax.plot(X, y_mark, label='Mark Equation', linestyle=':')
     ax.legend(loc='lower center')
     ax.set_xlabel('Theta (in degrees)')
     ax.set_ylabel('Success Probability')
@@ -213,6 +228,7 @@ def special_u_2sensor(draw: bool):
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
     filename = 'result/6.3.2022/varying_theta_2sensors'
     fig.savefig(filename)
+    return -1, -1
 
 
 # min error discrimination, 3 sensors, varying the theta of the unitary operator
@@ -274,6 +290,7 @@ def special_u_3sensor(draw: bool):
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
     filename = 'result/4.6.2022/varying_theta_3sensors'
     fig.savefig(filename)
+    return -1, -1
 
 
 # min error discrimination, 4 sensors, varying the theta of the unitary operator
@@ -316,6 +333,10 @@ def special_u_4sensor(draw: bool):
     for theta in range(1, 180):
         y_hillclimb.append(max(y_hillclimb0[(theta, 0)], y_hillclimb1[(theta, 1)]))
     
+    y_analitical = []
+    for theta in range(1, 180):
+        y_analitical.append(n_sensor_analytical(4, theta))
+
     if draw is False:
         return y_guess, y_hillclimb
 
@@ -323,6 +344,7 @@ def special_u_4sensor(draw: bool):
     fig.subplots_adjust(left=0.1, right=0.96, top=0.9, bottom=0.1)
     ax.plot(X, y_guess, label='Guess, Evaluate by SDP')
     ax.plot(X, y_hillclimb, label='Hill climbing')
+    ax.plot(X, y_analitical, label='Analytical', linestyle=':')
     ax.legend()
     ax.set_xlabel('Theta (in degrees)')
     ax.set_ylabel('Success Probability')
@@ -332,6 +354,8 @@ def special_u_4sensor(draw: bool):
     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
     filename = 'result/5.1.2022/varying_theta_4sensors'
     fig.savefig(filename)
+    return -1, -1
+
 
 # min error discrimination, 5 sensors, varying the theta of the unitary operator
 def special_u_5sensor(draw: bool):
@@ -1012,10 +1036,10 @@ if __name__ == '__main__':
     # vary_numsensors()
     # vary_startseed()
 
-    # draw = False
+    draw = True
     # guess_2s, hillclimb_2s = special_u_2sensor(draw)
     # guess_3s, hillclimb_3s = special_u_3sensor(draw)
-    # guess_4s, hillclimb_4s = special_u_4sensor(draw)
+    guess_4s, hillclimb_4s = special_u_4sensor(draw)
     # guess_5s, hillclimb_5s = special_u_5sensor(draw)
     # special_u_allsensors(guess_2s, hillclimb_2s, guess_3s, hillclimb_3s, guess_4s, hillclimb_4s, guess_5s, hillclimb_5s)
     # special_u_2()
@@ -1023,7 +1047,7 @@ if __name__ == '__main__':
 
     # print_results()
 
-    upperbound()
+    # upperbound()
 
 
     # hillclimb_bugfix()

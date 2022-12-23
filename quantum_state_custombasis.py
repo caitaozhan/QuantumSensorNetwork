@@ -55,7 +55,7 @@ class QuantumStateCustomBasis:
 
     @property
     def density_matrix(self):
-        if self._density_matrix is None:
+        if self._density_matrix is None:  # BUG?
             if self._state_vector is None:
                 raise Exception('state_vector is None!')
             self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...

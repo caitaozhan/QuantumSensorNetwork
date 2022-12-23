@@ -29,7 +29,7 @@ class Default:
     amp_step = 0.1            # initial amplitude step size
     decrease_rate = 0.96      # decrease rate for the step sizes
     realimag_neighbor = False # changing the real part and the imaginary part
-    random_neighbor = False   # random neighbor or predefined direction neighbor
+    random_neighbor = True   # random neighbor or predefined direction neighbor
 
     # below are for simulated annealing
     init_step = 0.1                  # initial step size

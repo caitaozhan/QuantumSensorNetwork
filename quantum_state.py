@@ -20,7 +20,7 @@ class QuantumState:
         '''
         self._num_sensor = num_sensor
         self._state_vector = state_vector
-        self._density_matrix = None
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector)) if state_vector is not None else None
 
     @property
     def num_sensor(self):
@@ -33,13 +33,10 @@ class QuantumState:
     @state_vector.setter
     def state_vector(self, vector: np.array):
         self._state_vector = vector
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
 
     @property
     def density_matrix(self):
-        if self._density_matrix is None:   # BUG is this a bug?
-            if self._state_vector is None:
-                raise Exception('state_vector is None!')
-            self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...
         return self._density_matrix
 
     def check_state(self):
@@ -75,6 +72,7 @@ class QuantumState:
         if seed is not None:
             np.random.seed(seed)
         self._state_vector = random_state(self.num_sensor)
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
 
     def init_random_state_realnumber(self, seed: int = None):
         '''init a random quantum state with real number amplitudes'''
@@ -83,6 +81,7 @@ class QuantumState:
         self._state_vector = np.random.random(2**self.num_sensor)
         squared_sum = np.sum(np.power(self._state_vector, 2))
         self._state_vector /= np.sqrt(squared_sum)
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
 
     def init_random_state_realnumber_partition(self, seed: int, partitions: list, varying: int):
         '''init a random quantum state with real number amplitudes
@@ -98,6 +97,7 @@ class QuantumState:
                     self._state_vector[j] = fixed
         squared_sum = np.sum(np.power(self._state_vector, 2))
         self._state_vector /= np.sqrt(squared_sum)
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
 
     def evolve(self, operator: Operator):
         '''the evolution of a quantum state
@@ -108,6 +108,7 @@ class QuantumState:
         operator_dim = np.product(operator.input_dims()) # for N qubits, the input_dims() return (2, 2, ..., 2), N twos.
         if dim == operator_dim:
             self._state_vector = np.dot(operator._data, self._state_vector)
+            self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
         else:
             raise Exception('state_vector and operator dimension not equal')
 
@@ -153,3 +154,4 @@ class QuantumState:
                 imag = float(imag[:-1].strip())
                 statevector.append(complex(real, imag))
         self._state_vector = np.array(statevector)
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
