@@ -13,6 +13,8 @@ class Plot:
 
     @staticmethod
     def vary_theta(data, filename):
+        '''vary theta, hill climbing, n-sensors (n=2,3,4,5)
+        '''
         method = 'Hill climbing'
         table = defaultdict(list)
         for myinput, output_by_method in data:
@@ -58,6 +60,48 @@ class Plot:
         fig.savefig(filename)
 
 
+    @staticmethod
+    def methods_similar(data1: list, data2: list, filename: str):
+        # data1: varying theta, 4 sensors
+        table1 = defaultdict(list)
+        for myinput, output_by_methods in data1:
+            for method, output in output_by_methods.items():
+                table1[method].append({myinput.unitary_theta : output.success})
+        Y = defaultdict(list)
+        X = [i for i in range(1, 90)]
+        for method, mylist in table1.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, success in key_val.items():
+                    y[theta] = success
+            y2 = []
+            for theta in X:
+                if theta in y:
+                    y2.append(y[theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y[method] = y2
+
+        # data2: varying iteration, 4 sensors, theta = 40 case
+        table2 = {}
+        for myinput, output_by_methods in data2:
+            for method, output in output_by_methods.items():
+                table2[method] = output.scores[:50]
+        Y2 = table2
+        
+        # plotting
+        methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(30, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.9, bottom=0.13)
+        ax0.plot(X, Y[methods[0]])
+        ax0.plot(X, Y[methods[1]])
+        ax0.plot(X, Y[methods[2]])
+        ax1.plot(Y2[methods[0]])
+        ax1.plot(Y2[methods[1]])
+        ax1.plot(Y2[methods[2]])
+        fig.savefig(filename)
+
+
 def vary_theta():
     logs = ['result2/12.22.2022/varying_theta_2sensors', 'result2/12.22.2022/varying_theta_3sensors', \
             'result2/12.22.2022/varying_theta_4sensors', 'result2/12.22.2022/varying_theta_5sensors']
@@ -66,8 +110,17 @@ def vary_theta():
     Plot.vary_theta(data, filename)
 
 
+def methods_similar():
+    logs1 = ['result2/12.22.2022/varying_theta_4sensors', 'result2/12.26.2022/compare_methods_4sensors']
+    logs2 = ['result2/12.23.2022/compare_methods_4sensors']
+    data1 = Logger.read_log(logs1)
+    data2 = Logger.read_log(logs2)
+    filename = 'result2/12.26.2022/compare_methods_similar.png'
+    Plot.methods_similar(data1, data2, filename)
+
 
 if __name__ == '__main__':
-    vary_theta()
+    # vary_theta()
+    methods_similar()
 
     

@@ -279,51 +279,8 @@ def average_two_states(qstate_custom1: QuantumStateCustomBasis, qstate_custom2: 
     # print(qstate.check_state())
     return qstate
 
-def main1(debug, seed):
-    '''confirm that the permutations of an initial state has the same probability of error
-    '''
-    print(f'seed is {seed}')
-    unitary_theta = 44
-    num_sensor = 3
-    priors = [1/3, 1/3, 1/3]
-    povm = Povm()
-    # 1. random initial state and random unitary operator
-    init_state = QuantumState(num_sensor)
-    init_state.init_random_state(seed)
-    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
-    print(f'Initial state:\n{init_state}')
-    Utility.print_matrix('Unitary operator:', U.data)
-    print()
-    # 2. the initial state evolves to different quantum states to be discriminated and do SDP
-    quantum_states = []
-    for i in range(num_sensor):
-        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
-        qstate = deepcopy(init_state)
-        qstate.evolve(evolve_operator)
-        quantum_states.append(qstate)
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
-    print(f'the probability of error is {povm.theoretical_error:.5f}')
-    # 3. do permutation
-    init_state_permutation = permutation(init_state)
-    quantum_states = []
-    for i in range(num_sensor):
-        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
-        qstate = deepcopy(init_state_permutation)
-        qstate.evolve(evolve_operator)
-        quantum_states.append(qstate)
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
-    print(f'the probability of error is {povm.theoretical_error:.5f}')
-    init_state_permutation = permutation(init_state_permutation)
-    quantum_states = []
-    for i in range(num_sensor):
-        evolve_operator = Utility.evolve_operator(U, num_sensor, i)
-        qstate = deepcopy(init_state_permutation)
-        qstate.evolve(evolve_operator)
-        quantum_states.append(qstate)
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug)
-    print(f'the probability of error is {povm.theoretical_error:.5f}')
-    
 
+# doing average in a single partition
 def main2(debug, seed, unitary_theta):
     '''test the averaging the coefficients in each partition will lead to a better initial state
        here only one partition has varying coefficients
@@ -384,6 +341,7 @@ def main2(debug, seed, unitary_theta):
         print(False)
 
 
+# doing average (small step delta) in a single partition
 def main2_delta(debug, seed, unitary_theta):
     '''instead of averaging in main2, here change small delta at a time
        here only one partition has varying coefficients
@@ -426,6 +384,7 @@ def main2_delta(debug, seed, unitary_theta):
 
 counter_false = 0
 counter_true = 0
+
 
 def main3(debug, seed, unitary_theta):
     '''here all parititions has varying coefficients
@@ -492,7 +451,7 @@ def main3(debug, seed, unitary_theta):
 
 
 def main3_delta(debug, seed, unitary_theta):
-    '''instead of averaging in main2, here change small delta at a time
+    '''instead of averaging in main3, here change small delta at a time
        here all parititions has varying coefficients
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
@@ -531,7 +490,9 @@ def main3_delta(debug, seed, unitary_theta):
 
 
 def main4(debug, seed, unitary_theta):
-    '''similar to main1, but using QuantumStateCustomBasis
+    '''use QuantumStateCustomBasis
+       1) confirm that the permutations of an initial state has the same probability of error
+       2) average --> better state (lower error)
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}')
     num_sensor = 3
@@ -561,8 +522,10 @@ def main4(debug, seed, unitary_theta):
         print(i, 'error', evaluate(qstate_avg, U, priors, povm, debug=debug))
 
 
+# bogus stuff: averaging POVM...
 def main5(debug, seed, unitary_theta, repeat):
     '''testing the average of initial state and permutation state and using the averaged POVM
+       Will not work -- error will not be equal, the POVM will raise questions too (can POVM even be averaged?)
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}')
     num_sensor = 3
@@ -601,15 +564,13 @@ def main5(debug, seed, unitary_theta, repeat):
 if __name__ == '__main__':
     debug = True
     seed = 4
-    # main1(debug, seed)
     # for unitary_theta in range(1, 90):
     #     for seed in range(20):
     #         main3(debug, seed, unitary_theta)  # all is True
     # print('false', counter_false)
-    # print('true', counter_true)
     # debug = True
-    # main2(debug, seed=2, unitary_theta=40)
 
+    # main2(debug, seed=2, unitary_theta=40)
     # main2_delta(debug, seed=2, unitary_theta=40)
 
     seed = 2
@@ -617,15 +578,15 @@ if __name__ == '__main__':
 
     # main3(debug, seed=seed, unitary_theta=theta)
     # print('\n*********\n')
-    # for theta in range(1, 10):
-    #     for seed in range(5, 7):
-    #         print(f'theta={theta}, seed={seed}')
-    #         main3_delta(debug, seed=seed, unitary_theta=theta)
+    for theta in range(40, 41):
+        for seed in range(10):
+            print(f'theta={theta}, seed={seed}')
+            main3_delta(debug, seed=seed, unitary_theta=theta)
 
     # main4(debug, seed, theta)
 
-    repeat = 1_000_000
-    main5(debug, seed, theta, repeat)
+    # repeat = 1_000_000
+    # main5(debug, seed, theta, repeat)
 
 
 '''

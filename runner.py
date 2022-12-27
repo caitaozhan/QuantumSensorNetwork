@@ -65,14 +65,14 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "2", "-m", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
+    base_args = ["-us", "7", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
 
     num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result2/12.26.2022'
-    output_file = 'compare_methods_4sensors'
-    thetas      = [i for i in range(1, 91)]
+    output_file = 'vary_unitary_seed'
+    thetas      = [i for i in range(40, 41)]
     start_seed  = [0]
 
     ps = []
