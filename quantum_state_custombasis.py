@@ -212,3 +212,4 @@ class QuantumStateCustomBasis:
                 imag = float(imag[:-1].strip())
                 statevector.append(complex(real, imag))
         self._state_vector = np.array(statevector)
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))

@@ -123,7 +123,7 @@ class OptimizeInitialState(QuantumState):
                 e_vector = self.eigenvector(v1, v2, ev)
                 states.append(coeff2 * e_vector)
             self._state_vector = np.sum(states, axis=0)
-        else:                                                                  # non mutual orthogonal situation
+        else:                                                                  # non mutual orthogonal situation (conjecture)
             # partition = eg.optimal_solution_smallerT_i(unitary_theta, partition_i)
             partition = eg.optimal_solution_smallerT()
             coeff = np.sqrt(1/len(partition))
@@ -137,48 +137,6 @@ class OptimizeInitialState(QuantumState):
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Theorem'
 
-
-    def guess(self, unitary_operator: Operator, unitary_theta: float):
-        '''do an eigenvalue decomposition, the two eigen vectors are |v> and |u>,
-           then the guessed initial state is 1/sqrt(2) * (|v>|u> + |u>|v>) 
-        Args:
-            unitary_opeartor: describe the interaction with the environment
-            unitary_theta: the theata in eigen value e^{i \theta}, in degrees, need to convert to RAD while plugging into API
-        '''
-        e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
-        theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
-        theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
-        v1 = e_vectors[:, 0]    # v1 is positive
-        v2 = e_vectors[:, 1]    # v2 is negative
-        if theta1 < theta2:
-            v1, v2, = v2, v1
-
-        if self.num_sensor == 2 and 45 < unitary_theta < 135:
-            RAD = 180 / np.pi
-            coeff1 = np.sqrt(1 / (2*(1 - np.cos(2*unitary_theta/RAD))))
-            coeff2 = np.sqrt(-np.cos(2*unitary_theta/RAD) / (2*(1 - np.cos(2*unitary_theta/RAD))))
-            psi0 = coeff1 * np.kron(v1, v2)
-            psi1 = coeff1 * np.kron(v2, v1)
-            psi2 = coeff2 * np.kron(v1, v1)
-            psi3 = coeff2 * np.kron(v2, v2)
-            self._state_vector = np.sum([psi0, psi1, psi2, psi3], axis=0)
-        else:
-            tensors = []
-            for i in range(self.num_sensor):
-                j = 0
-                tensor = 1
-                while j < self.num_sensor:
-                    if j == i:
-                        tensor = np.kron(tensor, v1)  # kron is tensor product
-                    else:
-                        tensor = np.kron(tensor, v2)
-                    j += 1
-                tensors.append(tensor)
-            self._state_vector = 1/math.sqrt(self.num_sensor) * np.sum(tensors, axis=0)
-
-        if self.check_state() is False:
-            raise Exception(f'{self} is not a valid quantum state')
-        self._optimze_method = 'Guess'
 
     def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the self.state_vector

@@ -459,12 +459,12 @@ def main3_delta(debug, seed, unitary_theta):
     priors = [1/3, 1/3, 1/3]
     povm = Povm()
     # 1. random initial state and random unitary operator
-    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=2)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
     custom_basis = generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
-    init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
+    init_state_custom.init_random_state_realnumber(seed=seed)      # all coefficients are random
     if debug:
         print(f'Initial state:\n{init_state_custom}')
         print()
@@ -579,7 +579,7 @@ if __name__ == '__main__':
     # main3(debug, seed=seed, unitary_theta=theta)
     # print('\n*********\n')
     for theta in range(40, 41):
-        for seed in range(10):
+        for seed in range(7, 8):
             print(f'theta={theta}, seed={seed}')
             main3_delta(debug, seed=seed, unitary_theta=theta)
 

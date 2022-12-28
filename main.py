@@ -89,15 +89,6 @@ if __name__ == '__main__':
         error = round(1-success, 7)
         theorem_output = GuessOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(theorem_output)  # Theorem and Guess share the same output format
-
-    if "Guess" in methods:
-        opt_initstate = OptimizeInitialState(num_sensor)
-        opt_initstate.guess(unitary_operator, unitary_theta)
-        success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
-        success = round(success, 7)
-        error = round(1-success, 7)
-        guess_output = GuessOutput(experiment_id, opt_initstate.optimize_method, error, success, str(opt_initstate))
-        outputs.append(guess_output)
         
     if "Hill climbing" in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
