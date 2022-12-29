@@ -144,6 +144,69 @@ class Plot:
         fig.savefig(filename)
 
 
+    @staticmethod
+    def lemma2(data, filename):
+        plt.rcParams['font.size'] = 40
+        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=(20, 16))
+        fig.subplots_adjust(left=0.14, right=0.97, top=0.89, bottom=0.11, wspace=0.4, hspace=0.3)
+        
+        boxprops = dict(linewidth=2)
+        medianprops = dict(linewidth=2)
+        whiskerprops = dict(linewidth=2)
+        capprops = dict(linewidth=2)
+
+        n = 2
+        print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
+        ax0.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax0.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
+        xticks = [1]
+        ax0.set_xticks(xticks)
+        ax0.set_xticklabels([f'{x+1}' for x in xticks])
+        yticks = [0.069, 0.070, 0.071, 0.072, 0.073]
+        ax0.set_yticks(yticks)
+        ax0.set_yticklabels([f'{round(y*100, 1)}' for y in yticks])
+        ax0.tick_params(axis='x', direction='in', length=8, width=2, pad=15)
+        ax0.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
+        n = 3
+        print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
+        ax1.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax1.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
+        ax1.set_xticks(xticks)
+        ax1.set_xticklabels([f'{x+2}' for x in xticks])
+        yticks = [0.189, 0.191, 0.193, 0.195, 0.197]
+        ax1.set_yticks(yticks)
+        ax1.set_yticklabels([f'{round(y*100, 1)}' for y in yticks])
+        ax1.tick_params(axis='x', direction='in', length=8, width=2, pad=15)
+        ax1.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
+        n = 4
+        print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
+        ax2.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax2.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
+        ax2.set_xticks(xticks)
+        ax2.set_xticklabels([f'{x+3}' for x in xticks])
+        yticks = [0.182, 0.186, 0.190, 0.194, 0.198]
+        ax2.set_yticks(yticks)
+        ax2.set_yticklabels([f'{round(y*100, 1)}' for y in yticks])
+        ax2.tick_params(axis='x', direction='in', length=8, width=2, pad=15)
+        ax2.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
+        n = 5
+        print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
+        ax3.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax3.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
+        ax3.set_xticks(xticks)
+        ax3.set_xticklabels([f'{x+4}' for x in xticks])
+        yticks = [0.224, 0.227, 0.23, 0.233, 0.236]
+        ax3.set_yticks(yticks)
+        ax3.set_yticklabels([f'{round(y*100, 1)}' for y in yticks])
+        ax3.tick_params(axis='x', direction='in', length=8, width=2, pad=15)
+        ax3.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
+        # fig
+        fig.supylabel('Error Probability (%)')
+        fig.supxlabel('Number of Sensors')
+        fig.suptitle('Lemma 2: The Averaged Initial States Have Lower Error')
+        fig.savefig(filename)
+
+
 def vary_theta():
     logs = ['result2/12.22.2022/varying_theta_2sensors', 'result2/12.22.2022/varying_theta_3sensors', \
             'result2/12.22.2022/varying_theta_4sensors', 'result2/12.22.2022/varying_theta_5sensors']
@@ -161,8 +224,23 @@ def methods_similar():
     Plot.methods_similar(data1, data2, filename)
 
 
-if __name__ == '__main__':
-    vary_theta()
-    methods_similar()
+def lemma2():
+    file_perm = 'result2/12.28.2022/lemma2.n{}.perm.npy'
+    file_avg = 'result2/12.28.2022/lemma2.n{}.avg.npy'
+    data = {}
+    for n in range(2, 6):
+        perm = np.load(file_perm.format(n))
+        avg  = np.load(file_avg.format(n))
+        data[f'n{n}.perm'] = perm
+        data[f'n{n}.avg'] = avg
+    filename = 'result2/12.28.2022/lemma2.png'
+    Plot.lemma2(data, filename)
 
+        
+
+
+if __name__ == '__main__':
+    # vary_theta()
+    # methods_similar()
+    lemma2()
     

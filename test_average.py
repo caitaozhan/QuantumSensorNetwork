@@ -173,24 +173,6 @@ def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> 
     return qstate
 
 
-def average_two_povm(povm1: Povm, povm2: Povm) -> Povm:
-    '''average the POVM elements
-    '''
-    n = len(povm1.operators)
-    if n != len(povm2.operators):
-        raise Exception('Two Povms has different number of elements')
-    operators_avg = []
-    for k in range(n):
-        matrix1 = povm1.operators[k]._data
-        matrix2 = povm2.operators[k]._data
-        matrix_avg = np.array(povm1.operators[k]._data)
-        for i in range(len(matrix1)):
-            for j in range(len(matrix1[0])):
-                matrix_avg[i][j] = (matrix1[i][j] + matrix2[i][j]) / 2
-        operators_avg.append(Operator(matrix_avg))
-    povm_avg = Povm(operators_avg)
-    return povm_avg
-
 
 def evaluate(init_state_custom: QuantumStateCustomBasis, U: Operator, priors: list, povm: Povm, debug: bool = False) -> float:
     '''evaluate an initial state using SDP, return the probability of error
@@ -489,17 +471,41 @@ def main3_delta(debug, seed, unitary_theta):
     plot_errors_steps(errors, theta, seed)
 
 
-def main4(debug, seed, unitary_theta):
+def validate_lemma2():
+    debug = False
+    seed = 0
+    unitary_theta = 40
+    file_perm = 'result2/12.28.2022/lemma2.n{}.perm.npy'
+    file_avg = 'result2/12.28.2022/lemma2.n{}.avg.npy'
+    
+    errors_perm, errors_avg = lemma2(2, debug, seed, unitary_theta)
+    np.save(file_perm.format(2), np.array(errors_perm))
+    np.save(file_avg.format(2), np.array(errors_avg))
+    
+    errors_perm, errors_avg = lemma2(3, debug, seed, unitary_theta)
+    np.save(file_perm.format(3), np.array(errors_perm))
+    np.save(file_avg.format(3), np.array(errors_avg))
+    
+    errors_perm, errors_avg = lemma2(4, debug, seed, unitary_theta)
+    np.save(file_perm.format(4), np.array(errors_perm))
+    np.save(file_avg.format(4), np.array(errors_avg))
+    
+    errors_perm, errors_avg = lemma2(5, debug, seed, unitary_theta)
+    np.save(file_perm.format(5), np.array(errors_perm))
+    np.save(file_avg.format(5), np.array(errors_avg))
+    
+
+# validate lemma 2 about averaging two states, n=3
+def lemma2(num_sensor, debug, seed, unitary_theta):
     '''use QuantumStateCustomBasis
        1) confirm that the permutations of an initial state has the same probability of error
        2) average --> better state (lower error)
     '''
-    print(f'unitary theta is {unitary_theta}, seed is {seed}')
-    num_sensor = 3
-    priors = [1/3, 1/3, 1/3]
+    print(f'---\nunitary theta is {unitary_theta}, seed is {seed}')
+    priors = [1/num_sensor] * num_sensor
     povm = Povm()
     # 1. random initial state and random unitary operator
-    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=2)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
     custom_basis = generate_custombasis(num_sensor, U)
@@ -508,61 +514,28 @@ def main4(debug, seed, unitary_theta):
     print('\ninitial state:')
     print('error', evaluate(init_state_custom, U, priors, povm, debug=debug))
     if debug:
-        print(f'Initial state:\n{init_state_custom}')
-        print()
+        print(f'Initial state:\n{init_state_custom}\n')
     # 2. purmutate the initial state and evaluate them
     init_state_custom_permute = permutation_custombasis(init_state_custom)
     print('\npermutated states:')
+    errors_perm = []
     for i, qstate in enumerate(init_state_custom_permute):
-        print(i, 'error', evaluate(qstate, U, priors, povm, debug=debug))
+        errors_perm.append(evaluate(qstate, U, priors, povm, debug=debug))
+        print(i, 'error', errors_perm[-1])
     # 3. average the initial state and the permutated state and evaluate them
     print('\naverage of initial state and the permutated states')
+    errors_avg = []
     for i, qstate in enumerate(init_state_custom_permute):
         qstate_avg = average_two_states(init_state_custom, qstate)
-        print(i, 'error', evaluate(qstate_avg, U, priors, povm, debug=debug))
+        errors_avg.append(evaluate(qstate_avg, U, priors, povm, debug=debug))
+        print(i, 'error', errors_avg[-1])
+    return errors_perm, errors_avg
 
-
-# bogus stuff: averaging POVM...
-def main5(debug, seed, unitary_theta, repeat):
-    '''testing the average of initial state and permutation state and using the averaged POVM
-       Will not work -- error will not be equal, the POVM will raise questions too (can POVM even be averaged?)
-    '''
-    print(f'unitary theta is {unitary_theta}, seed is {seed}')
-    num_sensor = 3
-    priors = [1/3, 1/3, 1/3]
-    povm = Povm()
-    # 1. random initial state and random unitary operator
-    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
-    if debug:
-        Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
-    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
-    init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
-    print('\ninitial state:')
-    init_state_custom_povm = deepcopy(evaluate_povm(init_state_custom, U, priors, povm, debug=debug))
-    print('error', init_state_custom_povm.theoretical_error)
-    if debug:
-        print(f'Initial state:\n{init_state_custom}')
-        print()
-    # 2. purmutate the initial state and evaluate them 
-    init_state_custom_permute = permutation_custombasis(init_state_custom)
-    init_state_custom_permute_povm = []
-    print('\npermutated states:')
-    for i, qstate in enumerate(init_state_custom_permute):
-        qstate_povm = deepcopy(evaluate_povm(qstate, U, priors, povm, debug=debug))
-        init_state_custom_permute_povm.append(qstate_povm)
-        print(i, 'error', qstate_povm.theoretical_error)
-    # 3. average the initial state and permutated state and evaluate using the averaged POVM + simulation
-    print('\naverage of initial state and the permutated states')
-    for i, qstate in enumerate(init_state_custom_permute):
-        qstate_avg = average_two_states(init_state_custom, qstate)
-        povm_avg = average_two_povm(init_state_custom_povm, init_state_custom_permute_povm[i])
-        print(i, 'error', evaluate_simulation(qstate_avg, U, priors, povm_avg, seed, repeat, debug=debug))
 
 
 
 if __name__ == '__main__':
-    debug = True
+    debug = False
     seed = 4
     # for unitary_theta in range(1, 90):
     #     for seed in range(20):
@@ -578,16 +551,12 @@ if __name__ == '__main__':
 
     # main3(debug, seed=seed, unitary_theta=theta)
     # print('\n*********\n')
-    for theta in range(40, 41):
-        for seed in range(7, 8):
-            print(f'theta={theta}, seed={seed}')
-            main3_delta(debug, seed=seed, unitary_theta=theta)
+    # for theta in range(40, 41):
+    #     for seed in range(7, 8):
+    #         print(f'theta={theta}, seed={seed}')
+    #         main3_delta(debug, seed=seed, unitary_theta=theta)
 
-    # main4(debug, seed, theta)
-
-    # repeat = 1_000_000
-    # main5(debug, seed, theta, repeat)
-
+    validate_lemma2()
 
 '''
 
