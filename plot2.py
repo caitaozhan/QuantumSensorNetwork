@@ -150,10 +150,10 @@ class Plot:
         fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=(20, 16))
         fig.subplots_adjust(left=0.14, right=0.97, top=0.89, bottom=0.11, wspace=0.4, hspace=0.3)
         
-        boxprops = dict(linewidth=2)
-        medianprops = dict(linewidth=2)
-        whiskerprops = dict(linewidth=2)
-        capprops = dict(linewidth=2)
+        boxprops = dict(linewidth=3)
+        medianprops = dict(linewidth=2.5)
+        whiskerprops = dict(linewidth=2.5)
+        capprops = dict(linewidth=2.5)
 
         n = 2
         print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))

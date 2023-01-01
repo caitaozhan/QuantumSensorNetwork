@@ -65,14 +65,15 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
+    # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
+    base_args = ["-us", "2", "-m", "Theorem"]
 
-    num_sensor  = 4
+    num_sensor  = 6
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result2/12.26.2022'
-    output_file = 'vary_unitary_seed'
-    thetas      = [i for i in range(40, 41)]
+    output_dir  = 'result2/12.31.2022'
+    output_file = 'conjecture.6sensor'
+    thetas      = [i for i in range(38, 180)]
     start_seed  = [0]
 
     ps = []

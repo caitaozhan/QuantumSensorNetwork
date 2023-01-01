@@ -12,7 +12,7 @@ class Default:
     '''
     output_dir  = 'result-tmp'
     output_file = 'foo'
-    methods = ['Guess', 'Hill climbing', 'Simulated annealing']
+    methods = ['Theory', 'Hill climbing', 'Simulated annealing']
     # some constants
     EPSILON = 1e-8              # the epsilon for zero
     EPSILON_SEMIDEFINITE = 8e-4 # relaxed for semidefinate programming optimal condition checking......
@@ -21,7 +21,7 @@ class Default:
     # problem input related
     num_sensor   = 2
     unitary_seed = 2
-    method       = 'Guess'
+    method       = 'Theory'
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
@@ -92,8 +92,8 @@ class ProblemInput:
 
 
 @dataclass
-class GuessOutput:
-    '''encapsulate the Guess method's output or Theorem's output
+class TheoremOutput:
+    '''encapsulate the Theory (conjecture) method's output or Theorem's output
     '''
     experiment_id: int
     method: str
@@ -120,11 +120,11 @@ class GuessOutput:
 
     @classmethod
     def from_json_str(cls, json_str):
-        '''init an Guess output object from json string
+        '''init an Theory (conjecture) output object from json string
         Args:
             json_str -- a string of json
         Return:
-            GuessOutput
+            TheoryOutput
         '''
         outdict = json.loads(json_str)
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], outdict['init_state'])

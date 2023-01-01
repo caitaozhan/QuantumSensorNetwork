@@ -1,0 +1,537 @@
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 1.0}
+{"experiment_id": 1, "error": 0.482551, "method": "Theorem", "success": 0.517449, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 2.0}
+{"experiment_id": 1, "error": 0.4651218, "method": "Theorem", "success": 0.5348782, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 3.0}
+{"experiment_id": 1, "error": 0.4477358, "method": "Theorem", "success": 0.5522642, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 4.0}
+{"experiment_id": 1, "error": 0.4304687, "method": "Theorem", "success": 0.5695313, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 5.0}
+{"experiment_id": 1, "error": 0.4131759, "method": "Theorem", "success": 0.5868241, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 6.0}
+{"experiment_id": 1, "error": 0.3960442, "method": "Theorem", "success": 0.6039558, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 7.0}
+{"experiment_id": 1, "error": 0.379039, "method": "Theorem", "success": 0.620961, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 8.0}
+{"experiment_id": 1, "error": 0.3621813, "method": "Theorem", "success": 0.6378187, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 9.0}
+{"experiment_id": 1, "error": 0.3455277, "method": "Theorem", "success": 0.6544723, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 10.0}
+{"experiment_id": 1, "error": 0.3289511, "method": "Theorem", "success": 0.6710489, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 11.0}
+{"experiment_id": 1, "error": 0.312693, "method": "Theorem", "success": 0.687307, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 12.0}
+{"experiment_id": 1, "error": 0.2966359, "method": "Theorem", "success": 0.7033641, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 13.0}
+{"experiment_id": 1, "error": 0.2808307, "method": "Theorem", "success": 0.7191693, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 14.0}
+{"experiment_id": 1, "error": 0.2652723, "method": "Theorem", "success": 0.7347277, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 15.0}
+{"experiment_id": 1, "error": 0.2500079, "method": "Theorem", "success": 0.7499921, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 16.0}
+{"experiment_id": 1, "error": 0.2350391, "method": "Theorem", "success": 0.7649609, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 17.0}
+{"experiment_id": 1, "error": 0.2203977, "method": "Theorem", "success": 0.7796023, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 18.0}
+{"experiment_id": 1, "error": 0.2061413, "method": "Theorem", "success": 0.7938587, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 19.0}
+{"experiment_id": 1, "error": 0.1922099, "method": "Theorem", "success": 0.8077901, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 20.0}
+{"experiment_id": 1, "error": 0.178613, "method": "Theorem", "success": 0.821387, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 21.0}
+{"experiment_id": 1, "error": 0.1654347, "method": "Theorem", "success": 0.8345653, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 22.0}
+{"experiment_id": 1, "error": 0.1526676, "method": "Theorem", "success": 0.8473324, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 23.0}
+{"experiment_id": 1, "error": 0.1403302, "method": "Theorem", "success": 0.8596698, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 24.0}
+{"experiment_id": 1, "error": 0.1284273, "method": "Theorem", "success": 0.8715727, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 25.0}
+{"experiment_id": 1, "error": 0.1169775, "method": "Theorem", "success": 0.8830225, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 26.0}
+{"experiment_id": 1, "error": 0.1059957, "method": "Theorem", "success": 0.8940043, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 27.0}
+{"experiment_id": 1, "error": 0.0954909, "method": "Theorem", "success": 0.9045091, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 28.0}
+{"experiment_id": 1, "error": 0.0854796, "method": "Theorem", "success": 0.9145204, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 29.0}
+{"experiment_id": 1, "error": 0.075976, "method": "Theorem", "success": 0.924024, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 30.0}
+{"experiment_id": 1, "error": 0.0669872, "method": "Theorem", "success": 0.9330128, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 31.0}
+{"experiment_id": 1, "error": 0.0585262, "method": "Theorem", "success": 0.9414738, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 32.0}
+{"experiment_id": 1, "error": 0.0506615, "method": "Theorem", "success": 0.9493385, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 33.0}
+{"experiment_id": 1, "error": 0.0432263, "method": "Theorem", "success": 0.9567737, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 34.0}
+{"experiment_id": 1, "error": 0.0364084, "method": "Theorem", "success": 0.9635916, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 35.0}
+{"experiment_id": 1, "error": 0.0301547, "method": "Theorem", "success": 0.9698453, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 36.0}
+{"experiment_id": 1, "error": 0.0244654, "method": "Theorem", "success": 0.9755346, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 37.0}
+{"experiment_id": 1, "error": 0.0193538, "method": "Theorem", "success": 0.9806462, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 38.0}
+{"experiment_id": 1, "error": 0.014792, "method": "Theorem", "success": 0.985208, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 39.0}
+{"experiment_id": 1, "error": 0.0110121, "method": "Theorem", "success": 0.9889879, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 40.0}
+{"experiment_id": 1, "error": 0.0076834, "method": "Theorem", "success": 0.9923166, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 41.0}
+{"experiment_id": 1, "error": 0.0049374, "method": "Theorem", "success": 0.9950626, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 42.0}
+{"experiment_id": 1, "error": 0.0027676, "method": "Theorem", "success": 0.9972324, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 43.0}
+{"experiment_id": 1, "error": 0.001213, "method": "Theorem", "success": 0.998787, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 44.0}
+{"experiment_id": 1, "error": 0.0002856, "method": "Theorem", "success": 0.9997144, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 45.0}
+{"experiment_id": 1, "error": -1.09e-05, "method": "Theorem", "success": 1.0000109, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 46.0}
+{"experiment_id": 1, "error": 2.18e-05, "method": "Theorem", "success": 0.9999782, "init_state": "\nTheorem\nInitial state:\n|00>:  0.429174  0.266927i\n|01>:  0.552510  0.035260i\n|10>:  0.552510  0.035260i\n|11>: -0.260221  0.252633i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 47.0}
+{"experiment_id": 1, "error": 3.52e-05, "method": "Theorem", "success": 0.9999648, "init_state": "\nTheorem\nInitial state:\n|00>:  0.491042  0.262542i\n|01>:  0.529465  0.049032i\n|10>:  0.529465  0.049032i\n|11>: -0.256103  0.242665i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 48.0}
+{"experiment_id": 1, "error": 2.71e-05, "method": "Theorem", "success": 0.9999729, "init_state": "\nTheorem\nInitial state:\n|00>:  0.535188  0.258376i\n|01>:  0.510537  0.059068i\n|10>:  0.510537  0.059068i\n|11>: -0.252157  0.234431i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 49.0}
+{"experiment_id": 1, "error": 1.42e-05, "method": "Theorem", "success": 0.9999858, "init_state": "\nTheorem\nInitial state:\n|00>:  0.569970  0.254417i\n|01>:  0.494001  0.067113i\n|10>:  0.494001  0.067113i\n|11>: -0.248391  0.227210i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 50.0}
+{"experiment_id": 1, "error": 3e-06, "method": "Theorem", "success": 0.999997, "init_state": "\nTheorem\nInitial state:\n|00>:  0.598693  0.250653i\n|01>:  0.479161  0.073857i\n|10>:  0.479161  0.073857i\n|11>: -0.244800  0.220712i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 51.0}
+{"experiment_id": 1, "error": 4.1e-06, "method": "Theorem", "success": 0.9999959, "init_state": "\nTheorem\nInitial state:\n|00>:  0.623082  0.247072i\n|01>:  0.465639  0.079661i\n|10>:  0.465639  0.079661i\n|11>: -0.241378  0.214778i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 52.0}
+{"experiment_id": 1, "error": 1.23e-05, "method": "Theorem", "success": 0.9999877, "init_state": "\nTheorem\nInitial state:\n|00>:  0.644183  0.243665i\n|01>:  0.453200  0.084745i\n|10>:  0.453200  0.084745i\n|11>: -0.238117  0.209311i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 53.0}
+{"experiment_id": 1, "error": -1.82e-05, "method": "Theorem", "success": 1.0000182, "init_state": "\nTheorem\nInitial state:\n|00>:  0.662683  0.240424i\n|01>:  0.441684  0.089255i\n|10>:  0.441684  0.089255i\n|11>: -0.235011  0.204241i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 54.0}
+{"experiment_id": 1, "error": -1.58e-05, "method": "Theorem", "success": 1.0000158, "init_state": "\nTheorem\nInitial state:\n|00>:  0.679069  0.237339i\n|01>:  0.430972  0.093292i\n|10>:  0.430972  0.093292i\n|11>: -0.232052  0.199519i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 55.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.693697  0.234402i\n|01>:  0.420971  0.096933i\n|10>:  0.420971  0.096933i\n|11>: -0.229233  0.195107i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 56.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.706839  0.231607i\n|01>:  0.411611  0.100236i\n|10>:  0.411611  0.100236i\n|11>: -0.226549  0.190973i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 57.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.718707  0.228947i\n|01>:  0.402832  0.103247i\n|10>:  0.402832  0.103247i\n|11>: -0.223992  0.187092i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 58.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.729472  0.226415i\n|01>:  0.394585  0.106001i\n|10>:  0.394585  0.106001i\n|11>: -0.221558  0.183444i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 59.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.739272  0.224006i\n|01>:  0.386828  0.108530i\n|10>:  0.386828  0.108530i\n|11>: -0.219240  0.180010i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 60.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.748219  0.221715i\n|01>:  0.379525  0.110858i\n|10>:  0.379525  0.110858i\n|11>: -0.217035  0.176775i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 61.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.756410  0.219537i\n|01>:  0.372645  0.113005i\n|10>:  0.372645  0.113005i\n|11>: -0.214938  0.173726i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 62.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.763925  0.217466i\n|01>:  0.366161  0.114989i\n|10>:  0.366161  0.114989i\n|11>: -0.212944  0.170851i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 63.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.770831  0.215499i\n|01>:  0.360049  0.116826i\n|10>:  0.360049  0.116826i\n|11>: -0.211049  0.168139i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 64.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.777189  0.213632i\n|01>:  0.354287  0.118528i\n|10>:  0.354287  0.118528i\n|11>: -0.209250  0.165582i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 65.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.783048  0.211861i\n|01>:  0.348856  0.120107i\n|10>:  0.348856  0.120107i\n|11>: -0.207544  0.163171i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 66.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.788452  0.210182i\n|01>:  0.343739  0.121573i\n|10>:  0.343739  0.121573i\n|11>: -0.205926  0.160898i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 67.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.793441  0.208593i\n|01>:  0.338921  0.122934i\n|10>:  0.338921  0.122934i\n|11>: -0.204394  0.158758i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 68.0}
+{"experiment_id": 1, "error": 6e-07, "method": "Theorem", "success": 0.9999994, "init_state": "\nTheorem\nInitial state:\n|00>:  0.798047  0.207091i\n|01>:  0.334387  0.124197i\n|10>:  0.334387  0.124197i\n|11>: -0.202945  0.156743i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 69.0}
+{"experiment_id": 1, "error": 7.2e-06, "method": "Theorem", "success": 0.9999928, "init_state": "\nTheorem\nInitial state:\n|00>:  0.802301  0.205672i\n|01>:  0.330126  0.125371i\n|10>:  0.330126  0.125371i\n|11>: -0.201576  0.154848i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 70.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.806229  0.204334i\n|01>:  0.326124  0.126460i\n|10>:  0.326124  0.126460i\n|11>: -0.200286  0.153069i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 71.0}
+{"experiment_id": 1, "error": -0.0001231, "method": "Theorem", "success": 1.0001231, "init_state": "\nTheorem\nInitial state:\n|00>:  0.809854  0.203075i\n|01>:  0.322373  0.127470i\n|10>:  0.322373  0.127470i\n|11>: -0.199071  0.151400i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 72.0}
+{"experiment_id": 1, "error": -3.17e-05, "method": "Theorem", "success": 1.0000317, "init_state": "\nTheorem\nInitial state:\n|00>:  0.813197  0.201892i\n|01>:  0.318863  0.128405i\n|10>:  0.318863  0.128405i\n|11>: -0.197931  0.149838i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 73.0}
+{"experiment_id": 1, "error": -9.8e-06, "method": "Theorem", "success": 1.0000098, "init_state": "\nTheorem\nInitial state:\n|00>:  0.816276  0.200784i\n|01>:  0.315584  0.129271i\n|10>:  0.315584  0.129271i\n|11>: -0.196862  0.148380i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 74.0}
+{"experiment_id": 1, "error": 2.49e-05, "method": "Theorem", "success": 0.9999751, "init_state": "\nTheorem\nInitial state:\n|00>:  0.819108  0.199749i\n|01>:  0.312530  0.130071i\n|10>:  0.312530  0.130071i\n|11>: -0.195862  0.147020i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 75.0}
+{"experiment_id": 1, "error": 6.43e-05, "method": "Theorem", "success": 0.9999357, "init_state": "\nTheorem\nInitial state:\n|00>:  0.821707  0.198784i\n|01>:  0.309692  0.130807i\n|10>:  0.309692  0.130807i\n|11>: -0.194932  0.145757i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 76.0}
+{"experiment_id": 1, "error": 0.0001095, "method": "Theorem", "success": 0.9998905, "init_state": "\nTheorem\nInitial state:\n|00>:  0.824086  0.197889i\n|01>:  0.307065  0.131484i\n|10>:  0.307065  0.131484i\n|11>: -0.194067  0.144587i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 77.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.826258  0.197062i\n|01>:  0.304642  0.132104i\n|10>:  0.304642  0.132104i\n|11>: -0.193269  0.143508i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 78.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.828232  0.196301i\n|01>:  0.302419  0.132670i\n|10>:  0.302419  0.132670i\n|11>: -0.192534  0.142518i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 79.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.830018  0.195605i\n|01>:  0.300390  0.133183i\n|10>:  0.300390  0.133183i\n|11>: -0.191862  0.141614i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 80.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.831624  0.194973i\n|01>:  0.298551  0.133645i\n|10>:  0.298551  0.133645i\n|11>: -0.191252  0.140795i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 81.0}
+{"experiment_id": 1, "error": 0.0001033, "method": "Theorem", "success": 0.9998967, "init_state": "\nTheorem\nInitial state:\n|00>:  0.833056  0.194404i\n|01>:  0.296898  0.134058i\n|10>:  0.296898  0.134058i\n|11>: -0.190703  0.140059i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 82.0}
+{"experiment_id": 1, "error": 6.58e-05, "method": "Theorem", "success": 0.9999342, "init_state": "\nTheorem\nInitial state:\n|00>:  0.834322  0.193898i\n|01>:  0.295428  0.134425i\n|10>:  0.295428  0.134425i\n|11>: -0.190214  0.139404i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 83.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.835427  0.193453i\n|01>:  0.294138  0.134745i\n|10>:  0.294138  0.134745i\n|11>: -0.189785  0.138829i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 84.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.836375  0.193069i\n|01>:  0.293025  0.135020i\n|10>:  0.293025  0.135020i\n|11>: -0.189414  0.138333i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 85.0}
+{"experiment_id": 1, "error": 4.04e-05, "method": "Theorem", "success": 0.9999596, "init_state": "\nTheorem\nInitial state:\n|00>:  0.837170  0.192744i\n|01>:  0.292087  0.135252i\n|10>:  0.292087  0.135252i\n|11>: -0.189101  0.137915i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 86.0}
+{"experiment_id": 1, "error": 3.71e-05, "method": "Theorem", "success": 0.9999629, "init_state": "\nTheorem\nInitial state:\n|00>:  0.837817  0.192480i\n|01>:  0.291322  0.135440i\n|10>:  0.291322  0.135440i\n|11>: -0.188845  0.137574i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 87.0}
+{"experiment_id": 1, "error": 3.32e-05, "method": "Theorem", "success": 0.9999668, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838317  0.192274i\n|01>:  0.290729  0.135586i\n|10>:  0.290729  0.135586i\n|11>: -0.188647  0.137310i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 88.0}
+{"experiment_id": 1, "error": 3.25e-05, "method": "Theorem", "success": 0.9999675, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838673  0.192128i\n|01>:  0.290306  0.135689i\n|10>:  0.290306  0.135689i\n|11>: -0.188505  0.137121i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 89.0}
+{"experiment_id": 1, "error": 2e-05, "method": "Theorem", "success": 0.99998, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838886  0.192040i\n|01>:  0.290052  0.135752i\n|10>:  0.290052  0.135752i\n|11>: -0.188420  0.137008i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 90.0}
+{"experiment_id": 1, "error": 6.5e-06, "method": "Theorem", "success": 0.9999935, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838957  0.192011i\n|01>:  0.289968  0.135772i\n|10>:  0.289968  0.135772i\n|11>: -0.188392  0.136971i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 91.0}
+{"experiment_id": 1, "error": 8.3e-06, "method": "Theorem", "success": 0.9999917, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838886  0.192040i\n|01>:  0.290052  0.135752i\n|10>:  0.290052  0.135752i\n|11>: -0.188420  0.137008i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 92.0}
+{"experiment_id": 1, "error": 1.26e-05, "method": "Theorem", "success": 0.9999874, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838673  0.192128i\n|01>:  0.290306  0.135689i\n|10>:  0.290306  0.135689i\n|11>: -0.188505  0.137121i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 93.0}
+{"experiment_id": 1, "error": 3.6e-06, "method": "Theorem", "success": 0.9999964, "init_state": "\nTheorem\nInitial state:\n|00>:  0.838317  0.192274i\n|01>:  0.290729  0.135586i\n|10>:  0.290729  0.135586i\n|11>: -0.188647  0.137310i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 94.0}
+{"experiment_id": 1, "error": -1.33e-05, "method": "Theorem", "success": 1.0000133, "init_state": "\nTheorem\nInitial state:\n|00>:  0.837817  0.192480i\n|01>:  0.291322  0.135440i\n|10>:  0.291322  0.135440i\n|11>: -0.188845  0.137574i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 95.0}
+{"experiment_id": 1, "error": 7e-07, "method": "Theorem", "success": 0.9999993, "init_state": "\nTheorem\nInitial state:\n|00>:  0.837170  0.192744i\n|01>:  0.292087  0.135252i\n|10>:  0.292087  0.135252i\n|11>: -0.189101  0.137915i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 96.0}
+{"experiment_id": 1, "error": 7e-07, "method": "Theorem", "success": 0.9999993, "init_state": "\nTheorem\nInitial state:\n|00>:  0.836375  0.193069i\n|01>:  0.293025  0.135020i\n|10>:  0.293025  0.135020i\n|11>: -0.189414  0.138333i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 97.0}
+{"experiment_id": 1, "error": 8e-07, "method": "Theorem", "success": 0.9999992, "init_state": "\nTheorem\nInitial state:\n|00>:  0.835427  0.193453i\n|01>:  0.294138  0.134745i\n|10>:  0.294138  0.134745i\n|11>: -0.189785  0.138829i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 98.0}
+{"experiment_id": 1, "error": 7e-07, "method": "Theorem", "success": 0.9999993, "init_state": "\nTheorem\nInitial state:\n|00>:  0.834322  0.193898i\n|01>:  0.295428  0.134425i\n|10>:  0.295428  0.134425i\n|11>: -0.190214  0.139404i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 99.0}
+{"experiment_id": 1, "error": 7e-07, "method": "Theorem", "success": 0.9999993, "init_state": "\nTheorem\nInitial state:\n|00>:  0.833056  0.194404i\n|01>:  0.296898  0.134058i\n|10>:  0.296898  0.134058i\n|11>: -0.190703  0.140059i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 100.0}
+{"experiment_id": 1, "error": 5e-07, "method": "Theorem", "success": 0.9999995, "init_state": "\nTheorem\nInitial state:\n|00>:  0.831624  0.194973i\n|01>:  0.298551  0.133645i\n|10>:  0.298551  0.133645i\n|11>: -0.191252  0.140795i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 101.0}
+{"experiment_id": 1, "error": 3e-07, "method": "Theorem", "success": 0.9999997, "init_state": "\nTheorem\nInitial state:\n|00>:  0.830018  0.195605i\n|01>:  0.300390  0.133183i\n|10>:  0.300390  0.133183i\n|11>: -0.191862  0.141614i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 102.0}
+{"experiment_id": 1, "error": 1e-07, "method": "Theorem", "success": 0.9999999, "init_state": "\nTheorem\nInitial state:\n|00>:  0.828232  0.196301i\n|01>:  0.302419  0.132670i\n|10>:  0.302419  0.132670i\n|11>: -0.192534  0.142518i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 103.0}
+{"experiment_id": 1, "error": -2e-07, "method": "Theorem", "success": 1.0000002, "init_state": "\nTheorem\nInitial state:\n|00>:  0.826258  0.197062i\n|01>:  0.304642  0.132104i\n|10>:  0.304642  0.132104i\n|11>: -0.193269  0.143508i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 104.0}
+{"experiment_id": 1, "error": -6e-07, "method": "Theorem", "success": 1.0000006, "init_state": "\nTheorem\nInitial state:\n|00>:  0.824086  0.197889i\n|01>:  0.307065  0.131484i\n|10>:  0.307065  0.131484i\n|11>: -0.194067  0.144587i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 105.0}
+{"experiment_id": 1, "error": -1e-06, "method": "Theorem", "success": 1.000001, "init_state": "\nTheorem\nInitial state:\n|00>:  0.821707  0.198784i\n|01>:  0.309692  0.130807i\n|10>:  0.309692  0.130807i\n|11>: -0.194932  0.145757i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 106.0}
+{"experiment_id": 1, "error": -1.4e-06, "method": "Theorem", "success": 1.0000014, "init_state": "\nTheorem\nInitial state:\n|00>:  0.819108  0.199749i\n|01>:  0.312530  0.130071i\n|10>:  0.312530  0.130071i\n|11>: -0.195862  0.147020i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 107.0}
+{"experiment_id": 1, "error": -1.7e-06, "method": "Theorem", "success": 1.0000017, "init_state": "\nTheorem\nInitial state:\n|00>:  0.816276  0.200784i\n|01>:  0.315584  0.129271i\n|10>:  0.315584  0.129271i\n|11>: -0.196862  0.148380i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 108.0}
+{"experiment_id": 1, "error": -1.6e-06, "method": "Theorem", "success": 1.0000016, "init_state": "\nTheorem\nInitial state:\n|00>:  0.813197  0.201892i\n|01>:  0.318863  0.128405i\n|10>:  0.318863  0.128405i\n|11>: -0.197931  0.149838i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 109.0}
+{"experiment_id": 1, "error": -1.1e-06, "method": "Theorem", "success": 1.0000011, "init_state": "\nTheorem\nInitial state:\n|00>:  0.809854  0.203075i\n|01>:  0.322373  0.127470i\n|10>:  0.322373  0.127470i\n|11>: -0.199071  0.151400i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 110.0}
+{"experiment_id": 1, "error": -1e-07, "method": "Theorem", "success": 1.0000001, "init_state": "\nTheorem\nInitial state:\n|00>:  0.806229  0.204334i\n|01>:  0.326124  0.126460i\n|10>:  0.326124  0.126460i\n|11>: -0.200286  0.153069i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 111.0}
+{"experiment_id": 1, "error": -2e-07, "method": "Theorem", "success": 1.0000002, "init_state": "\nTheorem\nInitial state:\n|00>:  0.802301  0.205672i\n|01>:  0.330126  0.125371i\n|10>:  0.330126  0.125371i\n|11>: -0.201576  0.154848i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 112.0}
+{"experiment_id": 1, "error": -1.2e-06, "method": "Theorem", "success": 1.0000012, "init_state": "\nTheorem\nInitial state:\n|00>:  0.798047  0.207091i\n|01>:  0.334387  0.124197i\n|10>:  0.334387  0.124197i\n|11>: -0.202945  0.156743i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 113.0}
+{"experiment_id": 1, "error": 1e-07, "method": "Theorem", "success": 0.9999999, "init_state": "\nTheorem\nInitial state:\n|00>:  0.793441  0.208593i\n|01>:  0.338921  0.122934i\n|10>:  0.338921  0.122934i\n|11>: -0.204394  0.158758i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 114.0}
+{"experiment_id": 1, "error": -5e-07, "method": "Theorem", "success": 1.0000005, "init_state": "\nTheorem\nInitial state:\n|00>:  0.788452  0.210182i\n|01>:  0.343739  0.121573i\n|10>:  0.343739  0.121573i\n|11>: -0.205926  0.160898i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 115.0}
+{"experiment_id": 1, "error": -8.6e-06, "method": "Theorem", "success": 1.0000086, "init_state": "\nTheorem\nInitial state:\n|00>:  0.783048  0.211861i\n|01>:  0.348856  0.120107i\n|10>:  0.348856  0.120107i\n|11>: -0.207544  0.163171i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 116.0}
+{"experiment_id": 1, "error": -1.4e-06, "method": "Theorem", "success": 1.0000014, "init_state": "\nTheorem\nInitial state:\n|00>:  0.777189  0.213632i\n|01>:  0.354287  0.118528i\n|10>:  0.354287  0.118528i\n|11>: -0.209250  0.165582i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 117.0}
+{"experiment_id": 1, "error": 2.16e-05, "method": "Theorem", "success": 0.9999784, "init_state": "\nTheorem\nInitial state:\n|00>:  0.770831  0.215499i\n|01>:  0.360049  0.116826i\n|10>:  0.360049  0.116826i\n|11>: -0.211049  0.168139i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 118.0}
+{"experiment_id": 1, "error": 2.42e-05, "method": "Theorem", "success": 0.9999758, "init_state": "\nTheorem\nInitial state:\n|00>:  0.763925  0.217466i\n|01>:  0.366161  0.114989i\n|10>:  0.366161  0.114989i\n|11>: -0.212944  0.170851i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 119.0}
+{"experiment_id": 1, "error": 3.85e-05, "method": "Theorem", "success": 0.9999615, "init_state": "\nTheorem\nInitial state:\n|00>:  0.756410  0.219537i\n|01>:  0.372645  0.113005i\n|10>:  0.372645  0.113005i\n|11>: -0.214938  0.173726i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 120.0}
+{"experiment_id": 1, "error": -3.81e-05, "method": "Theorem", "success": 1.0000381, "init_state": "\nTheorem\nInitial state:\n|00>:  0.748219  0.221715i\n|01>:  0.379525  0.110858i\n|10>:  0.379525  0.110858i\n|11>: -0.217035  0.176775i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 121.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.739272  0.224006i\n|01>:  0.386828  0.108530i\n|10>:  0.386828  0.108530i\n|11>: -0.219240  0.180010i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 122.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.729472  0.226415i\n|01>:  0.394585  0.106001i\n|10>:  0.394585  0.106001i\n|11>: -0.221558  0.183444i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 123.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.718707  0.228947i\n|01>:  0.402832  0.103247i\n|10>:  0.402832  0.103247i\n|11>: -0.223992  0.187092i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 124.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.706839  0.231607i\n|01>:  0.411611  0.100236i\n|10>:  0.411611  0.100236i\n|11>: -0.226549  0.190973i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 125.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.693697  0.234402i\n|01>:  0.420971  0.096933i\n|10>:  0.420971  0.096933i\n|11>: -0.229233  0.195107i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 126.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.679069  0.237339i\n|01>:  0.430972  0.093292i\n|10>:  0.430972  0.093292i\n|11>: -0.232052  0.199519i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 127.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.662683  0.240424i\n|01>:  0.441684  0.089255i\n|10>:  0.441684  0.089255i\n|11>: -0.235011  0.204241i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 128.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.644183  0.243665i\n|01>:  0.453200  0.084745i\n|10>:  0.453200  0.084745i\n|11>: -0.238117  0.209311i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 129.0}
+{"experiment_id": 1, "error": -9.5e-05, "method": "Theorem", "success": 1.000095, "init_state": "\nTheorem\nInitial state:\n|00>:  0.623082  0.247072i\n|01>:  0.465639  0.079661i\n|10>:  0.465639  0.079661i\n|11>: -0.241378  0.214778i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 130.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.598693  0.250653i\n|01>:  0.479161  0.073857i\n|10>:  0.479161  0.073857i\n|11>: -0.244800  0.220712i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 131.0}
+{"experiment_id": 1, "error": 0.0, "method": "Theorem", "success": 1.0, "init_state": "\nTheorem\nInitial state:\n|00>:  0.569970  0.254417i\n|01>:  0.494001  0.067113i\n|10>:  0.494001  0.067113i\n|11>: -0.248391  0.227210i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 132.0}
+{"experiment_id": 1, "error": -7.83e-05, "method": "Theorem", "success": 1.0000783, "init_state": "\nTheorem\nInitial state:\n|00>:  0.535188  0.258376i\n|01>:  0.510537  0.059068i\n|10>:  0.510537  0.059068i\n|11>: -0.252157  0.234431i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 133.0}
+{"experiment_id": 1, "error": 1.08e-05, "method": "Theorem", "success": 0.9999892, "init_state": "\nTheorem\nInitial state:\n|00>:  0.491042  0.262542i\n|01>:  0.529465  0.049032i\n|10>:  0.529465  0.049032i\n|11>: -0.256103  0.242665i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 134.0}
+{"experiment_id": 1, "error": 4.2e-06, "method": "Theorem", "success": 0.9999958, "init_state": "\nTheorem\nInitial state:\n|00>:  0.429174  0.266927i\n|01>:  0.552510  0.035260i\n|10>:  0.552510  0.035260i\n|11>: -0.260221  0.252633i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 135.0}
+{"experiment_id": 1, "error": -1.09e-05, "method": "Theorem", "success": 1.0000109, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 136.0}
+{"experiment_id": 1, "error": 0.0002856, "method": "Theorem", "success": 0.9997144, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 137.0}
+{"experiment_id": 1, "error": 0.001213, "method": "Theorem", "success": 0.998787, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 138.0}
+{"experiment_id": 1, "error": 0.0027676, "method": "Theorem", "success": 0.9972324, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 139.0}
+{"experiment_id": 1, "error": 0.0049374, "method": "Theorem", "success": 0.9950626, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 140.0}
+{"experiment_id": 1, "error": 0.0076834, "method": "Theorem", "success": 0.9923166, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 141.0}
+{"experiment_id": 1, "error": 0.0110121, "method": "Theorem", "success": 0.9889879, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 142.0}
+{"experiment_id": 1, "error": 0.014792, "method": "Theorem", "success": 0.985208, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 143.0}
+{"experiment_id": 1, "error": 0.0193538, "method": "Theorem", "success": 0.9806462, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 144.0}
+{"experiment_id": 1, "error": 0.0244654, "method": "Theorem", "success": 0.9755346, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 145.0}
+{"experiment_id": 1, "error": 0.0301547, "method": "Theorem", "success": 0.9698453, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 146.0}
+{"experiment_id": 1, "error": 0.0364084, "method": "Theorem", "success": 0.9635916, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 147.0}
+{"experiment_id": 1, "error": 0.0432263, "method": "Theorem", "success": 0.9567737, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 148.0}
+{"experiment_id": 1, "error": 0.0506615, "method": "Theorem", "success": 0.9493385, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 149.0}
+{"experiment_id": 1, "error": 0.0585262, "method": "Theorem", "success": 0.9414738, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 150.0}
+{"experiment_id": 1, "error": 0.0669872, "method": "Theorem", "success": 0.9330128, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 151.0}
+{"experiment_id": 1, "error": 0.075976, "method": "Theorem", "success": 0.924024, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 152.0}
+{"experiment_id": 1, "error": 0.0854796, "method": "Theorem", "success": 0.9145204, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 153.0}
+{"experiment_id": 1, "error": 0.0954909, "method": "Theorem", "success": 0.9045091, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 154.0}
+{"experiment_id": 1, "error": 0.1059957, "method": "Theorem", "success": 0.8940043, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 155.0}
+{"experiment_id": 1, "error": 0.1169775, "method": "Theorem", "success": 0.8830225, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 156.0}
+{"experiment_id": 1, "error": 0.1284273, "method": "Theorem", "success": 0.8715727, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 157.0}
+{"experiment_id": 1, "error": 0.1403302, "method": "Theorem", "success": 0.8596698, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 158.0}
+{"experiment_id": 1, "error": 0.1526676, "method": "Theorem", "success": 0.8473324, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 159.0}
+{"experiment_id": 1, "error": 0.1654347, "method": "Theorem", "success": 0.8345653, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 160.0}
+{"experiment_id": 1, "error": 0.178613, "method": "Theorem", "success": 0.821387, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 161.0}
+{"experiment_id": 1, "error": 0.1922099, "method": "Theorem", "success": 0.8077901, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 162.0}
+{"experiment_id": 1, "error": 0.2061413, "method": "Theorem", "success": 0.7938587, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 163.0}
+{"experiment_id": 1, "error": 0.2203977, "method": "Theorem", "success": 0.7796023, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 164.0}
+{"experiment_id": 1, "error": 0.2350391, "method": "Theorem", "success": 0.7649609, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 165.0}
+{"experiment_id": 1, "error": 0.2500079, "method": "Theorem", "success": 0.7499921, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 166.0}
+{"experiment_id": 1, "error": 0.2652723, "method": "Theorem", "success": 0.7347277, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 167.0}
+{"experiment_id": 1, "error": 0.2808307, "method": "Theorem", "success": 0.7191693, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 168.0}
+{"experiment_id": 1, "error": 0.2966359, "method": "Theorem", "success": 0.7033641, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 169.0}
+{"experiment_id": 1, "error": 0.312693, "method": "Theorem", "success": 0.687307, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 170.0}
+{"experiment_id": 1, "error": 0.3289511, "method": "Theorem", "success": 0.6710489, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 171.0}
+{"experiment_id": 1, "error": 0.3455277, "method": "Theorem", "success": 0.6544723, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 172.0}
+{"experiment_id": 1, "error": 0.3621813, "method": "Theorem", "success": 0.6378187, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 173.0}
+{"experiment_id": 1, "error": 0.379039, "method": "Theorem", "success": 0.620961, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 174.0}
+{"experiment_id": 1, "error": 0.3960442, "method": "Theorem", "success": 0.6039558, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 175.0}
+{"experiment_id": 1, "error": 0.4131759, "method": "Theorem", "success": 0.5868241, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 176.0}
+{"experiment_id": 1, "error": 0.4304687, "method": "Theorem", "success": 0.5695313, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 177.0}
+{"experiment_id": 1, "error": 0.4477358, "method": "Theorem", "success": 0.5522642, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986  0.000000i\n|10>:  0.596986  0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 178.0}
+{"experiment_id": 1, "error": 0.4651218, "method": "Theorem", "success": 0.5348782, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+
+{"experiment_id": 0, "num_sensor": 2, "priors": [0.5, 0.5], "unitary_seed": 2, "unitary_theta": 179.0}
+{"experiment_id": 1, "error": 0.482551, "method": "Theorem", "success": 0.517449, "init_state": "\nTheorem\nInitial state:\n|00>:  0.264331  0.271545i\n|01>:  0.596986 -0.000000i\n|10>:  0.596986 -0.000000i\n|11>: -0.264331  0.271545i\n"}
+

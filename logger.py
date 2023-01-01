@@ -4,7 +4,7 @@
 import os
 
 from zmq import DEALER
-from input_output import ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput, GeneticOutput
+from input_output import ProblemInput, TheoremOutput, HillclimbOutput, SimulatedAnnealOutput, GeneticOutput
 
 class Logger:
 
@@ -33,9 +33,9 @@ class Logger:
                 output_by_method = {}
                 line = f.readline()
                 while line != '' and line != '\n':
-                    if line.find('Guess') != -1:
-                        output = GuessOutput.from_json_str(line)
-                        output_by_method['Guess'] = output
+                    if line.find('Theory') != -1:
+                        output = TheoremOutput.from_json_str(line)
+                        output_by_method['Theory'] = output
                     if line.find('Hill climbing') != -1:
                         output = HillclimbOutput.from_json_str(line)
                         output_by_method['Hill climbing'] = output

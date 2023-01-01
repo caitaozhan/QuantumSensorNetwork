@@ -8,7 +8,7 @@ from optimize_initial_state import OptimizeInitialState
 from povm import Povm
 from utility import Utility
 import time
-from input_output import Default, GeneticOutput, ParticleSwarmOutput, ProblemInput, GuessOutput, HillclimbOutput, SimulatedAnnealOutput
+from input_output import Default, GeneticOutput, ParticleSwarmOutput, ProblemInput, TheoremOutput, HillclimbOutput, SimulatedAnnealOutput
 from logger import Logger
 
 
@@ -83,11 +83,11 @@ if __name__ == '__main__':
         opt_initstate.theorem(unitary_operator, unitary_theta, partition_i)
         success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
         # success = opt_initstate.evaluate_orthogonal(unitary_operator)
-        innerprods = opt_initstate.get_innerproducts(unitary_operator)
-        print(innerprods)
+        # innerprods = opt_initstate.get_innerproducts(unitary_operator)
+        # print(innerprods)
         success = round(success, 7)
         error = round(1-success, 7)
-        theorem_output = GuessOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
+        theorem_output = TheoremOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
         outputs.append(theorem_output)  # Theorem and Guess share the same output format
         
     if "Hill climbing" in methods:
