@@ -24,7 +24,7 @@ class Logger:
     def read_log(logs):
         data = []
         for log in logs:
-            f = open(log,'r')
+            f = open(log, 'r')
             while True:
                 line = f.readline()
                 if line == '':
@@ -33,9 +33,9 @@ class Logger:
                 output_by_method = {}
                 line = f.readline()
                 while line != '' and line != '\n':
-                    if line.find('Theory') != -1:
+                    if line.find('Theorem') != -1:
                         output = TheoremOutput.from_json_str(line)
-                        output_by_method['Theory'] = output
+                        output_by_method['Theorem'] = output
                     if line.find('Hill climbing') != -1:
                         output = HillclimbOutput.from_json_str(line)
                         output_by_method['Hill climbing'] = output
