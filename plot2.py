@@ -6,6 +6,7 @@ from optimize_initial_state import OptimizeInitialState
 from utility import Utility
 from collections import defaultdict
 
+
 class Plot:
 
     plt.rcParams['font.size'] = 60
@@ -20,7 +21,7 @@ class Plot:
     LINE_STYLE = dict(zip(_METHOD, _STYLE))
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
-    _COLOR  = ['blue',   'orange',              'green',             'red']
+    _COLOR  = ['blue',          'orange',              'green',             'pink']
     COLOR   = dict(zip(_METHOD, _COLOR))
 
 
@@ -56,7 +57,7 @@ class Plot:
         ax.vlines(x=45,   ymin=0.2, ymax=1, linestyles='dotted', colors='black')
         ax.vlines(x=60,   ymin=0.2, ymax=1, linestyles='dotted', colors='black')
         ax.vlines(x=65.9, ymin=0.2, ymax=1, linestyles='dotted', colors='black')
-        ax.legend(fontsize='55', loc='center', bbox_to_anchor=(0.6, 0.25), edgecolor='black')
+        ax.legend(fontsize=55, loc='center', bbox_to_anchor=(0.6, 0.25), edgecolor='black')
         xticks = [i for i in range(0, 181, 15)]
         ax.set_xticks(xticks)
         ax.set_xticklabels([f'{x}' for x in xticks])
@@ -103,6 +104,7 @@ class Plot:
         Y2 = table2
         
         # plotting
+        arrowprops = dict(facecolor='black', width=5, headwidth=25)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(30, 17))
         fig.subplots_adjust(left=0.1, right=0.97, top=0.85, bottom=0.2)
@@ -127,7 +129,8 @@ class Plot:
         ax0.set_xlim([0, 90])
         ax0.set_ylim([0.2, 1.02])
         ax0.set_ylabel('Success Probability (%)')
-        ax0.text(42, 0.865, '(40, 0.883)', fontsize=50)
+        ax0.annotate('(40, 0.883)', xy=(42, 0.883), xytext=(51, 0.883), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax0.text(42.5, 0.864, '(40, 0.883)', fontsize=50)
         # ax1
         ax1.plot(Y2[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=9)
         ax1.plot(Y2[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=7)
@@ -144,6 +147,7 @@ class Plot:
         ax1.set_xlabel('Iteration Number', labelpad=15)
         ax1.set_xlim([-1, 50])
         ax1.set_ylim([0.805, 0.89])
+        ax1.annotate('Random Initial State', xy=(0.7, 0.811), xytext=(6, 0.811), arrowprops=arrowprops, fontsize=50, va='center')
         plt.figtext(0.28, 0.01, '(a)')
         plt.figtext(0.75, 0.01, '(b)')
         fig.savefig(filename)
@@ -270,7 +274,7 @@ class Plot:
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax0.set_title('3 Sensors', fontsize=60)
-        ax0.legend(ncol=2, loc='upper left', bbox_to_anchor=(0.2, 1.2, 0.05, 0.05), fontsize=55, handlelength=3.5, edgecolor='black')
+        ax0.legend(ncol=2, loc='upper left', bbox_to_anchor=(0.15, 1.2, 0.05, 0.05), fontsize=55, handlelength=3.5, edgecolor='black')
         ax0.set_xlabel('Theta (degree)', labelpad=15)
         ax0.set_ylabel('Success Probability (%)')
         # ax1
@@ -294,6 +298,107 @@ class Plot:
         fig.savefig(filename)
 
 
+    @staticmethod
+    def conjecture_2(data, filename):
+        # data
+        table_6sensor = defaultdict(list)
+        table_7sensor = defaultdict(list)
+        table_8sensor = defaultdict(list)
+        table_9sensor = defaultdict(list)
+        for myinput, output_by_methods in data:
+            if myinput.num_sensor == 6:
+                for method, output in output_by_methods.items():
+                    table_6sensor[method].append({myinput.unitary_theta: output.success})
+            if myinput.num_sensor == 7:
+                for method, output in output_by_methods.items():
+                    table_7sensor[method].append({myinput.unitary_theta: output.success})
+            if myinput.num_sensor == 8:
+                for method, output in output_by_methods.items():
+                    table_8sensor[method].append({myinput.unitary_theta: output.success})
+            if myinput.num_sensor == 9:
+                for method, output in output_by_methods.items():
+                    table_9sensor[method].append({myinput.unitary_theta: output.success})
+
+        X = [i for i in range(1, 91)]
+        Y6 = defaultdict(list)
+        for method, mylist in table_6sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, success in key_val.items():
+                    y[theta] = success
+            y2 = []
+            for theta in X:
+                if theta in y:
+                    y2.append(y[theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y6[method] = y2
+        Y7 = defaultdict(list)
+        for method, mylist in table_7sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, success in key_val.items():
+                    y[theta] = success
+            y2 = []
+            for theta in X:
+                if theta in y:
+                    y2.append(y[theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y7[method] = y2
+        Y8 = defaultdict(list)
+        for method, mylist in table_8sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, success in key_val.items():
+                    y[theta] = success
+            y2 = []
+            for theta in X:
+                if theta in y:
+                    y2.append(y[theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y8[method] = y2
+        Y9 = defaultdict(list)
+        for method, mylist in table_9sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, success in key_val.items():
+                    y[theta] = success
+            y2 = []
+            for theta in X:
+                if theta in y:
+                    y2.append(y[theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y9[method] = y2
+        
+        # plotting
+        fig, ax = plt.subplots(1, 1, figsize=(24, 16))
+        fig.subplots_adjust(left=0.12, right=0.97, top=0.9, bottom=0.14)
+        method = 'Theorem'
+        ax.plot(X, Y6[method], label='6 Sensors')
+        ax.plot(X, Y7[method], label='7 Sensors')
+        ax.plot(X, Y8[method], label='8 Sensors')
+        ax.plot(X, Y9[method], label='9 Sensors')
+        ax.legend(edgecolor='black', fontsize=55, loc='lower center')
+        ax.vlines(x=65.9,   ymin=0, ymax=1, linestyles='dotted', colors='black')
+        ax.vlines(x=69.3,   ymin=0, ymax=1, linestyles='dotted', colors='black')
+        ax.vlines(x=71.6,   ymin=0, ymax=1, linestyles='dotted', colors='black')
+        xticks = [i for i in range(0, 91, 15)]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([f'{x}' for x in xticks])
+        yticks = [0.1, 0.2, 0.4, 0.6, 0.8, 1]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        ax.set_ylim([0.1, 1.02])
+        ax.set_xlim([0, 90])
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.set_xlabel('Theta (degree)', labelpad=20)
+        ax.set_ylabel('Success Probability (%)')
+        ax.set_title('The Performance of Conjecture and Corollary', fontsize=60, pad=40)
+        fig.savefig(filename)
 
 def vary_theta():
     logs = ['result2/12.22.2022/varying_theta_2sensors', 'result2/12.22.2022/varying_theta_3sensors', \
@@ -326,16 +431,22 @@ def lemma2():
 
 
 def conjecture():
-    logs = ['result2/12.31.2022/conjecture.3sensor', 'result2/12.31.2022/conjecture.5sensor',
-            'result2/12.22.2022/varying_theta_3sensors', 'result2/12.22.2022/varying_theta_5sensors']
+    # logs = ['result2/12.31.2022/conjecture_3sensor', 'result2/12.31.2022/conjecture_5sensor',
+    #         'result2/12.22.2022/varying_theta_3sensors', 'result2/12.22.2022/varying_theta_5sensors']
+    # data = Logger.read_log(logs)
+    # filename = 'result2/12.31.2022/conjecture_1.png'
+    # Plot.conjecture_1(data, filename)
+
+    logs = ['result2/12.31.2022/conjecture_6sensor', 'result2/12.31.2022/conjecture_7sensor',
+            'result2/12.31.2022/conjecture_8sensor', 'result2/12.31.2022/conjecture_9sensor']
     data = Logger.read_log(logs)
-    filename = 'result2/12.31.2022/conjecture_1.png'
-    Plot.conjecture_1(data, filename)
+    filename = 'result2/12.31.2022/conjecture_2.png'
+    Plot.conjecture_2(data, filename)
 
 
 if __name__ == '__main__':
-    vary_theta()
+    # vary_theta()
     # methods_similar()
     # lemma2()
-    # conjecture()
+    conjecture()
     
