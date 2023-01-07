@@ -262,6 +262,41 @@ def average_two_states(qstate_custom1: QuantumStateCustomBasis, qstate_custom2: 
     return qstate
 
 
+def generate_pyramid_states(n: int, x: float) -> list:
+    '''Note that the coefficients are real numbers instead of complex numbers
+    Params:
+        n -- number of qubits
+        x -- <q|q> = x
+    Return:
+        a list of QuantumState
+    '''
+    qstates = []
+    state = np.zeros(2 ** n)
+    state[0] = 1
+    qstates.append(state)
+    for i in range(1, n):
+        prev_state = qstates[-1]
+        state = np.zeros(2 ** n)
+        # 0 ~ i-2: copy
+        summ = 0
+        for j in range(i-1):
+            state[j] = prev_state[j]
+            summ += state[j] * prev_state[j]
+        # i-1: <phi|phi> = x
+        state[i-1] = (x - summ) / prev_state[i-1]
+        # i: normalization
+        summ = 0
+        for j in range(i):
+            summ += state[j] ** 2
+        state[i] = np.sqrt(1 - summ)
+        qstates.append(state)
+    qstates2 = []
+    for state in qstates:
+        qstates2.append(QuantumState(num_sensor=n, state_vector=state))
+    return qstates2
+
+
+
 # doing average in a single partition
 def main2(debug, seed, unitary_theta):
     '''test the averaging the coefficients in each partition will lead to a better initial state
@@ -532,6 +567,33 @@ def lemma2(num_sensor, debug, seed, unitary_theta):
     return errors_perm, errors_avg
 
 
+def validate_lemma3():
+    file = 'result2/1.6.2023/lemma3.n{}.npy'
+    error = lemma3(num_sensor=2)
+    np.save(file.format(2), np.array(error))
+    
+    error = lemma3(num_sensor=3)
+    np.save(file.format(3), np.array(error))
+
+    error = lemma3(num_sensor=4)
+    np.save(file.format(4), np.array(error))
+
+    error = lemma3(num_sensor=5)
+    np.save(file.format(5), np.array(error))
+
+
+def lemma3(num_sensor: int) -> list:
+    print(f'num sensor = {num_sensor}')
+    povm = Povm()
+    priors = [1/num_sensor] * num_sensor
+    X = np.linspace(0, 0.99, 100)
+    y = []
+    for x in X:
+        qstates = generate_pyramid_states(num_sensor, x)
+        povm.semidefinite_programming_minerror(qstates, priors, debug=False)
+        y.append(povm.theoretical_error)
+        print(f'x={x}, y={y[-1]}')
+    return y
 
 
 if __name__ == '__main__':
@@ -556,7 +618,9 @@ if __name__ == '__main__':
     #         print(f'theta={theta}, seed={seed}')
     #         main3_delta(debug, seed=seed, unitary_theta=theta)
 
-    validate_lemma2()
+    # validate_lemma2()
+
+    validate_lemma3()
 
 '''
 

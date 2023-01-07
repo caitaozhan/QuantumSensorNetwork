@@ -217,6 +217,38 @@ class Plot:
 
 
     @staticmethod
+    def lemma3(data, filename):
+        fig, ax = plt.subplots(1, 1, figsize=(24, 16))
+        fig.subplots_adjust(left=0.12, right=0.97, top=0.9, bottom=0.15)
+
+        X = np.linspace(0, 0.99, 100)
+        n=2
+        ax.plot(X, data[f'n{n}'], label='2 Sensors')
+        n=3
+        ax.plot(X, data[f'n{n}'], label='3 Sensors')
+        n=4
+        ax.plot(X, data[f'n{n}'], label='4 Sensors')
+        n=5
+        ax.plot(X, data[f'n{n}'], label='5 Sensors')
+        ax.legend(fontsize=50)
+        yticks = [0, 0.2, 0.4, 0.6, 0.8]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        xticks = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([str(x) for x in xticks])
+        ax.set_xlim([0, 1])
+        ax.set_ylim([-0.005, 0.8])
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.set_xlabel('Pairwise $\langle \phi_i \| \phi_j \\rangle = x$', labelpad=20)
+        ax.set_ylabel('Probability of Error (%)', labelpad=20)
+        ax.set_title('Validating Lemma 3', pad = 20)
+        fig.savefig(filename)
+
+
+
+    @staticmethod
     def conjecture_1(data, filename):
         table_3sensor = defaultdict(list)
         table_5sensor = defaultdict(list)
@@ -430,6 +462,16 @@ def lemma2():
     Plot.lemma2(data, filename)
 
 
+def lemma3():
+    file = 'result2/1.6.2023/lemma3.n{}.npy'
+    data = {}
+    for n in range(2, 6):
+        y = np.load(file.format(n))
+        data[f'n{n}'] = y
+    filename = 'result2/1.6.2023/lemma3.png'
+    Plot.lemma3(data, filename)
+
+
 def conjecture():
     # logs = ['result2/12.31.2022/conjecture_3sensor', 'result2/12.31.2022/conjecture_5sensor',
     #         'result2/12.22.2022/varying_theta_3sensors', 'result2/12.22.2022/varying_theta_5sensors']
@@ -448,5 +490,6 @@ if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
-    conjecture()
+    lemma3()
+    # conjecture()
     
