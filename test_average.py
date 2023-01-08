@@ -587,6 +587,7 @@ def lemma3(num_sensor: int) -> list:
     povm = Povm()
     priors = [1/num_sensor] * num_sensor
     X = np.linspace(0, 0.99, 100)
+    X = np.append(X, [0.995, 0.998, 0.999, 0.99999])
     y = []
     for x in X:
         qstates = generate_pyramid_states(num_sensor, x)
