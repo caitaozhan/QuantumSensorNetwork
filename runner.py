@@ -68,11 +68,11 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
     base_args = ["-us", "2", "-m", "Theorem"]
 
-    num_sensor  = 9
+    num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result2/12.31.2022'
-    output_file = 'conjecture.9sensor'
+    output_dir  = 'result-tmp/1.8.2023'
+    output_file = 'conjecture.4sensor'
     thetas      = [i for i in range(1, 91)]
     start_seed  = [0]
 
