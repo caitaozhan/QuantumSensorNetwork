@@ -10,7 +10,7 @@ For understanding the parameters: python main.py -h
 
 Pysical Review A: https://caitaozhan.github.io/file/PhysRevA.QuantumSensor.pdf
 
-Citation:
+Please cite using the following BibTeX, Thanks!!!
 ```
 @article{PhysRevA.107.012435,
   title = {Discrete outcome quantum sensor networks},
