@@ -156,16 +156,16 @@ class Plot:
     def lemma2(data, filename):
         plt.rcParams['font.size'] = 45
         fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=(22, 15))
-        fig.subplots_adjust(left=0.14, right=0.97, top=0.89, bottom=0.11, wspace=0.4, hspace=0.3)
+        fig.subplots_adjust(left=0.14, right=0.97, top=0.88, bottom=0.12, wspace=0.4, hspace=0.3)
         
-        boxprops = dict(linewidth=3)
-        medianprops = dict(linewidth=3)
-        whiskerprops = dict(linewidth=3)
-        capprops = dict(linewidth=3)
+        boxprops = dict(linewidth=5)
+        medianprops = dict(linewidth=5)
+        whiskerprops = dict(linewidth=5)
+        capprops = dict(linewidth=5)
 
         n = 2
         print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
-        ax0.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax0.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=5)
         ax0.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
         xticks = [1]
         ax0.set_xticks(xticks)
@@ -177,7 +177,7 @@ class Plot:
         ax0.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
         n = 3
         print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
-        ax1.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax1.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=5)
         ax1.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
         ax1.set_xticks(xticks)
         ax1.set_xticklabels([f'{x+2}' for x in xticks])
@@ -188,7 +188,7 @@ class Plot:
         ax1.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
         n = 4
         print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
-        ax2.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax2.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=5)
         ax2.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
         ax2.set_xticks(xticks)
         ax2.set_xticklabels([f'{x+3}' for x in xticks])
@@ -199,7 +199,7 @@ class Plot:
         ax2.tick_params(axis='y', direction='in', length=8, width=2, pad=15)
         n = 5
         print(data[f'n{n}.perm'][0], min(data[f'n{n}.avg']), max(data[f'n{n}.avg']))
-        ax3.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=3)
+        ax3.hlines(y=data[f'n{n}.perm'][0], xmin=0.85, xmax=1.15, linewidth=5)
         ax3.boxplot(data[f'n{n}.avg'], whis=(0, 100), widths=0.2, boxprops=boxprops, medianprops=medianprops, whiskerprops=whiskerprops, capprops=capprops)
         ax3.set_xticks(xticks)
         ax3.set_xticklabels([f'{x+4}' for x in xticks])
@@ -218,7 +218,7 @@ class Plot:
     @staticmethod
     def lemma3(data, filename):
         fig, ax = plt.subplots(1, 1, figsize=(24, 14))
-        fig.subplots_adjust(left=0.12, right=0.98, top=0.9, bottom=0.16)
+        fig.subplots_adjust(left=0.12, right=0.98, top=0.89, bottom=0.16)
 
         X = np.linspace(0, 0.99, 100)
         X = np.append(X, [0.995, 0.998, 0.999, 0.99999])
@@ -242,9 +242,9 @@ class Plot:
         ax.set_ylim([-0.001, 0.801])
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax.set_xlabel('$x$ (such that $\\forall i \\neq j$: $\langle \phi_i \| \phi_j \\rangle = x$)', labelpad=20)
+        ax.set_xlabel('$x$ (such that $\\forall i \\neq j$: $\langle \phi_i \| \phi_j \\rangle = x$)', labelpad=22)
         ax.set_ylabel('Probability of Error (%)', labelpad=30)
-        ax.set_title('$Lemma\ 3$: $PoE$ Decrease with the Decrease in $x$', pad=20, fontsize=60)
+        ax.set_title('$Lemma\ 3$: $PoE$ Decrease with the Decrease in $x$', pad=40, fontsize=60)
         ax.invert_xaxis()
         fig.savefig(filename)
 
@@ -490,8 +490,8 @@ def conjecture():
 
 if __name__ == '__main__':
     # vary_theta()
-    methods_similar()
+    # methods_similar()
     # lemma2()
-    # lemma3()
+    lemma3()
     # conjecture()
     
