@@ -243,8 +243,8 @@ class Plot:
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_xlabel('$x$ (such that $\\forall i \\neq j$: $\langle \phi_i \| \phi_j \\rangle = x$)', labelpad=22)
-        ax.set_ylabel('Probability of Error (%)', labelpad=30)
-        ax.set_title('$Lemma\ 3$: $PoE$ Decrease with the Decrease in $x$', pad=40, fontsize=60)
+        ax.set_ylabel('Probability of Error (%)', labelpad=30, fontsize=58)
+        ax.set_title('$Lemma\ 3$: $PoE$ Decrease with the Decrease in $x$', pad=40, fontsize=58)
         ax.invert_xaxis()
         fig.savefig(filename)
 
