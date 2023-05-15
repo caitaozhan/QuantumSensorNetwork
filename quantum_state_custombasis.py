@@ -115,7 +115,7 @@ class QuantumStateCustomBasis:
 
     def init_random_state_realnumber_partition(self, seed: int, partitions: list, varying: int):
         '''init a random quantum state with real number amplitudes
-           coefficients at each partition except the partition i are the same. In partition varying, the coefficients are different.
+           coefficients at each partition except the partition varying are the same. In partition varying, the coefficients are different.
         '''
         if seed is not None:
             np.random.seed(seed)
@@ -155,6 +155,26 @@ class QuantumStateCustomBasis:
                 string += c_str
             string += ']\n'
         return string
+
+
+    def visualize_computation_in_custombasis(self, matplotlib: bool):
+        '''measure the computational state vector in the custom basis, and visualize it
+        Args:
+            matplotlib -- if True, do a bar plot, else just print the probs
+        '''
+        amplitudes = []
+        for i in range(2 ** self.num_sensor):
+            amplitudes.append(np.dot(np.conj(self._custom_basis[i]), self._state_vector))
+        probs = np.abs(amplitudes) ** 2
+        if matplotlib:
+            import matplotlib.pyplot as plt
+            plt.bar(probs)
+            plt.show()
+        else:
+            print('\nProbabilities:')
+            for i, prob in enumerate(probs):
+                print(f'|{i}> : {prob}')
+
 
     def __str__(self):
         string = '\nCustom Basis:\n'

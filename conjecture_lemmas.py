@@ -153,7 +153,7 @@ def permutation_custombasis(init_state_custom: QuantumStateCustomBasis) -> List[
     return init_state_custom_permutations        
 
 
-def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> QuantumState:
+def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> QuantumStateCustomBasis:
     '''averaging the same partition coefficients for an initial state
     Args:
         init_state -- initial quantum state
@@ -303,6 +303,7 @@ def main2(debug, seed, unitary_theta):
        here only one partition has varying coefficients
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
+    matplotlib = False
     num_sensor = 3
     priors = [1/3, 1/3, 1/3]
     povm = Povm()
@@ -319,6 +320,7 @@ def main2(debug, seed, unitary_theta):
         partition = eg.get_partition(i)
         partitions.append([int(bin_string, 2) for bin_string in partition])
     init_state_custom.init_random_state_realnumber_partition(seed, partitions, varying=varying_partition)
+    init_state_custom.visualize_computation_in_custombasis(matplotlib)
     if debug:
         print(f'Initial state:\n{init_state_custom}')
         print()
@@ -338,6 +340,7 @@ def main2(debug, seed, unitary_theta):
     partition = eg.get_partition(varying_partition)
     partition = [int(bin_string, 2) for bin_string in partition]
     init_state_avg = average_init_state(init_state_avg, partition)
+    init_state_avg.visualize_computation_in_custombasis(matplotlib)
     # 4. do SDP for the new averaged initial state
     if debug:
         print('\nthe averaged initial state:')
@@ -606,7 +609,7 @@ if __name__ == '__main__':
     # print('false', counter_false)
     # debug = True
 
-    # main2(debug, seed=2, unitary_theta=40)
+    main2(debug, seed=2, unitary_theta=40)
     # main2_delta(debug, seed=2, unitary_theta=40)
 
     seed = 2
@@ -621,7 +624,7 @@ if __name__ == '__main__':
 
     # validate_lemma2()
 
-    validate_lemma3()
+    # validate_lemma3()
 
 '''
 

@@ -1,5 +1,0 @@
-4.28.2022 simulated annealing version: 
-1) select random directions during findneighbor
-2) only 2**num_sensor evaluations per temperature
-
-Hill climbing bugfix: fixed a bug in Utility.get_theta()
