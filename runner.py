@@ -66,13 +66,13 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
     # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
-    base_args = ["-us", "2", "-m", "Theorem"]
+    base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
 
-    num_sensor  = 4
+    num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result-tmp/1.8.2023'
-    output_file = 'conjecture.4sensor'
+    output_dir  = 'result2/5.15.2023'
+    output_file = 'varying_theta_5sensor_SA'
     thetas      = [i for i in range(1, 91)]
     start_seed  = [0]
 
