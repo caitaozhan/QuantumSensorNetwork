@@ -121,8 +121,8 @@ class Plot:
         
         # step 2: plotting
 
-        fig, ax = plt.subplots(figsize=(30, 15))
-        fig.subplots_adjust(left=0.1, right=0.97, top=0.9, bottom=0.15)
+        fig, ax = plt.subplots(figsize=(30, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.91, bottom=0.12)
 
         ax.plot(X2[:45], Y2[methods[0]][:45], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11, label=Plot.METHOD[methods[0]])
         ax.plot(X2[45:], Y2[methods[0]][45:], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
@@ -157,7 +157,7 @@ class Plot:
         # ax.vlines(x=60, ymin=0.2, ymax=1, linestyles='dotted', colors='black', )
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax.set_title('Empirical Validation of Heuristic Algorithms', fontsize=60, pad=30)
+        ax.set_title('Empirical Validation of Heuristic Algorithms', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('Theta (degree)', labelpad=15)
         ax.set_ylabel('Probability of Error (%)', fontsize=60)
@@ -464,8 +464,8 @@ class Plot:
         # step 2: plotting
 
         methods = ['Hill climbing', 'Theorem']
-        fig, ax = plt.subplots(figsize=(30, 15))
-        fig.subplots_adjust(left=0.1, right=0.97, top=0.9, bottom=0.15)
+        fig, ax = plt.subplots(figsize=(30, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.91, bottom=0.12)
 
         ax.plot(X2[:45], Y2[methods[0]][:45], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11, label=Plot.METHOD[methods[0]])
         ax.plot(X2[45:], Y2[methods[0]][45:], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
@@ -500,7 +500,7 @@ class Plot:
         # ax.vlines(x=60, ymin=0.2, ymax=1, linestyles='dotted', colors='black', )
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax.set_title('Empirical Validation of Conjecture', fontsize=60, pad=30)
+        ax.set_title('Empirical Validation of Conjecture', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('Theta (degree)', labelpad=15)
         ax.set_ylabel('Probability of Error (%)', fontsize=60)
