@@ -693,68 +693,68 @@ class Plot:
 
 
 def vary_theta():
-    logs = ['result2/12.22.2022/varying_theta_2sensors', 'result2/12.22.2022/varying_theta_3sensors', \
-            'result2/12.22.2022/varying_theta_4sensors', 'result2/12.22.2022/varying_theta_5sensors', \
-            'result2/5.15.2023/varying_theta_2sensors_SA', 'result2/5.15.2023/varying_theta_3sensors_SA',\
-            'result2/5.15.2023/varying_theta_5sensors_SA', 'result2/12.26.2022/compare_methods_4sensors']
+    logs = ['result/12.22.2022/varying_theta_2sensors', 'result/12.22.2022/varying_theta_3sensors', \
+            'result/12.22.2022/varying_theta_4sensors', 'result/12.22.2022/varying_theta_5sensors', \
+            'result/5.15.2023/varying_theta_2sensors_SA', 'result/5.15.2023/varying_theta_3sensors_SA',\
+            'result/5.15.2023/varying_theta_5sensors_SA', 'result/12.26.2022/compare_methods_4sensors']
     data = Logger.read_log(logs)
-    filename = 'result2/12.22.2022/varying_theta_nsensors.png'
+    filename = 'result/12.22.2022/varying_theta_nsensors.png'
     Plot.vary_theta(data, filename)
 
 
 def methods_similar():
-    # logs1 = ['result2/12.22.2022/varying_theta_4sensors', 'result2/12.26.2022/compare_methods_4sensors']
-    logs2 = ['result2/12.23.2022/compare_methods_4sensors']
+    # logs1 = ['result/12.22.2022/varying_theta_4sensors', 'result/12.26.2022/compare_methods_4sensors']
+    logs2 = ['result/12.23.2022/compare_methods_4sensors']
     # data1 = Logger.read_log(logs1)
     data2 = Logger.read_log(logs2)
-    filename = 'result2/12.26.2022/compare_methods_similar.png'
+    filename = 'result/12.26.2022/compare_methods_similar.png'
     Plot.methods_similar(data2, filename)
 
 
 def lemma2():
-    file_perm = 'result2/12.28.2022/lemma2.n{}.perm.npy'
-    file_avg = 'result2/12.28.2022/lemma2.n{}.avg.npy'
+    file_perm = 'result/12.28.2022/lemma2.n{}.perm.npy'
+    file_avg = 'result/12.28.2022/lemma2.n{}.avg.npy'
     data = {}
     for n in range(2, 6):
         perm = np.load(file_perm.format(n))
         avg  = np.load(file_avg.format(n))
         data[f'n{n}.perm'] = perm
         data[f'n{n}.avg'] = avg
-    filename = 'result2/12.28.2022/lemma2.png'
+    filename = 'result/12.28.2022/lemma2.png'
     Plot.lemma2(data, filename)
 
 
 def lemma3():
-    file = 'result2/1.6.2023/lemma3.n{}.npy'
+    file = 'result/1.6.2023/lemma3.n{}.npy'
     data = {}
     for n in range(2, 6):
         y = np.load(file.format(n))
         data[f'n{n}'] = y
-    filename = 'result2/1.6.2023/lemma3.png'
+    filename = 'result/1.6.2023/lemma3.png'
     Plot.lemma3(data, filename)
 
 
 def conjecture():
 
-    logs = ['result2/12.31.2022/conjecture_2sensor', 'result2/12.31.2022/conjecture_3sensor', 'result2/12.31.2022/conjecture_4sensor', 'result2/12.31.2022/conjecture_5sensor',
-            'result2/12.22.2022/varying_theta_2sensors', 'result2/12.22.2022/varying_theta_3sensors', 'result2/12.22.2022/varying_theta_4sensors', 'result2/12.22.2022/varying_theta_5sensors']
+    logs = ['result/12.31.2022/conjecture_2sensor', 'result/12.31.2022/conjecture_3sensor', 'result/12.31.2022/conjecture_4sensor', 'result/12.31.2022/conjecture_5sensor',
+            'result/12.22.2022/varying_theta_2sensors', 'result/12.22.2022/varying_theta_3sensors', 'result/12.22.2022/varying_theta_4sensors', 'result/12.22.2022/varying_theta_5sensors']
     data = Logger.read_log(logs)
-    filename = 'result2/12.31.2022/conjecture.png'
+    filename = 'result/12.31.2022/conjecture.png'
     Plot.conjecture(data, filename)
 
 
     # below are obsolete
 
-    # logs = ['result2/12.31.2022/conjecture_3sensor', 'result2/12.31.2022/conjecture_5sensor',
-    #         'result2/12.22.2022/varying_theta_3sensors', 'result2/12.22.2022/varying_theta_5sensors']
+    # logs = ['result/12.31.2022/conjecture_3sensor', 'result/12.31.2022/conjecture_5sensor',
+    #         'result/12.22.2022/varying_theta_3sensors', 'result/12.22.2022/varying_theta_5sensors']
     # data = Logger.read_log(logs)
-    # filename = 'result2/12.31.2022/conjecture_1.png'
+    # filename = 'result/12.31.2022/conjecture_1.png'
     # Plot.conjecture_1(data, filename)
 
-    # logs = ['result2/12.31.2022/conjecture_6sensor', 'result2/12.31.2022/conjecture_7sensor',
-    #         'result2/12.31.2022/conjecture_8sensor', 'result2/12.31.2022/conjecture_9sensor']
+    # logs = ['result/12.31.2022/conjecture_6sensor', 'result/12.31.2022/conjecture_7sensor',
+    #         'result/12.31.2022/conjecture_8sensor', 'result/12.31.2022/conjecture_9sensor']
     # data = Logger.read_log(logs)
-    # filename = 'result2/12.31.2022/conjecture_2.png'
+    # filename = 'result/12.31.2022/conjecture_2.png'
     # Plot.conjecture_2(data, filename)
 
 
