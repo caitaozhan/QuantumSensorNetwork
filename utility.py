@@ -160,3 +160,45 @@ class Utility:
         for e_val in e_vals:
             summ += abs(e_val)
         return summ
+
+    @staticmethod
+    def basis(v1: np.array, v2: np.array, string: str) -> np.array:
+        '''generate the customized basis, e.g., |--+>
+        the same as OptimizeInitState.eigenvector()
+        Args:
+            v1 -- u+
+            v2 -- u-
+            string -- the eigenvector to generate in binary string, e.g., '0001'
+        Return:
+            basis
+        '''
+        tensor = 1
+        for i in string:
+            if i == '1':
+                tensor = np.kron(tensor, v1)
+            else:
+                tensor = np.kron(tensor, v2)
+        return tensor
+
+    @staticmethod
+    def generate_custombasis(num_sensor: int, U: Operator) -> list:
+        '''generate a customized set of basis from unitary operator U
+        Args:
+            num_sensor -- number of sensor
+            U -- unitary operator
+        Return:
+            a list, where each element is a np.array (a basis |j>)
+        '''
+        e_vals, e_vectors = np.linalg.eig(U.data)
+        theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
+        theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
+        v1 = e_vectors[:, 0]  # v1 is positive
+        v2 = e_vectors[:, 1]  # v2 is negative
+        if theta1 < theta2:
+            v1, v2 = v2, v1
+        custombasis = []
+        for i in range(2**num_sensor):
+            j = bin(i)[2:]
+            j = '0' * (num_sensor-len(j)) + j
+            custombasis.append(Utility.basis(v1, v2, j))
+        return custombasis

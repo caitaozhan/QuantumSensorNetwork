@@ -4,6 +4,7 @@ from qiskit.quantum_info.operators.operator import Operator
 from qiskit_textbook.tools import random_state
 from utility import Utility
 from input_output import Default
+from equation_generator import EquationGenerator
 
 
 class QuantumStateCustomBasis:
@@ -166,14 +167,36 @@ class QuantumStateCustomBasis:
         for i in range(2 ** self.num_sensor):
             amplitudes.append(np.dot(np.conj(self._custom_basis[i]), self._state_vector))
         probs = np.abs(amplitudes) ** 2
+        print('\nProbabilities:')
+        for i, prob in enumerate(probs):
+            print(f'|{i}> : {prob}')
         if matplotlib:
             import matplotlib.pyplot as plt
-            plt.bar(probs)
+            X = list(range(2**self.num_sensor))
+            plt.bar(X, probs)
+            plt.xticks(X)
             plt.show()
-        else:
-            print('\nProbabilities:')
-            for i, prob in enumerate(probs):
-                print(f'|{i}> : {prob}')
+
+    def get_symmetry_index(self) -> float:
+        '''a measure of symmetry -- the sum of pairwise difference in the coefficient-squares, i.e., probabilities, in each partition
+        Return:
+            sym_index -- if value is zero, then perfect symmetry
+        '''
+        amplitudes = []
+        for i in range(2 ** self.num_sensor):
+            amplitudes.append(np.dot(np.conj(self._custom_basis[i]), self._state_vector))
+        probs = np.abs(amplitudes) ** 2
+        eg = EquationGenerator(self._num_sensor)
+        symmetry_index = 0
+        for i in range(self.num_sensor + 1):
+            partition = eg.get_partition(i)  # ['001', '010', '100']
+            n = len(partition)
+            for j in range(n):
+                prob_1 = probs[int(partition[j], 2)]
+                for k in range(j + 1, n):
+                    prob_2 = probs[int(partition[k], 2)]
+                    symmetry_index += abs(prob_1 - prob_2)
+        return symmetry_index
 
 
     def __str__(self):

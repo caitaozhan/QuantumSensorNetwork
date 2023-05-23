@@ -67,47 +67,6 @@ class Step:
         return self.stepsize_squared[i]
 
 
-def basis(v1: np.array, v2: np.array, string: str) -> np.array:
-    '''generate the customized basis, e.g., |--+>
-       the same as OptimizeInitState.eigenvector()
-    Args:
-        v1 -- u+
-        v2 -- u-
-        string -- the eigenvector to generate in binary string, e.g., '0001'
-    Return:
-        basis
-    '''
-    tensor = 1
-    for i in string:
-        if i == '1':
-            tensor = np.kron(tensor, v1)
-        else:
-            tensor = np.kron(tensor, v2)
-    return tensor
-
-
-def generate_custombasis(num_sensor: int, U: Operator) -> list:
-    '''generate a customized set of basis from unitary operator U
-    Args:
-        U -- unitary operator
-    Return:
-        a list, where each element is a np.array (a basis |j>)
-    '''
-    e_vals, e_vectors = np.linalg.eig(U.data)
-    theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
-    theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
-    v1 = e_vectors[:, 0]  # v1 is positive
-    v2 = e_vectors[:, 1]  # v2 is negative
-    if theta1 < theta2:
-        v1, v2 = v2, v1
-    custombasis = []
-    for i in range(2**num_sensor):
-        j = bin(i)[2:]
-        j = '0' * (num_sensor-len(j)) + j
-        custombasis.append(basis(v1, v2, j))
-    return custombasis
-
-
 def permutation(init_state: QuantumState) -> QuantumState:
     '''shift one bit to the right: 001 --> 100, 010 --> 001, 100 --> 010
     '''
@@ -303,7 +262,7 @@ def main2(debug, seed, unitary_theta):
        here only one partition has varying coefficients
     '''
     print(f'unitary theta is {unitary_theta}, seed is {seed}', end=' ')
-    matplotlib = False
+    matplotlib = True
     num_sensor = 3
     priors = [1/3, 1/3, 1/3]
     povm = Povm()
@@ -312,7 +271,7 @@ def main2(debug, seed, unitary_theta):
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     eg = EquationGenerator(num_sensor)
     partitions = []
@@ -321,6 +280,7 @@ def main2(debug, seed, unitary_theta):
         partitions.append([int(bin_string, 2) for bin_string in partition])
     init_state_custom.init_random_state_realnumber_partition(seed, partitions, varying=varying_partition)
     init_state_custom.visualize_computation_in_custombasis(matplotlib)
+    print(f'symmetry index = {init_state_custom.get_symmetry_index()}')
     if debug:
         print(f'Initial state:\n{init_state_custom}')
         print()
@@ -341,6 +301,7 @@ def main2(debug, seed, unitary_theta):
     partition = [int(bin_string, 2) for bin_string in partition]
     init_state_avg = average_init_state(init_state_avg, partition)
     init_state_avg.visualize_computation_in_custombasis(matplotlib)
+    print(f'symmetry index = {init_state_avg.get_symmetry_index()}')
     # 4. do SDP for the new averaged initial state
     if debug:
         print('\nthe averaged initial state:')
@@ -375,7 +336,7 @@ def main2_delta(debug, seed, unitary_theta):
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     eg = EquationGenerator(num_sensor)
     partitions = []
@@ -418,7 +379,7 @@ def main3(debug, seed, unitary_theta):
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=seed)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     eg = EquationGenerator(num_sensor)
     partitions = []
@@ -482,7 +443,7 @@ def main3_delta(debug, seed, unitary_theta):
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=2)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     init_state_custom.init_random_state_realnumber(seed=seed)      # all coefficients are random
     if debug:
@@ -546,7 +507,7 @@ def lemma2(num_sensor, debug, seed, unitary_theta):
     U = Utility.generate_unitary_operator(theta=unitary_theta, seed=2)
     if debug:
         Utility.print_matrix('\nUnitary operator:', U.data)
-    custom_basis = generate_custombasis(num_sensor, U)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
     print('\ninitial state:')

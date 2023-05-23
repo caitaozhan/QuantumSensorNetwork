@@ -10,7 +10,7 @@ import json
 class Default:
     '''Some default configurations
     '''
-    output_dir  = 'result-tmp'
+    output_dir  = 'result-tmp2'
     output_file = 'foo'
     methods = ['Theory', 'Hill climbing', 'Simulated annealing']
     # some constants
@@ -25,11 +25,10 @@ class Default:
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
-    mod_step = 0.1            # initial modulus step size
-    amp_step = 0.1            # initial amplitude step size
+    step_size  = 0.1          # initial step size
     decrease_rate = 0.96      # decrease rate for the step sizes
     realimag_neighbor = False # changing the real part and the imaginary part
-    random_neighbor = True   # random neighbor or predefined direction neighbor
+    random_neighbor = True    # random neighbor or predefined direction neighbor
 
     # below are for simulated annealing
     init_step = 0.1                  # initial step size
@@ -139,17 +138,15 @@ class HillclimbOutput:
     error: float
     success: float          # also 1 - error, also the last value of scores
     start_seed: int         # the seed that affects the starting point of hill climbing
-    mod_step: float         # the initial modulus step size
-    amp_step: float         # the initial amplitude step size
+    step_size: float        # the initial step size
     decrease_rate: float    # the decrease rate for the step sizes
     min_iteration: int      # the minimum iteration for hill climbing
     real_iteration: int     # number of iterations in reality
     init_state: str         # the initial state found
-    scores: List[float]     # the evaluation value of each iteration
+    scores: List[float]     # the evaluation value of the quantum state at each iteration
+    symmetries: List[float] # the symmetry index of the quantum state at each iteration
     runtime: float          # run time
     eval_metric: str        # 'min error' or 'unambiguous'
-    random_neighbor: bool   # random neighbor or not
-    realimag_neighbor: bool  # change the real part and imaginary parts
 
     def __str__(self):
         return self.to_json_str()
@@ -170,12 +167,10 @@ class HillclimbOutput:
             'start_seed': self.start_seed,
             'decrease_rate': self.decrease_rate,
             'success': self.success,
-            'mod_step': self.mod_step,
-            'amp_step': self.amp_step,
+            'step_size': self.step_size,
             'init_state': self.init_state,
-            'random_neighbor': self.random_neighbor,
-            'realimag_neighbor': self.realimag_neighbor,
-            'scores': self.scores
+            'scores': self.scores,
+            'symmetries': self.symmetries if self.symmetries else None
         }
         return json.dumps(outputdict)
 
@@ -189,11 +184,10 @@ class HillclimbOutput:
         '''
         outdict = json.loads(json_str)
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
-                   outdict['start_seed'], outdict['mod_step'], outdict['amp_step'], outdict['decrease_rate'], \
+                   outdict['start_seed'], outdict['step_size'], outdict['decrease_rate'], \
                    outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
-                   outdict['runtime'], outdict['eval_metric'] if 'eval_metric' in outdict else None,
-                   outdict['random_neighbor'] if 'random_neighbor' in outdict else False,
-                   outdict['realimag_neighbor'] if 'realimag_neighbor' in outdict else False)
+                   outdict['symmetries'] if outdict['symmetries'] in outdict else None,\
+                   outdict['runtime'], outdict['eval_metric'] if 'eval_metric' in outdict else None)
 
 
 @dataclass

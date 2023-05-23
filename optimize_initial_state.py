@@ -12,6 +12,7 @@ from qiskit_textbook.tools import random_state
 from qiskit.quantum_info.operators.operator import Operator
 from input_output import Default
 from quantum_state import QuantumState
+from quantum_state_custombasis import QuantumStateCustomBasis
 from utility import Utility
 from povm import Povm
 from equation_generator import EquationGenerator
@@ -220,56 +221,8 @@ class OptimizeInitialState(QuantumState):
             raise Exception(f'unknown eval_metric: {eval_metric}!')
         return povm.theoretical_success
 
-    def find_neighbors(self, init_state: QuantumState, i: int, mod_step: list, amp_step: float):
-        '''find four neighbors of the initial state
-        Args:
-            init_state -- initial state
-            i        -- ith element of the state vector to be modified
-            mod_step -- step size for modulus
-            amp_step -- step size for amplitude
-        Return:
-            list -- a list of QuantumState object
-        '''
-        init_state_vector = init_state.state_vector.copy()
-        z = init_state_vector[i]
-        r = abs(z)
-        theta = Utility.get_theta(z.real, z.imag)
-        array = []
-        init_state_vector[i] = (r + mod_step)*np.exp(complex(0, theta))
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        init_state_vector[i] = (r - mod_step)*np.exp(complex(0, theta))
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        init_state_vector[i] = r*np.exp(complex(0, theta + amp_step))
-        array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
-        init_state_vector[i] = r*np.exp(complex(0, theta - amp_step))
-        array.append(QuantumState(self.num_sensor, np.array(init_state_vector)))
-        return array
 
-    def find_neighbors_realimag(self, init_state: QuantumState, i: int, real_step: float, imag_step: float):
-        '''find four neighbors of the initial state
-        Args:
-            init_state -- initial state
-            i        -- ith element of the state vector to be modified
-            mod_step -- step size for modulus
-            amp_step -- step size for amplitude
-        Return:
-            list -- a list of QuantumState object
-        '''
-        init_state_vector = init_state.state_vector.copy()
-        z = init_state_vector[i]
-        array = []
-        init_state_vector[i] = (z.real + real_step) + 1j*z.imag
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        init_state_vector[i] = (z.real - real_step) + 1j*z.imag
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        init_state_vector[i] = z.real + 1j*(z.imag + imag_step)
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        init_state_vector[i] = z.real + 1j*(z.imag - imag_step)
-        array.append(QuantumState(self.num_sensor, self.normalize_state(init_state_vector)))
-        return array
-
-
-    def find_neighbors_random(self, qstate: QuantumState, i: int, step_size: float):
+    def find_neighbors(self, qstate: QuantumState, i: int, step_size: float):
         '''find four random neighbors of qstate
         Args:
             qstate -- initial state
@@ -287,102 +240,21 @@ class OptimizeInitialState(QuantumState):
         return array
 
 
-    def hill_climbing(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, epsilon: float, mod_step: list, \
-                      amp_step: list, decrease_rate: float, min_iteration: int, eval_metric: str, random_neighbor: bool, realimag_neighbor: bool):
+    def hill_climbing(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, epsilon: float, \
+                      step_size: list, decrease_rate: float, min_iteration: int, eval_metric: str):
         '''use the good old hill climbing method to optimize the initial state
         Args:
             startState       -- the start point of hill climbing
             seed             -- random seed
             unitary_operator -- describe the interaction with the environment
-            priors   -- prior probabilities
-            epsilon  -- for termination
-            mod_step -- step size for modulus
-            amp_step -- step size for amplitude
+            priors    -- prior probabilities
+            epsilon   -- for termination
+            step_size -- step sizes
             decrease_rate -- decrease rate
             min_iteration -- minimal number of iteration
             eval_metric -- 'min error' or 'unambiguous'
-            random_neighbor -- random neighbor or predefined directions
-            realimag_neighbor -- change real and imaginary parts
         Return:
-            list -- a list of scores at each iteration
-        '''
-        if random_neighbor:
-            return self._hill_climbing_randomneighbor(startState, seed, unitary_operator, priors, epsilon, \
-                                                      mod_step, decrease_rate, min_iteration, eval_metric)
-        if realimag_neighbor:
-            return self._hill_climbing_realimagneighbor(startState, seed, unitary_operator, priors, epsilon, \
-                                                        mod_step, amp_step, decrease_rate, min_iteration, eval_metric)
-
-        print('\nStart hill climbing...')
-        qstate = None
-        if startState is None:
-            np.random.seed(seed)
-            qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
-            # print(f'Random start:\n{qstate}')
-        else:
-            qstate = startState
-            # print(f'Start from guess:\n{startState}')
-        N = 2**self.num_sensor
-        povm = Povm()
-        try:
-            best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
-        except Exception as e:
-            raise e
-        scores = [round(best_score, 7)]
-        terminate = False
-        iteration = 0
-        while terminate is False or iteration < min_iteration:
-            iteration += 1
-            before_score = best_score
-            for i in range(N):
-                neighbors = self.find_neighbors(qstate, i, mod_step[i], amp_step[i])
-                best_step = -1
-                for j in range(len(neighbors)):
-                    try:
-                        score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
-                    except Exception as e:
-                        # print(e)
-                        score = 0
-                        print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}, error={e}')
-                    if score > best_score:
-                        best_score = score
-                        best_step = j
-                if best_step == -1:
-                    mod_step[i] *= decrease_rate
-                    amp_step[i] *= decrease_rate
-                elif best_step in [0, 1]:
-                    qstate = neighbors[best_step]
-                    mod_step[i] *= decrease_rate
-                else: # best_step in [2, 3]:
-                    qstate = neighbors[best_step]
-                    amp_step[i] *= decrease_rate
-            scores.append(round(best_score, 7))
-            if best_score - before_score < epsilon:
-                terminate = True
-            else:
-                terminate = False
-
-        self._state_vector = qstate.state_vector
-        self._optimze_method = 'Hill climbing'
-        return scores
-
-
-    def _hill_climbing_randomneighbor(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, epsilon: float, \
-                                      step_size: list, decrease_rate: float, min_iteration: int, eval_metric: str):
-        '''use the good old hill climbing method to optimize the initial state
-        Args:
-            startState       -- the start point of hill climbing
-            seed             -- random seed
-            unitary_operator -- describe the interaction with the environment
-            priors   -- prior probabilities
-            epsilon  -- for termination
-            init_step -- step size for modulus
-            decrease_rate -- decrease rate
-            min_iteration -- minimal number of iteration
-            eval_metric -- 'min error' or 'unambiguous'
-            random_neighbor -- random neighbor or predefined directions
-        Return:
-            list -- a list of scores at each iteration
+            list, list -- a list of scores at each iteration, and a list of symmetry index at each iteration
         '''
         print('\nStart hill climbing...')
         qstate = None
@@ -400,13 +272,15 @@ class OptimizeInitialState(QuantumState):
         except Exception as e:
             raise e
         scores = [round(best_score, 7)]
+        symmetry = self.get_symmetry_index(qstate.state_vector, unitary_operator)
+        symmetries = [round(symmetry, 7)]
         terminate = False
         iteration = 0
         while terminate is False or iteration < min_iteration:
             iteration += 1
             before_score = best_score
             for i in range(N):
-                neighbors = self.find_neighbors_random(qstate, i, step_size[i])
+                neighbors = self.find_neighbors(qstate, i, step_size[i])
                 best_step = -1
                 for j in range(len(neighbors)):
                     try:
@@ -424,6 +298,7 @@ class OptimizeInitialState(QuantumState):
                     qstate = neighbors[best_step]
                     step_size[i] *= decrease_rate
             scores.append(round(best_score, 7))
+            symmetries.append(round(self.get_symmetry_index(qstate.state_vector, unitary_operator), 7))
             if best_score - before_score < epsilon:
                 terminate = True
             else:
@@ -431,78 +306,20 @@ class OptimizeInitialState(QuantumState):
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Hill climbing'
-        return scores
+        return scores, symmetries
 
 
-    def _hill_climbing_realimagneighbor(self, startState: QuantumState, seed: int, unitary_operator: Operator, priors: list, epsilon: float, \
-                                      real_step: list, imag_step: list, decrease_rate: float, min_iteration: int, eval_metric: str):
-        '''use the good old hill climbing method to optimize the initial state
-        Args:
-            startState       -- the start point of hill climbing
-            seed             -- random seed
-            unitary_operator -- describe the interaction with the environment
-            priors   -- prior probabilities
-            epsilon  -- for termination
-            real_step -- step size for real part
-            imag_step -- step size for imaginary part
-            decrease_rate -- decrease rate
-            min_iteration -- minimal number of iteration
-            eval_metric -- 'min error' or 'unambiguous'
-        Return:
-            list -- a list of scores at each iteration
+    def get_symmetry_index(self, state_vector: np.ndarray, unitary_operator: Operator) -> float:
+        '''given a state_vector in the computational basis and the unitary operator from the problem's input
+           return its symmetry index under the custom_basis (computed from the unitary operator)
         '''
-        print('\nStart hill climbing (real, imaginary version)...')
-        qstate = None
-        if startState is None:
-            np.random.seed(seed)
-            qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
-            # print(f'Random start:\n{qstate}')
-        else:
-            qstate = startState
-            # print(f'Start from guess:\n{startState}')
-        N = 2**self.num_sensor
-        povm = Povm()
-        try:
-            best_score = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
-        except Exception as e:
-            raise e
-        scores = [round(best_score, 7)]
-        terminate = False
-        iteration = 0
-        while terminate is False or iteration < min_iteration:
-            iteration += 1
-            before_score = best_score
-            for i in range(N):
-                neighbors = self.find_neighbors_realimag(qstate, i, real_step[i], imag_step[i])
-                best_step = -1
-                for j in range(len(neighbors)):
-                    try:
-                        score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
-                    except Exception as e:
-                        # print(e)
-                        score = 0
-                        print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}, error={e}')
-                    if score > best_score:
-                        best_score = score
-                        best_step = j
-                if best_step == -1:
-                    real_step[i] *= decrease_rate
-                    imag_step[i] *= decrease_rate
-                elif best_step in [0, 1]:
-                    qstate = neighbors[best_step]
-                    real_step[i] *= decrease_rate
-                else: # best_step in [2, 3]:
-                    qstate = neighbors[best_step]
-                    imag_step[i] *= decrease_rate
-            scores.append(round(best_score, 7))
-            if best_score - before_score < epsilon:
-                terminate = True
-            else:
-                terminate = False
+        custom_basis = Utility.generate_custombasis(self.num_sensor, U=unitary_operator)
+        qstate_custom = QuantumStateCustomBasis(self.num_sensor, custom_basis=custom_basis, state_vector_custom=None, state_vector=state_vector)
+        symmetry_index = qstate_custom.get_symmetry_index()
+        print(f'\nsymmetry index = {symmetry_index}')
+        qstate_custom.visualize_computation_in_custombasis(matplotlib=False)
+        return symmetry_index
 
-        self._state_vector = qstate.state_vector
-        self._optimze_method = 'Hill climbing'
-        return scores
 
     def generate_init_temperature(self, qstate, init_step, N: int, unitary_operator: Operator, priors: list, povm: Povm, eval_metric):
         scores = []
@@ -597,6 +414,7 @@ class OptimizeInitialState(QuantumState):
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
         return scores
+
 
     def _compute_rank(self, fitness: list) -> list:
         '''

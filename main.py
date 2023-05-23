@@ -27,15 +27,12 @@ if __name__ == '__main__':
 
     # below are for hill climbing
     parser.add_argument('-ss', '--start_seed', type=int, nargs=1, default=[Default.start_seed], help='seed that affects the start point of hill climbing')
-    parser.add_argument('-ms', '--mod_step', type=float, nargs=1, default=[Default.mod_step], help='step size for modulus')
-    parser.add_argument('-as', '--amp_step', type=float, nargs=1, default=[Default.amp_step], help='initial step size for amplitude')
+    parser.add_argument('-st', '--step_size', type=float, nargs=1, default=[Default.step_size], help='step size')
     parser.add_argument('-dr', '--decrease_rate', type=float, nargs=1, default=[Default.decrease_rate], help='decrease rate for the step sizes')
-    parser.add_argument('-rn', '--random_neighbor', type=bool, nargs=1, default=[Default.random_neighbor], help='random neighbors or predefined direction neighbors')
-    parser.add_argument('-ri', '--realimag_neighbor', type=bool, nargs=1, default=[Default.realimag_neighbor], help='changing the real part and imaginary part')
 
     # below are for simulated annealing
     parser.add_argument('-is', '--init_step', type=float, nargs=1, default=[Default.init_step], help='initial step')
-    parser.add_argument('-st', '--max_stuck', type=int, nargs=1, default=[Default.max_stuck], help='max stuck in a same temperature')
+    parser.add_argument('-ms', '--max_stuck', type=int, nargs=1, default=[Default.max_stuck], help='max stuck in a same temperature')
     parser.add_argument('-cr', '--cooling_rate', type=float, nargs=1, default=[Default.cooling_rate], help='the cooling rate')
     parser.add_argument('-sd', '--stepsize_decreasing_rate', type=float, nargs=1, default=[Default.stepsize_decreasing_rate], help='the decreasing rate for stepsize')
 
@@ -85,6 +82,7 @@ if __name__ == '__main__':
         # success = opt_initstate.evaluate_orthogonal(unitary_operator)
         # innerprods = opt_initstate.get_innerproducts(unitary_operator)
         # print(innerprods)
+        # symmetry_index = opt_initstate.get_symmetry_index(opt_initstate.state_vector, unitary_operator)
         success = round(success, 7)
         error = round(1-success, 7)
         theorem_output = TheoremOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
@@ -94,22 +92,18 @@ if __name__ == '__main__':
         opt_initstate = OptimizeInitialState(num_sensor)
         start_seed = args.start_seed[0]
         epsilon = Default.EPSILON_OPT
-        mod_step = [args.mod_step[0]] * 2**num_sensor
-        amp_step = [args.amp_step[0]] * 2**num_sensor
+        step_size = [args.step_size[0]] * 2**num_sensor
         decrease_rate = args.decrease_rate[0]
         min_iteration = args.min_iteration[0]
-        random_neighbor = args.random_neighbor[0]
-        realimag_neighbor = args.realimag_neighbor[0]
         start_time = time.time()
-        scores = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, mod_step, amp_step, \
-                                             decrease_rate, min_iteration, eval_metric, random_neighbor, realimag_neighbor)
+        scores, symmetries = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, step_size, \
+                                             decrease_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 7)
         real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.mod_step[0], \
-                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric, \
-                                           random_neighbor, realimag_neighbor)
+        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
+                                           decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
         outputs.append(hillclimb_output)
 
     if 'Simulated annealing' in methods:
@@ -132,27 +126,28 @@ if __name__ == '__main__':
                                                       max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
         outputs.append(simulateanneal_output)
 
-    if "Hill climbing (NE)" in methods:
-        opt_initstate_ne = OptimizeInitialStateNonentangled(num_sensor)
-        start_seed = args.start_seed[0]
-        epsilon = Default.EPSILON_OPT
-        mod_step = [args.mod_step[0]] * 2
-        amp_step = [args.amp_step[0]] * 2
-        decrease_rate = args.decrease_rate[0]
-        min_iteration = args.min_iteration[0]
-        random_neighbor = True    # args.random_neighbor[0], currently only support random_neighbor
-        realimag_neighbor = False # args.realimag_neighbor[0], currently not supported
-        start_time = time.time()
-        scores = opt_initstate_ne.hill_climbing(start_seed, unitary_operator, priors, epsilon, \
-                                                mod_step, decrease_rate, min_iteration, eval_metric)
-        runtime = round(time.time() - start_time, 2)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
-                                           args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate_ne), scores, runtime, eval_metric, \
-                                           random_neighbor, realimag_neighbor)
-        outputs.append(hillclimb_output)
+    # if "Hill climbing (NE)" in methods:
+    #     parameter related to step_size changed
+    #     opt_initstate_ne = OptimizeInitialStateNonentangled(num_sensor)
+    #     start_seed = args.start_seed[0]
+    #     epsilon = Default.EPSILON_OPT
+    #     step_size = [args.mod_step[0]] * 2
+    #     amp_step = [args.amp_step[0]] * 2
+    #     decrease_rate = args.decrease_rate[0]
+    #     min_iteration = args.min_iteration[0]
+    #     random_neighbor = True    # args.random_neighbor[0], currently only support random_neighbor
+    #     realimag_neighbor = False # args.realimag_neighbor[0], currently not supported
+    #     start_time = time.time()
+    #     scores = opt_initstate_ne.hill_climbing(start_seed, unitary_operator, priors, epsilon, \
+    #                                             step_size, decrease_rate, min_iteration, eval_metric)
+    #     runtime = round(time.time() - start_time, 2)
+    #     success = scores[-1]
+    #     error = round(1 - success, 7)
+    #     real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
+    #     hillclimb_output = HillclimbOutput(experiment_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
+    #                                        args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate_ne), scores, runtime, eval_metric, \
+    #                                        random_neighbor, realimag_neighbor)
+    #     outputs.append(hillclimb_output)
 
     if "Genetic algorithm" in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
