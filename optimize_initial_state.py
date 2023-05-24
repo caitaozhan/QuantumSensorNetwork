@@ -316,8 +316,8 @@ class OptimizeInitialState(QuantumState):
         custom_basis = Utility.generate_custombasis(self.num_sensor, U=unitary_operator)
         qstate_custom = QuantumStateCustomBasis(self.num_sensor, custom_basis=custom_basis, state_vector_custom=None, state_vector=state_vector)
         symmetry_index = qstate_custom.get_symmetry_index()
-        print(f'\nsymmetry index = {symmetry_index}')
-        qstate_custom.visualize_computation_in_custombasis(matplotlib=False)
+        # print(f'\nsymmetry index = {symmetry_index}')
+        # qstate_custom.visualize_computation_in_custombasis(matplotlib=False)
         return symmetry_index
 
 
@@ -330,6 +330,8 @@ class OptimizeInitialState(QuantumState):
         return np.std(scores)
 
     def find_SA_neighbor(self, qstate: QuantumState, i: int, step_size: float):
+        '''return a random neighbor
+        '''
         real = 2 * np.random.random() - 1
         imag = 2 * np.random.random() - 1
         direction = real + 1j*imag
@@ -354,12 +356,14 @@ class OptimizeInitialState(QuantumState):
             min_iteration  -- minimal number of iterations
             eval_metric    -- 'min error' or 'unambiguous'
         Return:
-            list -- a list of scores at each iteration
+            list, list -- a list of scores at each iteration, and a list of symmetry index at each iteration
         '''
         print('Start simulated annealing...')
         np.random.seed(seed)
         random.seed(seed)
         qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+        symmetry = self.get_symmetry_index(qstate.state_vector, unitary_operator)
+        symmetries = [round(symmetry, 7)]
         # print(f'Random start:\n{qstate}')
         povm = Povm()
         N = 2**self.num_sensor
@@ -398,6 +402,7 @@ class OptimizeInitialState(QuantumState):
                         else:                       # qstate no change
                             pass
             scores.append(round(score1, 7))
+            symmetries.append(round(self.get_symmetry_index(qstate.state_vector, unitary_operator), 7))
             if previous_score >= score1 - epsilon:
                 stuck_count += 1
             else:
@@ -413,7 +418,7 @@ class OptimizeInitialState(QuantumState):
 
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
-        return scores
+        return scores, symmetries
 
 
     def _compute_rank(self, fitness: list) -> list:
@@ -504,12 +509,19 @@ class OptimizeInitialState(QuantumState):
         population = []
         fitness = []
         povm = Povm()
+        best_fitness = 0
+        best_qstate = None
         for _ in range(population_size):
             qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
             population.append(qstate)
-            fitness.append(self._evaluate(qstate, unitary_operator, priors, povm, eval_metric))
-        scores = [round(max(fitness), 7)]
-        best_fitness = max(fitness)
+            fit = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+            fitness.append(fit)
+            if fit > best_fitness:
+                best_fitness = fit
+                best_qstate = qstate
+        scores = [round(best_fitness, 7)]
+        symmetry = self.get_symmetry_index(best_qstate.state_vector, unitary_operator)
+        symmetries = [round(symmetry, 7)]
         iteration = 0
         stepsize = init_step
         terminate = False
@@ -539,16 +551,21 @@ class OptimizeInitialState(QuantumState):
             threshold = sorted(fitness)[population_size - 1]
             new_population = []
             new_fitness = []
+            best_fitness = 0
+            best_qstate = None
             for qstate, fit in zip(population + child_population, fitness):
                 if fit > threshold:
                     new_population.append(qstate)
                     new_fitness.append(fit)
+                if fit > best_fitness:
+                    best_fitness = fit
+                    best_qstate = qstate
 
+            scores.append(round(best_fitness, 7))
+            symmetries.append(round(self.get_symmetry_index(best_qstate.state_vector, unitary_operator), 7))
             stepsize *= stepsize_decreasing_rate
             population = new_population
             fitness = new_fitness
-            best_fitness = max(fitness)
-            scores.append(round(best_fitness, 7))
             if best_fitness - before_fitness < epsilon:
                 terminate = True
             else:
@@ -562,7 +579,7 @@ class OptimizeInitialState(QuantumState):
                 best_qstate = population[i]
         self._state_vector = best_qstate.state_vector
         self._optimze_method = 'Genetic algorithm'
-        return scores
+        return scores, symmetries
 
 
     def particle_swarm_optimization(self, seed: int, unitary_opeartor: Operator, priors: list, epsilon: float, population_size: int, \

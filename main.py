@@ -116,14 +116,14 @@ if __name__ == '__main__':
         min_iteration = args.min_iteration[0]
         epsilon = Default.EPSILON_OPT
         start_time   = time.time()
-        scores = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
+        scores, symmetries = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
                                                    epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 7)
         real_iteration = len(scores) - 1
         simulateanneal_output = SimulatedAnnealOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, init_step, stepsize_decreasing_rate,\
-                                                      max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+                                                      max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
         outputs.append(simulateanneal_output)
 
     # if "Hill climbing (NE)" in methods:
@@ -160,14 +160,14 @@ if __name__ == '__main__':
         init_step       = args.init_step[0]
         stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
         start_time = time.time()
-        scores = opt_initstate.genetic_algorithm(start_seed, unitary_operator, priors, epsilon, population_size, mutation_rate, \
-                                                 crossover_rate, init_step, stepsize_decreasing_rate, min_iteration, eval_metric)
+        scores, symmetries = opt_initstate.genetic_algorithm(start_seed, unitary_operator, priors, epsilon, population_size, mutation_rate, \
+                                                             crossover_rate, init_step, stepsize_decreasing_rate, min_iteration, eval_metric)
         success = scores[-1]
         error = round(1 - success, 7)
         runtime = round(time.time() - start_time, 2)
         real_iteration = len(scores) - 1
-        genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate,\
-                                       start_seed, init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+        genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate, start_seed, \
+                                       init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
         outputs.append(genetic_output)
 
     if "Particle swarm" in methods:

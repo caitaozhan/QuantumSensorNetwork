@@ -8,7 +8,7 @@ from collections import defaultdict
 class Plot:
 
     plt.rcParams['font.size'] = 60
-    plt.rcParams['lines.linewidth'] = 6
+    plt.rcParams['lines.linewidth'] = 7
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
     _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1']
@@ -507,189 +507,82 @@ class Plot:
         fig.savefig(filename)
 
 
-    # @staticmethod
-    # def conjecture_1(data, filename):
-    #     table_3sensor = defaultdict(list)
-    #     table_5sensor = defaultdict(list)
-    #     for myinput, output_by_methods in data:
-    #         if myinput.num_sensor == 3:
-    #             for method, output in output_by_methods.items():
-    #                 table_3sensor[method].append({myinput.unitary_theta: output.success})
-    #         if myinput.num_sensor == 5:
-    #             for method, output in output_by_methods.items():
-    #                 table_5sensor[method].append({myinput.unitary_theta: output.success})
-
-    #     X = [i for i in range(1, 90)]
-    #     Y3 = defaultdict(list)
-    #     for method, mylist in table_3sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y3[method] = y2
-    #     Y5 = defaultdict(list)
-    #     for method, mylist in table_5sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y5[method] = y2
-        
-    #     methods = ['Hill climbing', 'Theorem']
-    #     fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(30, 17))
-    #     fig.subplots_adjust(left=0.1, right=0.97, top=0.83, bottom=0.19)
-    #     # ax0
-    #     ax0.plot(X, Y3[methods[0]], label=Plot.METHOD[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=9)
-    #     ax0.plot(X, Y3[methods[1]], label=Plot.METHOD[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=7)
-    #     xticks = [i for i in range(0, 91, 15)]
-    #     ax0.set_xticks(xticks)
-    #     ax0.set_xticklabels([f'{x}' for x in xticks])
-    #     yticks = [0.2, 0.4, 0.6, 0.8, 1]
-    #     ax0.set_yticks(yticks)
-    #     ax0.set_yticklabels([f'{int(y * 100)}' for y in yticks])
-    #     ax0.set_xlim([0, 90])
-    #     ax0.set_ylim([0.2, 1.02])
-    #     ax0.vlines(x=60, ymin=0.2, ymax=1, linestyles='dotted', colors='black', )
-    #     ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
-    #     ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    #     ax0.set_title('3 Sensors', fontsize=60, pad=20)
-    #     ax0.legend(ncol=2, loc='upper left', bbox_to_anchor=(0.08, 1.23, 0.05, 0.05), fontsize=55, handlelength=3.5, edgecolor='black')
-    #     ax0.set_xlabel('Theta (degree)', labelpad=15)
-    #     ax0.set_ylabel('Probability of Success (%)', fontsize=60)
-    #     # ax1
-    #     ax1.plot(X, Y5[methods[0]], label=Plot.METHOD[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=9)
-    #     ax1.plot(X, Y5[methods[1]], label=Plot.METHOD[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=7)
-    #     xticks = [i for i in range(0, 91, 15)]
-    #     ax1.set_xticks(xticks)
-    #     ax1.set_xticklabels([f'{x}' for x in xticks])
-    #     yticks = [0.2, 0.4, 0.6, 0.8, 1]
-    #     ax1.set_yticks(yticks)
-    #     ax1.set_yticklabels([f'{int(y * 100)}' for y in yticks])
-    #     ax1.set_xlim([0, 90])
-    #     ax1.set_ylim([0.2, 1.02])
-    #     ax1.vlines(x=65.9, ymin=0.2, ymax=1, linestyles='dotted', colors='black', )
-    #     ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
-    #     ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    #     ax1.set_title('5 Sensors', fontsize=60, pad=20)
-    #     ax1.set_xlabel('Theta (degree)', labelpad=15)
-    #     plt.figtext(0.28, 0.01, '(a)')
-    #     plt.figtext(0.75, 0.01, '(b)')
-    #     fig.savefig(filename)
+    @staticmethod
+    def symmetry_varyseed(data: dict, filename: str):
+        # prepare data
+        theta = 46
+        table = defaultdict(list)
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if method == 'Hill climbing' and myinput.unitary_theta == theta:
+                    table[output.start_seed] = output.symmetries
+        print(table)
+        fig, ax = plt.subplots(figsize=(23, 17))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        seeds = [0, 1, 2, 3, 4]
+        for seed in seeds:
+            ax.plot(table[seed][:100], label=str(seed))
+        ax.legend()
+        ax.set_title(f'Hill Climbing at $theta={theta}$, Varying Seed', pad=40)
+        ax.set_xlabel('Iteration', labelpad=20)
+        ax.set_ylabel('Symmetry Index', labelpad=20)
+        ax.set_ylim([-0.001, 1])
+        ax.set_xlim([-0.1, 100])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        fig.savefig(filename)
 
 
-    # @staticmethod
-    # def conjecture_2(data, filename):
-    #     # data
-    #     table_6sensor = defaultdict(list)
-    #     table_7sensor = defaultdict(list)
-    #     table_8sensor = defaultdict(list)
-    #     table_9sensor = defaultdict(list)
-    #     for myinput, output_by_methods in data:
-    #         if myinput.num_sensor == 6:
-    #             for method, output in output_by_methods.items():
-    #                 table_6sensor[method].append({myinput.unitary_theta: output.success})
-    #         if myinput.num_sensor == 7:
-    #             for method, output in output_by_methods.items():
-    #                 table_7sensor[method].append({myinput.unitary_theta: output.success})
-    #         if myinput.num_sensor == 8:
-    #             for method, output in output_by_methods.items():
-    #                 table_8sensor[method].append({myinput.unitary_theta: output.success})
-    #         if myinput.num_sensor == 9:
-    #             for method, output in output_by_methods.items():
-    #                 table_9sensor[method].append({myinput.unitary_theta: output.success})
+    @staticmethod
+    def symmetry_varymethod(data: dict, filename: str):
+        # prepare data
+        theta = 46
+        seed = 0
+        table = defaultdict(list)
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta and output.start_seed == seed:
+                    table[method] = output.symmetries
+        print(table)
+        fig, ax = plt.subplots(figsize=(23, 17))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
+        for method in methods:
+            ax.plot(table[method][:100], label=method)
+        ax.legend()
+        ax.set_title(f'Various Methods at $theta={theta}$, $Seed={seed}$', pad=40)
+        ax.set_xlabel('Iteration', labelpad=20)
+        ax.set_ylabel('Symmetry Index', labelpad=20)
+        ax.set_ylim([-0.001, 1])
+        ax.set_xlim([-0.1, 100])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        fig.savefig(filename)
 
-    #     X = [i for i in range(1, 91)]
-    #     Y6 = defaultdict(list)
-    #     for method, mylist in table_6sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y6[method] = y2
-    #     Y7 = defaultdict(list)
-    #     for method, mylist in table_7sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y7[method] = y2
-    #     Y8 = defaultdict(list)
-    #     for method, mylist in table_8sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y8[method] = y2
-    #     Y9 = defaultdict(list)
-    #     for method, mylist in table_9sensor.items():
-    #         y = defaultdict(list)
-    #         for key_val in mylist: # each theta only one experiment
-    #             for theta, success in key_val.items():
-    #                 y[theta] = success
-    #         y2 = []
-    #         for theta in X:
-    #             if theta in y:
-    #                 y2.append(y[theta])
-    #             else:
-    #                 raise Exception(f'data missing: theta={theta}')
-    #         Y9[method] = y2
-        
-    #     # plotting
-    #     fig, ax = plt.subplots(1, 1, figsize=(24, 14))
-    #     fig.subplots_adjust(left=0.12, right=0.97, top=0.9, bottom=0.16)
-    #     method = 'Theorem'
-    #     ax.plot(X, Y6[method], label='6 Sensors')
-    #     ax.plot(X, Y7[method], label='7 Sensors')
-    #     ax.plot(X, Y8[method], label='8 Sensors')
-    #     ax.plot(X, Y9[method], label='9 Sensors')
-    #     ax.legend(edgecolor='black', fontsize=55, loc='lower center')
-    #     ax.vlines(x=65.9,   ymin=0, ymax=1, linestyles='dotted', colors='black')
-    #     ax.vlines(x=69.3,   ymin=0, ymax=1, linestyles='dotted', colors='black')
-    #     ax.vlines(x=71.6,   ymin=0, ymax=1, linestyles='dotted', colors='black')
-    #     xticks = [i for i in range(0, 91, 15)]
-    #     ax.set_xticks(xticks)
-    #     ax.set_xticklabels([f'{x}' for x in xticks])
-    #     yticks = [0.1, 0.2, 0.4, 0.6, 0.8, 1]
-    #     ax.set_yticks(yticks)
-    #     ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
-    #     ax.set_ylim([0.1, 1.02])
-    #     ax.set_xlim([0, 90])
-    #     ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
-    #     ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-    #     ax.set_xlabel('Theta (degree)', labelpad=20)
-    #     ax.set_ylabel('Probability of Success (%)')
-    #     ax.set_title('The Performance of $Conjecture\ 1$ and $Corollary\ 1$', fontsize=60, pad=30)
-    #     fig.savefig(filename)
+
+    @staticmethod
+    def symmetry_varytheta(data: dict, filename: str):
+        # prepare data
+        table = defaultdict(list)
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if method == 'Hill climbing' and output.start_seed == 0:
+                    table[myinput.unitary_theta] = output.symmetries
+        print(table)
+        fig, ax = plt.subplots(figsize=(23, 17))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        thetas = [6, 26, 46, 66, 86]
+        for theta in thetas:
+            ax.plot(table[theta][:100], label=str(theta))
+        ax.legend()
+        ax.set_title('Hill Climbing at $Seed=0$, varying Theta', pad=40)
+        ax.set_xlabel('Iteration', labelpad=20)
+        ax.set_ylabel('Symmetry Index', labelpad=20)
+        ax.set_ylim([-0.001, 1])
+        ax.set_xlim([-0.1, 100])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        fig.savefig(filename)
 
 
 def vary_theta():
@@ -743,25 +636,22 @@ def conjecture():
     Plot.conjecture(data, filename)
 
 
-    # below are obsolete
+def symmetry():
+    logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
+    data = Logger.read_log(logs)
+    filename = 'result/5.22.2023/symmetry_vary{}.png'
+    Plot.symmetry_varyseed(data, filename.format('seed'))
+    Plot.symmetry_varymethod(data, filename.format('method'))
+    Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    # logs = ['result/12.31.2022/conjecture_3sensor', 'result/12.31.2022/conjecture_5sensor',
-    #         'result/12.22.2022/varying_theta_3sensors', 'result/12.22.2022/varying_theta_5sensors']
-    # data = Logger.read_log(logs)
-    # filename = 'result/12.31.2022/conjecture_1.png'
-    # Plot.conjecture_1(data, filename)
-
-    # logs = ['result/12.31.2022/conjecture_6sensor', 'result/12.31.2022/conjecture_7sensor',
-    #         'result/12.31.2022/conjecture_8sensor', 'result/12.31.2022/conjecture_9sensor']
-    # data = Logger.read_log(logs)
-    # filename = 'result/12.31.2022/conjecture_2.png'
-    # Plot.conjecture_2(data, filename)
 
 
 if __name__ == '__main__':
-    vary_theta()
+    # vary_theta()
     # methods_similar()
     # lemma2()
     # lemma3()
-    conjecture()
+    # conjecture()
+
+    symmetry()
     

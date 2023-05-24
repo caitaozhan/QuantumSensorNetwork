@@ -186,7 +186,7 @@ class HillclimbOutput:
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['start_seed'], outdict['step_size'], outdict['decrease_rate'], \
                    outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
-                   outdict['symmetries'] if outdict['symmetries'] in outdict else None,\
+                   outdict['symmetries'] if 'symmetries' in outdict else None,\
                    outdict['runtime'], outdict['eval_metric'] if 'eval_metric' in outdict else None)
 
 
@@ -207,6 +207,7 @@ class SimulatedAnnealOutput:
     real_iteration: int  # number of iterations in reality
     init_state: str      # the initial state found
     scores: List[float]  # the evaluation value of each evaluation
+    symmetries: List[float] # the symmetry index of the quantum state at each iteration
     runtime: float       # run time
     eval_metric: str     # 'min error' or 'unambiguous'
 
@@ -234,6 +235,7 @@ class SimulatedAnnealOutput:
             'max_stuck': self.max_stuck,
             'init_state': self.init_state,
             'scores': self.scores,
+            'symmetries': self.symmetries
         }
         return json.dumps(outputdict)
 
@@ -249,7 +251,8 @@ class SimulatedAnnealOutput:
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['start_seed'], outdict['init_step'], outdict['stepsize_decreasing_rate'], outdict['max_stuck'], \
                    outdict['cooling_rate'], outdict['min_iteration'], outdict['real_iteration'], outdict['init_state'], \
-                   outdict['scores'], outdict['runtime'], outdict['eval_metric'])
+                   outdict['scores'], outdict['symmetries'] if 'symmetries' in outdict else None, \
+                   outdict['runtime'], outdict['eval_metric'])
 
 @dataclass
 class GeneticOutput:
@@ -269,6 +272,7 @@ class GeneticOutput:
     real_iteration: int     # number of iterations in reality
     init_state: str         # the initial state found
     scores: List[float]     # the evaluation value of each iteration
+    symmetries: List[float] # the symmetry index of the quantum state at each iteration
     runtime: float          # run time
     eval_metric: str        # 'min error' or 'unambiguous'
 
@@ -294,10 +298,11 @@ class GeneticOutput:
             'init_step': self.init_step,
             'stepsize_decreasing_rate': self.stepsize_decreaseing_rate,
             'init_state': self.init_state,
-            'scores': self.scores
+            'scores': self.scores,
+            'symmetries': self.symmetries
         }
         return json.dumps(outputdict)
-    
+
     @classmethod
     def from_json_str(cls, json_str) -> "GeneticOutput":
         '''init a Genetic algorithm output object from json string
@@ -308,7 +313,8 @@ class GeneticOutput:
         return cls(outdict['experiment_id'], outdict['method'], outdict['error'], outdict['success'], \
                    outdict['population_size'], outdict['crossover_rate'], outdict['mutation_rate'], \
                    outdict['start_seed'], outdict['init_step'], outdict['stepsize_decreasing_rate'], outdict['min_iteration'], \
-                   outdict['real_iteration'], outdict['init_state'], outdict['scores'], outdict['runtime'], outdict['eval_metric'])
+                   outdict['real_iteration'], outdict['init_state'], outdict['scores'], \
+                   outdict['symmetries'] if 'symmetries' in outdict else None, outdict['runtime'], outdict['eval_metric'])
 
 
 @dataclass
