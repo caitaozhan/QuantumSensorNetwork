@@ -474,25 +474,15 @@ def validate_lemma2():
     debug = False
     seed = 0
     unitary_theta = 40
-    file_perm = 'result2/12.28.2022/lemma2.n{}.perm.npy'
-    file_avg = 'result2/12.28.2022/lemma2.n{}.avg.npy'
+    file_perm = 'result/5.25.2023/lemma2.n{}-t{}.perm.npy'
+    file_avg  = 'result/5.25.2023/lemma2.n{}-t{}.avg.npy'
     
-    errors_perm, errors_avg = lemma2(2, debug, seed, unitary_theta)
-    np.save(file_perm.format(2), np.array(errors_perm))
-    np.save(file_avg.format(2), np.array(errors_avg))
-    
-    errors_perm, errors_avg = lemma2(3, debug, seed, unitary_theta)
-    np.save(file_perm.format(3), np.array(errors_perm))
-    np.save(file_avg.format(3), np.array(errors_avg))
-    
-    errors_perm, errors_avg = lemma2(4, debug, seed, unitary_theta)
-    np.save(file_perm.format(4), np.array(errors_perm))
-    np.save(file_avg.format(4), np.array(errors_avg))
-    
-    errors_perm, errors_avg = lemma2(5, debug, seed, unitary_theta)
-    np.save(file_perm.format(5), np.array(errors_perm))
-    np.save(file_avg.format(5), np.array(errors_avg))
-    
+    for num_sen in [3,4,5]:
+        for unitary_theta in [6, 26, 46, 66, 86]:
+            errors_perm, errors_avg = lemma2(num_sen, debug, seed, unitary_theta)
+            np.save(file_perm.format(num_sen, unitary_theta), np.array(errors_perm))
+            np.save(file_avg.format(num_sen, unitary_theta), np.array(errors_avg))
+
 
 # validate lemma 2 about averaging two states, n=3
 def lemma2(num_sensor, debug, seed, unitary_theta):
@@ -532,7 +522,7 @@ def lemma2(num_sensor, debug, seed, unitary_theta):
 
 
 def validate_lemma3():
-    file = 'result2/1.6.2023/lemma3.n{}.npy'
+    file = 'result/1.6.2023/lemma3.n{}.npy'
     error = lemma3(num_sensor=2)
     np.save(file.format(2), np.array(error))
     
@@ -570,7 +560,7 @@ if __name__ == '__main__':
     # print('false', counter_false)
     # debug = True
 
-    main2(debug, seed=2, unitary_theta=40)
+    # main2(debug, seed=2, unitary_theta=40)
     # main2_delta(debug, seed=2, unitary_theta=40)
 
     seed = 2
@@ -583,7 +573,7 @@ if __name__ == '__main__':
     #         print(f'theta={theta}, seed={seed}')
     #         main3_delta(debug, seed=seed, unitary_theta=theta)
 
-    # validate_lemma2()
+    validate_lemma2()
 
     # validate_lemma3()
 

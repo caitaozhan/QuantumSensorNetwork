@@ -279,7 +279,7 @@ class Plot:
 
 
     @staticmethod
-    def lemma2(data, filename):
+    def lemma2_old(data, filename):
         plt.rcParams['font.size'] = 45
         fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2, figsize=(22, 15))
         fig.subplots_adjust(left=0.14, right=0.97, top=0.88, bottom=0.12, wspace=0.4, hspace=0.3)
@@ -337,6 +337,33 @@ class Plot:
         # fig
         fig.supylabel('Probability of Error (%)')
         fig.supxlabel('Number of Sensors')
+        fig.suptitle('$Lemma\ 2$: The Averaged Initial States Have Lower $PoE$')
+        fig.savefig(filename)
+
+
+    @staticmethod
+    def lemma2(data, filename):
+        fig, axes = plt.subplots(1, 4, figsize=(40, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.82, bottom=0.1, wspace=0.4, hspace=0.3)
+        
+        for i, t in enumerate([26, 46, 66, 86]):
+            y_min, y_max, y = [], [], []
+            for n in [3, 4, 5]:
+                y_min.append(min(data[f'n{n}-t{t}.avg']))
+                y_max.append(max(data[f'n{n}-t{t}.avg']))
+                y.append(data[f'n{n}-t{t}.perm'][0])
+            y_min = np.array(y_min) * 100
+            y_max = np.array(y_max) * 100
+            y = np.array(y) * 100
+            X = [3,4,5]
+            yerr = np.stack([y - y_min, y_max - y])
+            axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=12, capthick=4, fmt=' ', marker='.', markersize=15)
+            axes[i].yaxis.grid()
+            axes[i].set_title(f'Theta={t}', fontsize=60, pad=20)
+            axes[i].set_xlabel('Number of Sensors', fontsize=55, labelpad=10)
+        
+        fig.supylabel('Probability of Error (%)')
+        # fig.supxlabel('Theta (degree)')
         fig.suptitle('$Lemma\ 2$: The Averaged Initial States Have Lower $PoE$')
         fig.savefig(filename)
 
@@ -561,6 +588,33 @@ class Plot:
 
 
     @staticmethod
+    def symmetry_varymethod_poe(data: dict, filename: str):
+        # prepare data
+        theta = 46
+        seed = 0
+        table = defaultdict(list)
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta and output.start_seed == seed:
+                    table[method] = (1 - np.array(output.scores)) * 100
+        print(table)
+        fig, ax = plt.subplots(figsize=(23, 17))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
+        for method in methods:
+            ax.plot(table[method][:100], label=method)
+        ax.legend()
+        ax.set_title(f'Various Methods at $theta={theta}$, $Seed={seed}$', pad=40)
+        ax.set_xlabel('Iteration', labelpad=20)
+        ax.set_ylabel('PoE (%)', labelpad=20)
+        ax.set_ylim([3, 12])
+        ax.set_xlim([-0.1, 100])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        fig.savefig(filename)
+
+
+    @staticmethod
     def symmetry_varytheta(data: dict, filename: str):
         # prepare data
         table = defaultdict(list)
@@ -605,15 +659,16 @@ def methods_similar():
 
 
 def lemma2():
-    file_perm = 'result/12.28.2022/lemma2.n{}.perm.npy'
-    file_avg = 'result/12.28.2022/lemma2.n{}.avg.npy'
+    file_perm = 'result/5.25.2023/lemma2.n{}-t{}.perm.npy'
+    file_avg  = 'result/5.25.2023/lemma2.n{}-t{}.avg.npy'
     data = {}
-    for n in range(2, 6):
-        perm = np.load(file_perm.format(n))
-        avg  = np.load(file_avg.format(n))
-        data[f'n{n}.perm'] = perm
-        data[f'n{n}.avg'] = avg
-    filename = 'result/12.28.2022/lemma2.png'
+    for n in [3, 4, 5]:                 # number of sensor
+        for t in [6, 26, 46, 66, 86]:   # theta
+            perm = np.load(file_perm.format(n, t))
+            avg  = np.load(file_avg.format(n, t))
+            data[f'n{n}-t{t}.perm'] = perm
+            data[f'n{n}-t{t}.avg'] = avg
+    filename = 'result/5.25.2023/lemma2.png'
     Plot.lemma2(data, filename)
 
 
@@ -640,18 +695,19 @@ def symmetry():
     logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
     data = Logger.read_log(logs)
     filename = 'result/5.22.2023/symmetry_vary{}.png'
-    Plot.symmetry_varyseed(data, filename.format('seed'))
-    Plot.symmetry_varymethod(data, filename.format('method'))
-    Plot.symmetry_varytheta(data, filename.format('theta'))
+    # Plot.symmetry_varyseed(data, filename.format('seed'))
+    # Plot.symmetry_varymethod(data, filename.format('method'))
+    Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
+    # Plot.symmetry_varytheta(data, filename.format('theta'))
 
 
 
 if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
-    # lemma2()
+    lemma2()
     # lemma3()
     # conjecture()
 
-    symmetry()
+    # symmetry()
     

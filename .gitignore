@@ -4,3 +4,4 @@ __pycache__
 *.DS_store
 .virtual_documents
 *ipynb_checkpoints
+*.npy
