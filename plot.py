@@ -357,10 +357,13 @@ class Plot:
             y = np.array(y) * 100
             X = [3,4,5]
             yerr = np.stack([y - y_min, y_max - y])
-            axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=12, capthick=4, fmt=' ', marker='.', markersize=15)
+            axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=20, capthick=5, fmt=' ', marker='.', markersize=25, color='r', ecolor='b')
             axes[i].yaxis.grid()
+            axes[i].set_xlim([2.7, 5.3])
             axes[i].set_title(f'Theta={t}', fontsize=60, pad=20)
             axes[i].set_xlabel('Number of Sensors', fontsize=55, labelpad=10)
+            axes[i].tick_params(axis='y', direction='in', length=10, width=4)
+            axes[i].tick_params(pad=10)
         
         fig.supylabel('Probability of Error (%)')
         # fig.supxlabel('Theta (degree)')
@@ -571,13 +574,13 @@ class Plot:
                 if myinput.unitary_theta == theta and output.start_seed == seed:
                     table[method] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(23, 17))
+        fig, ax = plt.subplots(figsize=(23, 15))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         for method in methods:
             ax.plot(table[method][:100], label=method)
         ax.legend()
-        ax.set_title(f'Various Methods at $theta={theta}$, $Seed={seed}$', pad=40)
+        ax.set_title(f'Various Methods at $theta={theta}$', pad=40)
         ax.set_xlabel('Iteration', labelpad=20)
         ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
@@ -623,13 +626,13 @@ class Plot:
                 if method == 'Hill climbing' and output.start_seed == 0:
                     table[myinput.unitary_theta] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(23, 17))
+        fig, ax = plt.subplots(figsize=(23, 15))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         thetas = [6, 26, 46, 66, 86]
         for theta in thetas:
             ax.plot(table[theta][:100], label=str(theta))
         ax.legend()
-        ax.set_title('Hill Climbing at $Seed=0$, varying Theta', pad=40)
+        ax.set_title('Hill Climbing, varying Theta', pad=40)
         ax.set_xlabel('Iteration', labelpad=20)
         ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
@@ -696,18 +699,18 @@ def symmetry():
     data = Logger.read_log(logs)
     filename = 'result/5.22.2023/symmetry_vary{}.png'
     # Plot.symmetry_varyseed(data, filename.format('seed'))
-    # Plot.symmetry_varymethod(data, filename.format('method'))
-    Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
-    # Plot.symmetry_varytheta(data, filename.format('theta'))
+    Plot.symmetry_varymethod(data, filename.format('method'))
+    # Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
+    Plot.symmetry_varytheta(data, filename.format('theta'))
 
 
 
 if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
-    lemma2()
+    # lemma2()
     # lemma3()
     # conjecture()
 
-    # symmetry()
+    symmetry()
     
