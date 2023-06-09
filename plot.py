@@ -357,7 +357,7 @@ class Plot:
             y = np.array(y) * 100
             X = [3,4,5]
             yerr = np.stack([y - y_min, y_max - y])
-            axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=20, capthick=5, fmt=' ', marker='.', markersize=25, color='r', ecolor='b')
+            axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=20, capthick=5, fmt=' ', marker='.', markersize=30, color='r', ecolor='b')
             axes[i].yaxis.grid()
             axes[i].set_xlim([2.7, 5.3])
             axes[i].set_title(f'Theta={t}', fontsize=60, pad=20)
@@ -591,6 +591,35 @@ class Plot:
 
 
     @staticmethod
+    def symmetry_poe_varymethod(data: dict, filename: str):
+        theta = 46
+        table = defaultdict(list)
+        key = '{}-{}'  # {method}-{seed}
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta:
+                    table[key.format(method, output.start_seed)].append(output.symmetries)                     # [0] is symmetry
+                    table[key.format(method, output.start_seed)].append((1 - np.array(output.scores)) * 100)   # [1] is poe
+        fig, ax = plt.subplots(figsize=(23, 15))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        # methods = ['Hill climbing']
+        # methods = ['Simulated annealing']
+        methods = ['Genetic algorithm']
+        seeds = [0, 1, 2, 3, 4]
+        for method in methods:
+            for seed in seeds:
+                ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=40)
+
+        ax.set_xlabel('Symmetry Index')
+        ax.set_ylabel('PoE(%)')
+        ax.set_xlim([0, 0.8])
+        ax.set_ylim([4, 10])
+        ax.set_title('PoE (%) and Symmetry Index', fontsize=60, pad=30)
+        fig.savefig(filename)
+
+
+
+    @staticmethod
     def symmetry_varymethod_poe(data: dict, filename: str):
         # prepare data
         theta = 46
@@ -697,11 +726,14 @@ def conjecture():
 def symmetry():
     logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
     data = Logger.read_log(logs)
-    filename = 'result/5.22.2023/symmetry_vary{}.png'
+    # filename = 'result/5.22.2023/symmetry_vary{}.png'
     # Plot.symmetry_varyseed(data, filename.format('seed'))
-    Plot.symmetry_varymethod(data, filename.format('method'))
+    # Plot.symmetry_varymethod(data, filename.format('method'))
     # Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
-    Plot.symmetry_varytheta(data, filename.format('theta'))
+    # Plot.symmetry_varytheta(data, filename.format('theta'))
+
+    filename = 'result/5.22.2023/poe_symmetry.png'
+    Plot.symmetry_poe_varymethod(data, filename)
 
 
 
@@ -711,6 +743,5 @@ if __name__ == '__main__':
     # lemma2()
     # lemma3()
     # conjecture()
-
     symmetry()
     
