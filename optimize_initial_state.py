@@ -2,6 +2,7 @@
 Optimizing initial state
 '''
 
+import time
 import copy
 import numpy as np
 import math
@@ -96,7 +97,7 @@ class OptimizeInitialState(QuantumState):
         return tensor
 
     def theorem(self, unitary_operator: Operator, unitary_theta: float, partition_i: int):
-        '''implementing the theorem
+        '''implementing the theorem (corollary + conjecture)
         '''
         e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
         theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
@@ -137,7 +138,6 @@ class OptimizeInitialState(QuantumState):
         if self.check_state() is False:
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Theorem'
-
 
     def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
         '''evaluate the self.state_vector
@@ -199,6 +199,7 @@ class OptimizeInitialState(QuantumState):
         Return:
             float -- evaluate score by SDP solver
         '''
+        profile = True
         quantum_states = []
         for i in range(self.num_sensor):
             evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
@@ -207,7 +208,12 @@ class OptimizeInitialState(QuantumState):
             quantum_states.append(init_state_copy)
         if eval_metric == 'min error':
             try:
+                if profile:
+                    start = time.time()
                 povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+                if profile:
+                    end = time.time()
+                    print(f'time elapse = {end - start:0.4f}')
             except Exception as e:
                 raise e
         elif eval_metric == 'unambiguous':

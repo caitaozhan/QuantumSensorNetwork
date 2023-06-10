@@ -397,7 +397,6 @@ class Plot:
         ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
         ax.set_xlim([0, 180])
         ax.set_ylim([-0.002, 1])
-        # ax.vlines(x=60, ymin=0.2, ymax=1, linestyles='dotted', colors='black', )
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_title('Empirical Validation of $Conjecture$ 1', fontsize=65, pad=40)

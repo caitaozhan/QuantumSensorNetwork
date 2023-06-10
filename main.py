@@ -66,7 +66,7 @@ if __name__ == '__main__':
     eval_metric   = args.eval_metric[0]
 
     problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta)
-    if unitary_theta:
+    if unitary_theta is not None:
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
         # when not specifying the theta, generate a random unitary that has some random thetas
