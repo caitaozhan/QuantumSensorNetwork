@@ -245,35 +245,37 @@ class Plot:
     @staticmethod
     def methods_similar(data: list, filename: str):
         # data2: varying iteration, 4 sensors, theta = 40 case
-        table2 = {}
-        for _, output_by_methods in data:
+        theta = 46
+        table = {}
+        for myinput, output_by_methods in data:
             for method, output in output_by_methods.items():
-                table2[method] = 1 - np.array(output.scores[:50])  # success --> error
-        Y = table2
+                if myinput.unitary_theta == theta:
+                    table[method] = 1 - np.array(output.scores[:50])  # success --> error
+        Y = table
         
         # plotting
         arrowprops = dict(facecolor='black', width=5, headwidth=25)
         methods = ['Genetic algorithm', 'Simulated annealing', 'Hill climbing']
-        fig, ax = plt.subplots(figsize=(23, 17))
-        fig.subplots_adjust(left=0.12, right=0.97, top=0.9, bottom=0.15)
+        fig, ax = plt.subplots(figsize=(26, 16))
+        fig.subplots_adjust(left=0.12, right=0.97, top=0.9, bottom=0.14)
         
         ax.plot(Y[methods[0]], label=Plot.METHOD[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=10)
         ax.plot(Y[methods[2]], label=Plot.METHOD[methods[2]], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=10)
         ax.plot(Y[methods[1]], label=Plot.METHOD[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=8)
-        ax.legend(fontsize=50, bbox_to_anchor=(0.45, 0.5), handlelength=3)
+        ax.legend(fontsize=50, bbox_to_anchor=(0.45, 0.8), handlelength=3)
         xticks = [i for i in range(0, 51, 10)]
         ax.set_xticks(xticks)
         ax.set_xticklabels([f'{x}' for x in xticks])
-        yticks = [0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+        yticks = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13]
         ax.set_yticks(yticks)
         ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 40', fontsize=60, pad=50)
+        ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 46', fontsize=60, pad=50)
         ax.set_xlabel('Iteration Number', labelpad=30)
         ax.set_xlim([-0.1, 50])
         ax.set_ylabel('Probability of Error (%)', fontsize=60, labelpad=30)
-        ax.set_ylim([0.1, 0.2])
+        ax.set_ylim([0.05, 0.133])
         ax.annotate('Random Initial State', xy=(0.5, 0.189), xytext=(5, 0.189), arrowprops=arrowprops, fontsize=50, va='center')
         fig.savefig(filename)
 
@@ -378,14 +380,14 @@ class Plot:
 
         X = np.linspace(0, 0.99, 100)
         X = np.append(X, [0.995, 0.998, 0.999, 0.99999])
-        n=2
-        ax.plot(X, data[f'n{n}'], label='2 Sensors')
-        n=3
-        ax.plot(X, data[f'n{n}'], label='3 Sensors')
-        n=4
-        ax.plot(X, data[f'n{n}'], label='4 Sensors')
         n=5
-        ax.plot(X, data[f'n{n}'], label='5 Sensors')
+        ax.plot(X, data[f'n{n}'], label='5 States')
+        n=4
+        ax.plot(X, data[f'n{n}'], label='4 States')
+        n=3
+        ax.plot(X, data[f'n{n}'], label='3 States')
+        n=2
+        ax.plot(X, data[f'n{n}'], label='2 States')
         ax.legend(fontsize=50, edgecolor='black')
         yticks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
         ax.set_yticks(yticks)
@@ -400,8 +402,8 @@ class Plot:
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_xlabel('$x$ (such that $\\forall i \\neq j$: $\langle \phi_i \| \phi_j \\rangle = x$)', labelpad=22)
         ax.set_ylabel('Probability of Error (%)', labelpad=30, fontsize=58)
-        ax.set_title('$Lemma\ 3$: $PoE$ Decrease with the Decrease in $x$', pad=40, fontsize=58)
-        ax.invert_xaxis()
+        ax.set_title('$Lemma\ 3$: $PoE$ Increase with the Increase in $x$', pad=40, fontsize=58)
+        ax.grid()
         fig.savefig(filename)
 
 
@@ -618,7 +620,6 @@ class Plot:
         fig.savefig(filename)
 
 
-
     @staticmethod
     def symmetry_varymethod_poe(data: dict, filename: str):
         # prepare data
@@ -683,7 +684,7 @@ def vary_theta():
 
 def methods_similar():
     # logs1 = ['result/12.22.2022/varying_theta_4sensors', 'result/12.26.2022/compare_methods_4sensors']
-    logs2 = ['result/12.23.2022/compare_methods_4sensors']
+    logs2 = ['result/12.26.2022/compare_methods_4sensors']
     # data1 = Logger.read_log(logs1)
     data2 = Logger.read_log(logs2)
     filename = 'result/12.26.2022/compare_methods_similar.png'
@@ -739,9 +740,8 @@ def symmetry():
 
 if __name__ == '__main__':
     # vary_theta()
-    # methods_similar()
+    methods_similar()
     # lemma2()
     # lemma3()
     # conjecture()
-    symmetry()
-    
+    # symmetry()

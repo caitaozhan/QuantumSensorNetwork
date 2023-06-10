@@ -65,19 +65,20 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Particle swarm", "Guess", "-mi", "100", "-ps", "32"]
 
-    base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "100"]
+    # base_args = ["-us", "2", "-m", "Hill climbing", "-mi", "100"]
+    base_args = ["-us", "2", "-m", "Genetic algorithm", "-mi", "100", "-ps", "64"]
     # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100", "-rn", "True"]
 
-    num_sensor  = 3
+    num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/5.22.2023'
-    output_file = 'symmetry_thetas'
-    # thetas      = [i for i in range(46, 47)]
-    thetas      = [86]
+    output_dir  = 'result/12.26.2022'
+    output_file = 'compare_methods_4sensors'
+    thetas      = [i for i in range(46, 47)]
+    # thetas      = [86]
     # start_seed  = list(range(5))
-    start_seed  = [1]
+    start_seed  = [0]
 
     ps = []
     tasks = []
