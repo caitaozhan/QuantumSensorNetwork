@@ -136,6 +136,7 @@ def average_init_state(init_state: QuantumStateCustomBasis, partition: list) -> 
 def evaluate(init_state_custom: QuantumStateCustomBasis, U: Operator, priors: list, povm: Povm, debug: bool = False) -> float:
     '''evaluate an initial state using SDP, return the probability of error
     '''
+    print('*** Evaluating ***')
     quantum_states = []
     num_sensor = init_state_custom.num_sensor
     for i in range(num_sensor):
@@ -143,7 +144,10 @@ def evaluate(init_state_custom: QuantumStateCustomBasis, U: Operator, priors: li
         qstate = deepcopy(init_state_custom)
         qstate.evolve(evolve_operator)
         quantum_states.append(qstate)
-    povm.semidefinite_programming_minerror(quantum_states, priors, debug=debug)
+    if debug:
+        for qstate in quantum_states:
+            print(qstate)
+    povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
     return povm.theoretical_error
 
 
@@ -471,17 +475,22 @@ def main3_delta(debug, seed, unitary_theta):
 
 
 def validate_lemma2():
-    debug = False
+    debug = True
     seed = 0
     unitary_theta = 40
     file_perm = 'result/5.25.2023/lemma2.n{}-t{}.perm.npy'
     file_avg  = 'result/5.25.2023/lemma2.n{}-t{}.avg.npy'
     
-    for num_sen in [3,4,5]:
-        for unitary_theta in [6, 26, 46, 66, 86]:
-            errors_perm, errors_avg = lemma2(num_sen, debug, seed, unitary_theta)
-            np.save(file_perm.format(num_sen, unitary_theta), np.array(errors_perm))
-            np.save(file_avg.format(num_sen, unitary_theta), np.array(errors_avg))
+    # for num_sen in [3,4,5]:
+    #     for unitary_theta in [6, 26, 46, 66, 86]:
+    #         errors_perm, errors_avg = lemma2(num_sen, debug, seed, unitary_theta)
+    #         np.save(file_perm.format(num_sen, unitary_theta), np.array(errors_perm))
+    #         np.save(file_avg.format(num_sen, unitary_theta), np.array(errors_avg))
+
+    for num_sen in [3]:
+        for unitary_theta in [46]:
+            lemma_tmp(num_sen, debug, seed, unitary_theta)
+
 
 
 # validate lemma 2 about averaging two states, n=3
@@ -501,9 +510,9 @@ def lemma2(num_sensor, debug, seed, unitary_theta):
     init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
     init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
     print('\ninitial state:')
-    print('error', evaluate(init_state_custom, U, priors, povm, debug=debug))
     if debug:
         print(f'Initial state:\n{init_state_custom}\n')
+    print('error', evaluate(init_state_custom, U, priors, povm, debug=debug))
     # 2. purmutate the initial state and evaluate them
     init_state_custom_permute = permutation_custombasis(init_state_custom)
     print('\npermutated states:')
@@ -519,6 +528,36 @@ def lemma2(num_sensor, debug, seed, unitary_theta):
         errors_avg.append(evaluate(qstate_avg, U, priors, povm, debug=debug))
         print(i, 'error', errors_avg[-1])
     return errors_perm, errors_avg
+
+
+def lemma_tmp(num_sensor, debug, seed, unitary_theta):
+    '''use QuantumStateCustomBasis
+       1) confirm that the permutations of an initial state has the same probability of error
+       2) average --> better state (lower error)
+    '''
+    print(f'---\nunitary theta is {unitary_theta}, seed is {seed}')
+    priors = [1/num_sensor] * num_sensor
+    povm = Povm()
+    # 1. random initial state and random unitary operator
+    U = Utility.generate_unitary_operator(theta=unitary_theta, seed=2)
+    if debug:
+        Utility.print_matrix('\nUnitary operator:', U.data)
+    custom_basis = Utility.generate_custombasis(num_sensor, U)
+    init_state_custom = QuantumStateCustomBasis(num_sensor, custom_basis)
+    init_state_custom.init_random_state_realnumber(seed)      # all coefficients are random
+    print('\ninitial state:')
+    print(f'Initial state:\n{init_state_custom}\n')
+    print('error', evaluate(init_state_custom, U, priors, povm, debug=debug))
+    # 2. purmutate the initial state and evaluate them
+    init_state_custom_permute = permutation_custombasis(init_state_custom)
+    print('\npermutated states:')
+    errors_perm = []
+    for i, qstate in enumerate(init_state_custom_permute):
+        print(qstate)
+        errors_perm.append(evaluate(qstate, U, priors, povm, debug=debug))
+        print(i, 'error', errors_perm[-1])
+        break
+    return
 
 
 def validate_lemma3():

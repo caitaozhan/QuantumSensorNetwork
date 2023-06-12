@@ -26,7 +26,7 @@ class QuantumStateCustomBasis:
         self._custom_basis = custom_basis
         self._state_vector_custom = state_vector_custom
         self._state_vector = state_vector
-        self._density_matrix = None
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector)) if state_vector is not None else None
         if self._state_vector_custom is not None:
             self.custom2computational()
 
@@ -53,13 +53,10 @@ class QuantumStateCustomBasis:
     @state_vector.setter
     def state_vector(self, vector: np.array):
         self._state_vector = vector
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
 
     @property
     def density_matrix(self):
-        if self._density_matrix is None:  # BUG?
-            if self._state_vector is None:
-                raise Exception('state_vector is None!')
-            self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))  # don't forget the conjugate ...
         return self._density_matrix
 
     def custom2computational(self):
@@ -68,6 +65,8 @@ class QuantumStateCustomBasis:
         self._state_vector = self._state_vector_custom[0] * self._custom_basis[0]
         for i in range(1, 2**self.num_sensor):
             self._state_vector += self._state_vector_custom[i] * self._custom_basis[i]
+        self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
+
 
     def check_state(self):
         '''check if the amplitudes norm_squared add up to one
@@ -103,6 +102,7 @@ class QuantumStateCustomBasis:
             np.random.seed(seed)
         self._state_vector_custom = random_state(self.num_sensor)
         self.custom2computational()
+    
 
     def init_random_state_realnumber(self, seed: int = None):
         '''init a random quantum state with real number amplitudes'''
@@ -140,6 +140,7 @@ class QuantumStateCustomBasis:
         operator_dim = np.product(operator.input_dims()) # for N qubits, the input_dims() return (2, 2, ..., 2), N twos.
         if dim == operator_dim:
             self._state_vector = np.dot(operator._data, self._state_vector)
+            self._density_matrix = np.outer(self._state_vector, np.conj(self._state_vector))
         else:
             raise Exception('state_vector and operator dimension not equal')
 
@@ -169,13 +170,14 @@ class QuantumStateCustomBasis:
         probs = np.abs(amplitudes) ** 2
         print('\nProbabilities:')
         for i, prob in enumerate(probs):
-            print(f'|{i}> : {prob}')
+            print(f'|{i}> : {prob:.5f}')
         if matplotlib:
             import matplotlib.pyplot as plt
             X = list(range(2**self.num_sensor))
             plt.bar(X, probs)
             plt.xticks(X)
             plt.show()
+
 
     def get_symmetry_index(self) -> float:
         '''a measure of symmetry -- the sum of pairwise difference in the coefficient-squares, i.e., probabilities, in each partition
@@ -201,7 +203,7 @@ class QuantumStateCustomBasis:
 
     def __str__(self):
         string = '\nCustom Basis:\n'
-        string += self.custombasis2string()
+        # string += self.custombasis2string()
         string += '\nCoefficients in custom basis:\n'
         index = 0
         num_of_bit = math.ceil(math.log2(len(self.state_vector_custom)))

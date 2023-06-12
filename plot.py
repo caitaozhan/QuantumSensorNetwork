@@ -408,7 +408,6 @@ class Plot:
 
     @staticmethod
     def symmetry_varyseed(data: dict, filename: str):
-        # prepare data
         theta = 46
         table = defaultdict(list)
         for myinput, output_by_methods in data:
@@ -416,7 +415,7 @@ class Plot:
                 if method == 'Hill climbing' and myinput.unitary_theta == theta:
                     table[output.start_seed] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(23, 17))
+        fig, ax = plt.subplots(figsize=(26, 16))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
@@ -434,7 +433,6 @@ class Plot:
 
     @staticmethod
     def symmetry_varymethod(data: dict, filename: str):
-        # prepare data
         theta = 46
         seed = 0
         table = defaultdict(list)
@@ -443,13 +441,37 @@ class Plot:
                 if myinput.unitary_theta == theta and output.start_seed == seed:
                     table[method] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(23, 15))
+        fig, ax = plt.subplots(figsize=(26, 16))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         for method in methods:
-            ax.plot(table[method][:100], label=method)
-        ax.legend()
-        ax.set_title(f'Various Methods at $theta={theta}$', pad=40)
+            ax.plot(table[method][:100], label=method, linestyle=Plot.LINE_STYLE[method], color=Plot.COLOR[method])
+        ax.legend(fontsize=45)
+        ax.set_title(f'Various Methods at $theta={theta}$', pad=40, fontsize=60)
+        ax.set_xlabel('Iteration', labelpad=20)
+        ax.set_ylabel('Symmetry Index', labelpad=20)
+        ax.set_ylim([-0.001, 1])
+        ax.set_xlim([-0.1, 100])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        fig.savefig(filename)
+
+
+    @staticmethod
+    def symmetry_varytheta(data: dict, filename: str):
+        table = defaultdict(list)
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if method == 'Hill climbing' and output.start_seed == 0:
+                    table[myinput.unitary_theta] = output.symmetries
+        print(table)
+        fig, ax = plt.subplots(figsize=(26, 16))
+        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        thetas = [6, 26, 46, 66, 86]
+        for theta in thetas:
+            ax.plot(table[theta][:100], label=str(theta))
+        ax.legend(fontsize=45)
+        ax.set_title('Hill Climbing, varying $theta$', pad=40, fontsize=60)
         ax.set_xlabel('Iteration', labelpad=20)
         ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
@@ -469,21 +491,65 @@ class Plot:
                 if myinput.unitary_theta == theta:
                     table[key.format(method, output.start_seed)].append(output.symmetries)                     # [0] is symmetry
                     table[key.format(method, output.start_seed)].append((1 - np.array(output.scores)) * 100)   # [1] is poe
-        fig, ax = plt.subplots(figsize=(23, 15))
-        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
-        # methods = ['Hill climbing']
+        fig, ax = plt.subplots(figsize=(26, 16))
+        fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
+        methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         # methods = ['Simulated annealing']
-        methods = ['Genetic algorithm']
+        # methods = ['Genetic algorithm']
         seeds = [0, 1, 2, 3, 4]
-        for method in methods:
-            for seed in seeds:
-                ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=40)
+        for seed in seeds:
+            for method in methods:
+                if seed == 0:
+                    ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120, label=Plot.METHOD[method])
+                else:
+                    ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120)
+        ax.legend(fontsize=40, facecolor='lightgray', markerscale=2)
+        ax.set_xlabel('Symmetry Index', labelpad=20)
+        ax.set_ylabel('$PoE$ (%)', labelpad=20)
+        ax.set_xlim([0, 0.82])
+        xticks = [0, 0.2, 0.4, 0.6, 0.8]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([str(x) for x in xticks])
+        ax.set_ylim([4, 18])
+        ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        fig.savefig(filename)
 
-        ax.set_xlabel('Symmetry Index')
-        ax.set_ylabel('PoE(%)')
-        ax.set_xlim([0, 0.8])
-        ax.set_ylim([4, 10])
-        ax.set_title('PoE (%) and Symmetry Index', fontsize=60, pad=30)
+
+    @staticmethod
+    def symmetry_poe_varymethod_zoomin(data: dict, filename: str):
+        theta = 46
+        table = defaultdict(list)
+        key = '{}-{}'  # {method}-{seed}
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta:
+                    table[key.format(method, output.start_seed)].append(output.symmetries)                     # [0] is symmetry
+                    table[key.format(method, output.start_seed)].append((1 - np.array(output.scores)) * 100)   # [1] is poe
+        fig, ax = plt.subplots(figsize=(26, 16))
+        fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
+        methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
+        # methods = ['Simulated annealing']
+        # methods = ['Genetic algorithm']
+        seeds = [0, 1, 2, 3, 4]
+        for seed in seeds:
+            for method in methods:
+                if seed == 0:
+                    ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120, label=Plot.METHOD[method])
+                else:
+                    ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120)
+        ax.legend(fontsize=40, facecolor='lightgray', markerscale=2)
+        ax.set_xlabel('Symmetry Index', labelpad=20)
+        ax.set_ylabel('$PoE$ (%)', labelpad=20)
+        ax.set_xlim([0, 0.082])
+        ax.set_ylim([4.34, 4.44])
+        xticks = [0, 0.02, 0.04, 0.06, 0.08]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([str(x) for x in xticks])
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
         fig.savefig(filename)
 
 
@@ -513,30 +579,6 @@ class Plot:
         ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
         fig.savefig(filename)
 
-
-    @staticmethod
-    def symmetry_varytheta(data: dict, filename: str):
-        # prepare data
-        table = defaultdict(list)
-        for myinput, output_by_methods in data:
-            for method, output in output_by_methods.items():
-                if method == 'Hill climbing' and output.start_seed == 0:
-                    table[myinput.unitary_theta] = output.symmetries
-        print(table)
-        fig, ax = plt.subplots(figsize=(23, 15))
-        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
-        thetas = [6, 26, 46, 66, 86]
-        for theta in thetas:
-            ax.plot(table[theta][:100], label=str(theta))
-        ax.legend()
-        ax.set_title('Hill Climbing, varying Theta', pad=40)
-        ax.set_xlabel('Iteration', labelpad=20)
-        ax.set_ylabel('Symmetry Index', labelpad=20)
-        ax.set_ylim([-0.001, 1])
-        ax.set_xlim([-0.1, 100])
-        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
-        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
-        fig.savefig(filename)
 
 
 def vary_theta():
@@ -594,14 +636,16 @@ def conjecture():
 def symmetry():
     logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
     data = Logger.read_log(logs)
-    # filename = 'result/5.22.2023/symmetry_vary{}.png'
+    filename = 'result/5.22.2023/symmetry_vary{}.png'
     # Plot.symmetry_varyseed(data, filename.format('seed'))
-    # Plot.symmetry_varymethod(data, filename.format('method'))
+    Plot.symmetry_varymethod(data, filename.format('method'))
     # Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
-    # Plot.symmetry_varytheta(data, filename.format('theta'))
+    Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    filename = 'result/5.22.2023/poe_symmetry.png'
-    Plot.symmetry_poe_varymethod(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry.png'
+    # Plot.symmetry_poe_varymethod(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
+    # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
 
@@ -610,5 +654,5 @@ if __name__ == '__main__':
     # methods_similar()
     # lemma2()
     # lemma3()
-    conjecture()
-    # symmetry()
+    # conjecture()
+    symmetry()
