@@ -510,6 +510,7 @@ class Plot:
         xticks = [0, 0.2, 0.4, 0.6, 0.8]
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
+        ax.invert_xaxis()
         ax.set_ylim([4, 18])
         ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
@@ -547,6 +548,7 @@ class Plot:
         xticks = [0, 0.02, 0.04, 0.06, 0.08]
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
+        ax.invert_xaxis()
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
@@ -636,16 +638,16 @@ def conjecture():
 def symmetry():
     logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
     data = Logger.read_log(logs)
-    filename = 'result/5.22.2023/symmetry_vary{}.png'
+    # filename = 'result/5.22.2023/symmetry_vary{}.png'
     # Plot.symmetry_varyseed(data, filename.format('seed'))
-    Plot.symmetry_varymethod(data, filename.format('method'))
+    # Plot.symmetry_varymethod(data, filename.format('method'))
     # Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
-    Plot.symmetry_varytheta(data, filename.format('theta'))
+    # Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    # filename = 'result/5.22.2023/poe_symmetry.png'
-    # Plot.symmetry_poe_varymethod(data, filename)
-    # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
-    # Plot.symmetry_poe_varymethod_zoomin(data, filename)
+    filename = 'result/5.22.2023/poe_symmetry.png'
+    Plot.symmetry_poe_varymethod(data, filename)
+    filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
+    Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
 
