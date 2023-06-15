@@ -271,6 +271,63 @@ class Plot:
 
 
     @staticmethod
+    def lemma3_tmp(data, filename):
+        import math
+        def p(r1: float, n: int) -> float:
+            '''probability of success as a function of r1
+               n number of states
+            '''
+            a = math.sqrt(1 - (n-1)*r1)
+            b = (n-1)*math.sqrt(r1)
+            return 1/n * (a + b) ** 2
+
+        def poe_list(X: list, n: int) -> list:
+            '''X: a list of inner-product values'''
+            y = []
+            for x in X:
+                r1 = (1-x) / n
+                p_success = p(r1, n)
+                y.append(1 - p_success)
+            return y
+
+        fig, ax = plt.subplots(1, 1, figsize=(26, 16))
+        fig.subplots_adjust(left=0.12, right=0.98, top=0.91, bottom=0.14)
+
+        X = np.linspace(0, 0.99, 100)
+        X = np.append(X, [0.995, 0.998, 0.999, 0.99999])
+        n=5
+        ax.plot(X, data[f'n{n}'], label='5 States')
+        ax.plot(X, poe_list(X, n), label='5 States, PGM', linestyle='dotted')
+        n=4
+        ax.plot(X, data[f'n{n}'], label='4 States')
+        ax.plot(X, poe_list(X, n), label='4 States, PGM', linestyle='dotted')
+        n=3
+        ax.plot(X, data[f'n{n}'], label='3 States')
+        ax.plot(X, poe_list(X, n), label='3 States, PGM', linestyle='dotted')
+        n=2
+        ax.plot(X, data[f'n{n}'], label='2 States')
+        ax.plot(X, poe_list(X, n), label='2 States, PGM', linestyle='dotted')
+        ax.legend(fontsize=50, edgecolor='black')
+        yticks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        xticks = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        xticks = xticks[::-1]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([str(x) for x in xticks])
+        ax.set_xlim([0, 1.001])
+        ax.set_ylim([-0.001, 0.801])
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.set_xlabel('$x$ (such that $\\forall i \\neq j$: $\langle \phi_i \| \phi_j \\rangle = x$)', labelpad=20)
+        ax.set_ylabel('Probability of Error (%)', labelpad=40, fontsize=58)
+        ax.set_title('$Conjecture\ 3$: $PoE$ Increase with the Increase in $x$', pad=50, fontsize=58)
+        ax.grid()
+        fig.savefig(filename)
+
+
+
+    @staticmethod
     def conjecture(data, filename):
 
         # step 1: prepare data
@@ -494,8 +551,6 @@ class Plot:
         fig, ax = plt.subplots(figsize=(26, 16))
         fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
-        # methods = ['Simulated annealing']
-        # methods = ['Genetic algorithm']
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
             for method in methods:
@@ -531,8 +586,6 @@ class Plot:
         fig, ax = plt.subplots(figsize=(26, 16))
         fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
-        # methods = ['Simulated annealing']
-        # methods = ['Genetic algorithm']
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
             for method in methods:
@@ -624,6 +677,8 @@ def lemma3():
         data[f'n{n}'] = y
     filename = 'result/1.6.2023/lemma3.png'
     Plot.lemma3(data, filename)
+    # filename = 'result/1.6.2023/lemma3_tmp.png'
+    # Plot.lemma3_tmp(data, filename)
 
 
 def conjecture():
@@ -655,6 +710,6 @@ if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
-    # lemma3()
+    lemma3()
     # conjecture()
-    symmetry()
+    # symmetry()
