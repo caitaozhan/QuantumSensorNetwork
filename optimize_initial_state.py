@@ -199,7 +199,6 @@ class OptimizeInitialState(QuantumState):
         Return:
             float -- evaluate score by SDP solver
         '''
-        profile = True
         quantum_states = []
         for i in range(self.num_sensor):
             evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
@@ -208,17 +207,12 @@ class OptimizeInitialState(QuantumState):
             quantum_states.append(init_state_copy)
         if eval_metric == 'min error':
             try:
-                if profile:
-                    start = time.time()
                 povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
-                if profile:
-                    end = time.time()
-                    print(f'time elapse = {end - start:0.4f}')
             except Exception as e:
                 raise e
         elif eval_metric == 'unambiguous':
             try:
-                povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=True)
+                povm.semidefinite_programming_unambiguous(quantum_states, priors, debug=False)
             except Exception as e:
                 raise e
         elif eval_metric == 'computational':
@@ -292,7 +286,6 @@ class OptimizeInitialState(QuantumState):
                     try:
                         score = self._evaluate(neighbors[j], unitary_operator, priors, povm, eval_metric)
                     except Exception as e:
-                        # print(e)
                         score = 0
                         print(f'solver issue at iteration={iteration}, dimension={i}, neighbor={j}, error={e}')
                     if score > best_score:

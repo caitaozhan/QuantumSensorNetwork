@@ -97,7 +97,7 @@ if __name__ == '__main__':
         min_iteration = args.min_iteration[0]
         start_time = time.time()
         scores, symmetries = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, step_size, \
-                                             decrease_rate, min_iteration, eval_metric)
+                                                         decrease_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 7)
