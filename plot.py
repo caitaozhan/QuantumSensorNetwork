@@ -19,7 +19,7 @@ class Plot:
     LINE_STYLE = dict(zip(_METHOD, _STYLE))
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
-    _COLOR  = ['blue',          'orange',              'green',             'gold']
+    _COLOR  = ['blue',          'orange',              'green',             'lime']
     COLOR   = dict(zip(_METHOD, _COLOR))
 
 
@@ -324,7 +324,6 @@ class Plot:
         ax.set_title('$Conjecture\ 3$: $PoE$ Increase with the Increase in $x$', pad=50, fontsize=58)
         ax.grid()
         fig.savefig(filename)
-
 
 
     @staticmethod
@@ -635,6 +634,157 @@ class Plot:
         fig.savefig(filename)
 
 
+    @staticmethod
+    def unambiguous_varytheta(data, filename):
+        '''vary theta, hill climbing, n-sensors (n=2,3,4,5)
+        '''
+        methods = ['Hill climbing', 'Simulated annealing', 'Theorem']
+        table_2sensor = defaultdict(list)
+        table_3sensor = defaultdict(list)
+        table_4sensor = defaultdict(list)
+        table_5sensor = defaultdict(list)
+
+        for myinput, output_by_methods in data:
+            if myinput.num_sensor == 2:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_2sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 3:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_3sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 4:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_4sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 5:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_5sensor[method].append({myinput.unitary_theta: output.error})
+
+        Y2 = defaultdict(list)
+        X2 = [i for i in range(1, 46)] + [i for i in range(135, 180)]
+        for method, mylist in table_2sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X2:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y2[method] = y2
+
+        Y3 = defaultdict(list)
+        X3 = [i for i in range(1, 61)] + [i for i in range(120, 180)]
+        for method, mylist in table_3sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X3:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y3[method] = y2
+
+        Y4 = defaultdict(list)
+        X4 = [i for i in range(1, 61)] + [i for i in range(120, 180)]
+        for method, mylist in table_4sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X4:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y4[method] = y2
+
+        Y5 = defaultdict(list)
+        X5 = [i for i in range(1, 66)] + [i for i in range(115, 180)]
+        for method, mylist in table_5sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X5:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: theta={theta}')
+            Y5[method] = y2
+
+        # step 2: plotting
+
+        fig, ax = plt.subplots(figsize=(30, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.91, bottom=0.12)
+
+        # ax.plot(X2[:45], Y2[methods[0]][:45], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11, label=Plot.METHOD[methods[0]])
+        # ax.plot(X2[45:], Y2[methods[0]][45:], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        # ax.plot(X2[:45], Y2[methods[1]][:45], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9, label=Plot.METHOD[methods[1]])
+        # ax.plot(X2[45:], Y2[methods[1]][45:], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        ax.plot(X2[:45], Y2[methods[1]][:45], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7, label=Plot.METHOD[methods[2]])
+        ax.plot(X2[45:], Y2[methods[1]][45:], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+        
+        # ax.plot(X3[:60], Y3[methods[0]][:60], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        # ax.plot(X3[60:], Y3[methods[0]][60:], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        # ax.plot(X3[:60], Y3[methods[1]][:60], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        # ax.plot(X3[60:], Y3[methods[1]][60:], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        ax.plot(X3[:60], Y3[methods[2]][:60], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+        ax.plot(X3[60:], Y3[methods[2]][60:], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+
+        # ax.plot(X4[:60], Y4[methods[0]][:60], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        # ax.plot(X4[60:], Y4[methods[0]][60:], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        # ax.plot(X4[:60], Y4[methods[1]][:60], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        # ax.plot(X4[60:], Y4[methods[1]][60:], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        ax.plot(X4[:60], Y4[methods[2]][:60], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+        ax.plot(X4[60:], Y4[methods[2]][60:], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+
+        ax.plot(X5[:65], Y5[methods[2]][:65], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+        ax.plot(X5[65:], Y5[methods[2]][65:], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=7)
+
+        arrowprops = dict(facecolor='black', width=5, headwidth=20)
+        # ax.annotate('2 Sensor', xy=(140.5, 0.15), xytext=(150, 0.15), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax.annotate('3 Sensor', xy=(133, 0.25),   xytext=(150, 0.25), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax.annotate('4 Sensor', xy=(131, 0.35),  xytext=(100, 0.35), arrowprops=arrowprops, fontsize=50, va='center')
+
+        ax.annotate('2 Sensor', xy=(140.5, 0.15), xytext=(150, 0.15), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('3/4 Sensor', xy=(133, 0.25),   xytext=(150, 0.25), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('5 Sensor', xy=(131, 0.35),  xytext=(100, 0.35), arrowprops=arrowprops, fontsize=50, va='center')
+
+        xticks = [i for i in range(0, 181, 15)]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([f'{x}' for x in xticks])
+        yticks = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        ax.set_xlim([0, 180])
+        ax.set_ylim([-0.002, 1])
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.set_title('Search Heuristics (Unambiguous)', fontsize=65, pad=40)
+        ax.legend(ncol=1, loc='upper center',  fontsize=55, handlelength=3.5, edgecolor='black')
+        ax.set_xlabel('Theta (degree)', labelpad=15)
+        ax.set_ylabel('Probability of Inconclusion (%)', fontsize=60)
+        fig.savefig(filename)
+
+
 
 def vary_theta():
     logs = ['result/12.22.2022/varying_theta_2sensors', 'result/12.22.2022/varying_theta_3sensors', \
@@ -705,11 +855,19 @@ def symmetry():
     Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
+def unambiguous_vary_theta():
+    logs = ['result/6.16.2023/unambiguous_varytheta_2sen', 'result/6.16.2023/unambiguous_varytheta_3sen', 
+            'result/6.16.2023/unambiguous_varytheta_4sen', 'result/6.16.2023/unambiguous_varytheta_5sen']
+    data = Logger.read_log(logs)
+    filename = 'result/6.16.2023/unambiguous_varying_theta2.png'
+    Plot.unambiguous_varytheta(data, filename)
+
 
 if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
-    lemma3()
+    # lemma3()
     # conjecture()
     # symmetry()
+    unambiguous_vary_theta()

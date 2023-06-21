@@ -1,4 +1,4 @@
-# QuantumSensorNetwork
+# Initial State Optimization in Quantum Sensor Network
 
 Example of running a Hill climbing program.
 
