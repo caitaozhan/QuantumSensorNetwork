@@ -116,8 +116,8 @@ if __name__ == '__main__':
         min_iteration = args.min_iteration[0]
         epsilon = Default.EPSILON_OPT
         start_time   = time.time()
-        scores, symmetries = opt_initstate.simulated_annealing(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
-                                                   epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
+        scores, symmetries = opt_initstate.simulated_annealing_new(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
+                                                               epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
         runtime = round(time.time() - start_time, 2)
         success = scores[-1]
         error = round(1 - success, 7)

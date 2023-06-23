@@ -32,7 +32,7 @@ class Default:
 
     # below are for simulated annealing
     init_step = 0.1                  # initial step size
-    max_stuck = 2                    # max stuck in a same temperature
+    max_stuck = 5                    # max stuck in a same temperature
     cooling_rate = 0.96              # the annealing cooling rate
     stepsize_decreasing_rate = 0.96  # the stepsize decreasing rate
 

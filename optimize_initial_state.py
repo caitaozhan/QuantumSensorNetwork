@@ -302,7 +302,7 @@ class OptimizeInitialState(QuantumState):
                 terminate = True
             else:
                 terminate = False
-
+        print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Hill climbing'
         return scores, symmetries
@@ -328,8 +328,8 @@ class OptimizeInitialState(QuantumState):
             scores.append(score)
         return np.std(scores)
 
-    def find_SA_neighbor(self, qstate: QuantumState, i: int, step_size: float):
-        '''return a random neighbor
+    def find_SA_neighbor(self, qstate: QuantumState, i: int, step_size: float) -> QuantumState:
+        '''return a random neighbor by updating the ith element of the state vector
         '''
         real = 2 * np.random.random() - 1
         imag = 2 * np.random.random() - 1
@@ -337,6 +337,20 @@ class OptimizeInitialState(QuantumState):
         direction /= abs(direction)  # normalize
         state_vector = qstate.state_vector.copy()
         state_vector[i] += direction * step_size
+        normalized_vector = self.normalize_state(state_vector)
+        return QuantumState(self.num_sensor, normalized_vector)
+    
+    def jump_around(self, qstate: QuantumState) -> QuantumState:
+        '''when stuck try jumping around: update ALL of the elements of the state vector
+        '''
+        state_vector = qstate.state_vector.copy()
+        n = qstate.num_sensor
+        for i in range(2 ** n):
+            real = 2 * np.random.random() - 1
+            imag = 2 * np.random.random() - 1
+            direction = real + 1j*imag
+            direction /= abs(direction)                           # normalize 
+            state_vector[i] += direction * random.random() * 0.2  # random step size between [0, 0.2)
         normalized_vector = self.normalize_state(state_vector)
         return QuantumState(self.num_sensor, normalized_vector)
 
@@ -414,7 +428,196 @@ class OptimizeInitialState(QuantumState):
             std_ratio *= cooling_rate
             temperature = min(temperature*cooling_rate, std*std_ratio)
             stepsize *= stepsize_decreasing_rate
+        print(f'POVM stats: {povm.sdp_info}')
+        self._state_vector = qstate.state_vector
+        self._optimze_method = 'Simulated annealing'
+        return scores, symmetries
 
+    def simulated_annealing_new(self, seed: int, unitary_operator: Operator, priors: list, init_step: float, stepsize_decreasing_rate: float, \
+                                      epsilon: float, max_stuck: int, cooling_rate: float, min_iteration: int, eval_metric: str):
+        '''use the simulated annealing to optimize the initial state
+        Args:
+            seed             -- random seed
+            unitary_operator -- describe the interaction with the environment
+            priors    -- prior probabilities
+            init_step -- the initial step size
+            stepsize_decreasing_rate -- the rate that the steps are decreasing at each iteration
+            epsilon   -- for termination
+            max_stuck -- frozen criteria
+            cooling_rate   -- cooling rate, the rate of the std of the previous iteration scores
+            min_iteration  -- minimal number of iterations
+            eval_metric    -- 'min error' or 'unambiguous'
+        Return:
+            list, list -- a list of scores at each iteration, and a list of symmetry index at each iteration
+        '''
+        print('Start simulated annealing...')
+        np.random.seed(seed)
+        random.seed(seed)
+        qstate = QuantumState(self.num_sensor, random_state(nqubits=self.num_sensor))
+        symmetry = self.get_symmetry_index(qstate.state_vector, unitary_operator)
+        symmetries = [round(symmetry, 7)]
+        # print(f'Random start:\n{qstate}')
+        povm = Povm()
+        N = 2**self.num_sensor
+        init_temperature = self.generate_init_temperature(qstate, init_step, N, unitary_operator, priors, povm, eval_metric)
+        temperature = init_temperature
+        score1  = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+        scores = [round(score1, 7)]
+        eval_count = 0
+        stuck_count = 0
+        std_ratio = 1
+        stepsize = init_step
+        min_evaluation = min_iteration * 4*N
+        while eval_count < min_evaluation:
+            previous_score = score1
+            scores_iteration = []
+            for i in range(N):
+                for _ in range(4):
+                    neighbor = self.find_SA_neighbor(qstate, i, stepsize)
+                    try:
+                        score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+                        scores_iteration.append(score2)
+                        eval_count += 1
+                    except Exception as e:
+                        score2 = -100
+                        print(f'solver issue at eval_count={eval_count}, error={e}')
+                    dS = score2 - score1 # score2 is the score of the neighbor state, score1 is for current state
+                    if dS > 0:
+                        qstate = neighbor           # qstate improves
+                        score1 = score2
+                    else:  # S <= 0
+                        prob = np.exp(dS / temperature)
+                        if np.random.uniform(0, 1) < prob:
+                            qstate = neighbor       # qstate becomes worse
+                            score1 = score2
+                        else:                       # qstate no change
+                            pass
+            scores.append(round(score1, 7))
+            symmetries.append(round(self.get_symmetry_index(qstate.state_vector, unitary_operator), 7))
+            if previous_score >= score1 - epsilon:
+                stuck_count += 1
+            else:
+                stuck_count = 0
+            if stuck_count == max_stuck:
+                temperature *= 1.5
+                std_ratio *= 1.5
+                stepsize *= 1.5
+                stuck_count = 0
+                continue
+            
+                # print(f'NO! Got stuck after {eval_count} number of evals.', end='  ')
+                # success, (new_qstate, score2) = self.get_out_of_stuck(qstate, score1, unitary_operator, priors, povm, eval_metric)
+                # if success:
+                #     qstate = new_qstate
+                #     score1 = score2
+                #     stuck_count = 0
+                # else:
+                #     break
+            
+            std = np.std(scores_iteration[-10:])
+            std_ratio *= cooling_rate
+            temperature = min(temperature*cooling_rate, std*std_ratio)
+            stepsize *= stepsize_decreasing_rate
+        print(f'POVM stats: {povm.sdp_info}')
+        self._state_vector = qstate.state_vector
+        self._optimze_method = 'Simulated annealing'
+        return scores, symmetries
+
+
+    def get_out_of_stuck(self, qstate: QuantumState, score1: float, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
+        '''if gets out of stuck, then return a tuple:        True,  (new state, score)
+           if fails to get out of stuc, then return a tuple: False, (None, None)
+        '''
+        i = 0
+        max_trial = 20_000
+        while i < max_trial:
+            new_state = self.jump_around(qstate)
+            score2 = self._evaluate(new_state, unitary_operator, priors, povm, eval_metric)
+            if score2 > score1:
+                print(f'YES! Got out of stuck at the {i}th trail')
+                return True, (new_state, score2)
+            i += 1
+        print(f'NO! Failed to get out of stuck after {max_trial} trails')
+        return False, (None, None)
+
+
+    def simulated_annealing_startstate(self, start_state: QuantumState, seed: int, unitary_operator: Operator, priors: list, init_step: float, stepsize_decreasing_rate: float, \
+                                             epsilon: float, max_stuck: int, cooling_rate: float, min_iteration: int, eval_metric: str):
+        '''use the simulated annealing to optimize the initial state
+           Not random start, but at a given startstate
+        Args:
+            start_state      -- a non-random start state
+            seed             -- random seed
+            unitary_operator -- describe the interaction with the environment
+            priors    -- prior probabilities
+            init_step -- the initial step size
+            stepsize_decreasing_rate -- the rate that the steps are decreasing at each iteration
+            epsilon   -- for termination
+            max_stuck -- frozen criteria
+            cooling_rate   -- cooling rate, the rate of the std of the previous iteration scores
+            min_iteration  -- minimal number of iterations
+            eval_metric    -- 'min error' or 'unambiguous'
+        Return:
+            list, list -- a list of scores at each iteration, and a list of symmetry index at each iteration
+        '''
+        print('Start simulated annealing...')
+        np.random.seed(seed)
+        random.seed(seed)
+        qstate = start_state
+        symmetry = self.get_symmetry_index(qstate.state_vector, unitary_operator)
+        symmetries = [round(symmetry, 7)]
+        # print(f'Random start:\n{qstate}')
+        povm = Povm()
+        N = 2**self.num_sensor
+        init_temperature = self.generate_init_temperature(qstate, init_step, N, unitary_operator, priors, povm, eval_metric)
+        temperature = init_temperature
+        score1  = self._evaluate(qstate, unitary_operator, priors, povm, eval_metric)
+        scores = [round(score1, 7)]
+        terminate  = False
+        eval_count = 0
+        stuck_count = 0
+        std_ratio = 1
+        stepsize = init_step
+        min_evaluation = min_iteration * 4*N
+        while terminate is False or eval_count < min_evaluation:
+            previous_score = score1
+            scores_iteration = []
+            for i in range(N):
+                for _ in range(4):
+                    neighbor = self.find_SA_neighbor(qstate, i, stepsize)
+                    try:
+                        score2 = self._evaluate(neighbor, unitary_operator, priors, povm, eval_metric)
+                        scores_iteration.append(score2)
+                        eval_count += 1
+                    except Exception as e:
+                        score2 = -100
+                        print(f'solver issue at eval_count={eval_count}, error={e}')
+                    dS = score2 - score1 # score2 is the score of the neighbor state, score1 is for current state
+                    if dS > 0:
+                        qstate = neighbor           # qstate improves
+                        score1 = score2
+                    else:  # S <= 0
+                        prob = np.exp(dS / temperature)
+                        if np.random.uniform(0, 1) < prob:
+                            qstate = neighbor       # qstate becomes worse
+                            score1 = score2
+                        else:                       # qstate no change
+                            pass
+            scores.append(round(score1, 7))
+            symmetries.append(round(self.get_symmetry_index(qstate.state_vector, unitary_operator), 7))
+            if previous_score >= score1 - epsilon:
+                stuck_count += 1
+            else:
+                stuck_count = 0
+                terminate = False
+            if stuck_count == max_stuck:
+                terminate = True
+            
+            std = np.std(scores_iteration[-10:])
+            std_ratio *= cooling_rate
+            temperature = min(temperature*cooling_rate, std*std_ratio)
+            stepsize *= stepsize_decreasing_rate
+        print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
         return scores, symmetries

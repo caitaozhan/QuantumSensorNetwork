@@ -14,6 +14,19 @@ from utility import Utility
 from input_output import Default
 
 
+class SDP_Info:
+    def __init__(self):
+        self.optimal = 0
+        self.inaccurate = 0
+        self.error = 0
+    
+    def __str__(self) -> str:
+        s  = f'optimal = {self.optimal}\n'
+        s += f'inaccurate = {self.inaccurate}\n'
+        s += f'error = {self.error}\n'
+        return s
+
+
 class Povm:
     '''encapsulate positive operator valued measurement
     '''
@@ -22,6 +35,7 @@ class Povm:
         self._method = ''
         self._theoretical_error = -1
         self._theoretical_success = -1
+        self.sdp_info = SDP_Info()
 
     @property
     def operators(self):
@@ -333,10 +347,15 @@ class Povm:
         prob.solve(verbose=debug)
         self._method = 'Semidefinite programming'
         if prob.status == 'optimal' or prob.status == 'optimal_inaccurate':
+            if prob.status == 'optimal':
+                self.sdp_info.optimal += 1
+            else:
+                self.sdp_info.inaccurate += 1
             self._theoretical_success = prob.value
             self._theoretical_error = 1 - prob.value
             self._operators = [Operator(MI.value) for MI in Ms]
         else:
+            self.sdp_info.error += 1
             raise Exception(f'prob.status={prob.status}')
         
         if debug:
