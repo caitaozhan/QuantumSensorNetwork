@@ -163,7 +163,7 @@ class Plot:
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_title('Empirical Validation of Search Heuristics', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
-        ax.set_xlabel('Theta (degree)', labelpad=15)
+        ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
         ax.set_ylabel('Probability of Error (%)', fontsize=60)
         fig.savefig(filename)
 
@@ -176,7 +176,7 @@ class Plot:
         for myinput, output_by_methods in data:
             for method, output in output_by_methods.items():
                 if myinput.unitary_theta == theta:
-                    table[method] = 1 - np.array(output.scores[:50])  # success --> error
+                    table[method] = 1 - np.array(output.scores[:100])  # success --> error
         Y = table
         
         # plotting
@@ -189,17 +189,17 @@ class Plot:
         ax.plot(Y[methods[2]], label=Plot.METHOD[methods[2]], linestyle=Plot.LINE_STYLE[methods[2]], color=Plot.COLOR[methods[2]], linewidth=10)
         ax.plot(Y[methods[1]], label=Plot.METHOD[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=8)
         ax.legend(fontsize=50, bbox_to_anchor=(0.45, 0.8), handlelength=3)
-        xticks = [i for i in range(0, 51, 10)]
+        xticks = [i for i in range(0, 101, 10)]
         ax.set_xticks(xticks)
         ax.set_xticklabels([f'{x}' for x in xticks])
         yticks = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13]
         ax.set_yticks(yticks)
         ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
-        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
-        ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='x', direction='in',  length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
         ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 46', fontsize=60, pad=50)
         ax.set_xlabel('Iteration Number', labelpad=30)
-        ax.set_xlim([-0.1, 50])
+        ax.set_xlim([-0.1, 100])
         ax.set_ylabel('Probability of Error (%)', fontsize=60, labelpad=30)
         ax.set_ylim([0.05, 0.133])
         ax.annotate('Random Initial State', xy=(0.5, 0.189), xytext=(5, 0.189), arrowprops=arrowprops, fontsize=50, va='center')
@@ -225,8 +225,8 @@ class Plot:
             axes[i].errorbar(X, y, yerr=yerr, linewidth=5, capsize=20, capthick=5, fmt=' ', marker='.', markersize=45, color='r', ecolor='b')
             axes[i].yaxis.grid()
             axes[i].set_xlim([2.7, 5.3])
-            axes[i].set_title(f'Theta={t}', fontsize=60, pad=20)
-            axes[i].set_xlabel('Number of Sensors', fontsize=55, labelpad=15)
+            axes[i].set_title(f'$\\theta$={t}', fontsize=60, pad=20)
+            axes[i].set_xlabel('Number of Sensors', fontsize=58, labelpad=15)
             axes[i].tick_params(axis='y', direction='in', length=10, width=4)
             axes[i].tick_params(pad=10)
         
@@ -328,7 +328,6 @@ class Plot:
 
     @staticmethod
     def conjecture(data, filename):
-
         # step 1: prepare data
 
         table_2sensor = defaultdict(list)
@@ -457,7 +456,7 @@ class Plot:
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax.set_title('Empirical Validation of $Conjecture$ 1', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
-        ax.set_xlabel('Theta (degree)', labelpad=15)
+        ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
         ax.set_ylabel('Probability of Error (%)', fontsize=60)
         fig.savefig(filename)
 
@@ -502,8 +501,9 @@ class Plot:
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         for method in methods:
             ax.plot(table[method][:100], label=method, linestyle=Plot.LINE_STYLE[method], color=Plot.COLOR[method])
-        ax.legend(fontsize=45)
-        ax.set_title(f'Various Methods at $theta={theta}$', pad=40, fontsize=60)
+      
+        ax.legend(fontsize=45, handlelength=3)
+        ax.set_title(f'Various Methods at $\\theta={theta}$', pad=40, fontsize=60)
         ax.set_xlabel('Iteration', labelpad=20)
         ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
@@ -525,9 +525,9 @@ class Plot:
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         thetas = [6, 26, 46, 66, 86]
         for theta in thetas:
-            ax.plot(table[theta][:100], label=str(theta))
-        ax.legend(fontsize=45)
-        ax.set_title('Hill Climbing, varying $theta$', pad=40, fontsize=60)
+            ax.plot(table[theta][:100], label=f'$\\theta$={theta}')
+        ax.legend(fontsize=45, handlelength=3)
+        ax.set_title('Hill Climbing with varying $\\theta$', pad=40, fontsize=60)
         ax.set_xlabel('Iteration', labelpad=20)
         ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
@@ -894,16 +894,17 @@ def conjecture():
 def symmetry():
     logs = ['result/5.22.2023/symmetry_theta46', 'result/5.22.2023/symmetry_theta66', 'result/5.22.2023/symmetry_thetas']
     data = Logger.read_log(logs)
-    # filename = 'result/5.22.2023/symmetry_vary{}.png'
+    filename = 'result/5.22.2023/symmetry_vary{}.png'
     # Plot.symmetry_varyseed(data, filename.format('seed'))
-    # Plot.symmetry_varymethod(data, filename.format('method'))
     # Plot.symmetry_varymethod_poe(data, filename.format('method_poe'))
-    # Plot.symmetry_varytheta(data, filename.format('theta'))
+    
+    Plot.symmetry_varymethod(data, filename.format('method'))
+    Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    filename = 'result/5.22.2023/poe_symmetry.png'
-    Plot.symmetry_poe_varymethod(data, filename)
-    filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
-    Plot.symmetry_poe_varymethod_zoomin(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry.png'
+    # Plot.symmetry_poe_varymethod(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
+    # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
 def unambiguous_vary_theta():
@@ -921,5 +922,5 @@ if __name__ == '__main__':
     # lemma2()
     # lemma3()
     # conjecture()
-    # symmetry()
-    unambiguous_vary_theta()
+    symmetry()
+    # unambiguous_vary_theta()
