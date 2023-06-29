@@ -164,7 +164,7 @@ class Plot:
         ax.set_title('Empirical Validation of Search Heuristics', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
-        ax.set_ylabel('Probability of Error (%)', fontsize=60)
+        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=60, labelpad=10)
         fig.savefig(filename)
 
 
@@ -191,16 +191,16 @@ class Plot:
         ax.legend(fontsize=50, bbox_to_anchor=(0.45, 0.8), handlelength=3)
         xticks = [i for i in range(0, 101, 10)]
         ax.set_xticks(xticks)
-        ax.set_xticklabels([f'{x}' for x in xticks])
+        ax.set_xticklabels([f'{x}' for x in xticks], fontsize=50)
         yticks = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13]
         ax.set_yticks(yticks)
-        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks], fontsize=50)
         ax.tick_params(axis='x', direction='in',  length=10, width=3, pad=15)
         ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
-        ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 46', fontsize=60, pad=50)
-        ax.set_xlabel('Iteration Number', labelpad=30)
+        ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 46', fontsize=55, pad=50)
+        ax.set_xlabel('Iteration Number', labelpad=30, fontsize=50)
         ax.set_xlim([-0.1, 100])
-        ax.set_ylabel('Probability of Error (%)', fontsize=60, labelpad=30)
+        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=50, labelpad=30)
         ax.set_ylim([0.05, 0.133])
         ax.annotate('Random Initial State', xy=(0.5, 0.189), xytext=(5, 0.189), arrowprops=arrowprops, fontsize=50, va='center')
         fig.savefig(filename)
@@ -230,7 +230,7 @@ class Plot:
             axes[i].tick_params(axis='y', direction='in', length=10, width=4)
             axes[i].tick_params(pad=10)
         
-        fig.supylabel('Probability of Error (%)')
+        fig.supylabel('Optimal Objective Value $P()$ (in %)')
         # fig.supxlabel('Theta (degree)')
         fig.suptitle('$Conjecture\ 2$: The Averaged Initial States Have Lower $PoE$', fontsize=75)
         fig.savefig(filename)
@@ -457,7 +457,7 @@ class Plot:
         ax.set_title('Empirical Validation of $Conjecture$ 1', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
-        ax.set_ylabel('Probability of Error (%)', fontsize=60)
+        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=60)
         fig.savefig(filename)
 
 
@@ -547,8 +547,8 @@ class Plot:
                 if myinput.unitary_theta == theta:
                     table[key.format(method, output.start_seed)].append(output.symmetries)                     # [0] is symmetry
                     table[key.format(method, output.start_seed)].append((1 - np.array(output.scores)) * 100)   # [1] is poe
-        fig, ax = plt.subplots(figsize=(26, 16))
-        fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
+        fig, ax = plt.subplots(figsize=(22, 16))
+        fig.subplots_adjust(left=0.115, right=0.98, top=0.9, bottom=0.14)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
@@ -559,15 +559,15 @@ class Plot:
                     ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120)
         ax.legend(fontsize=40, facecolor='lightgray', markerscale=2)
         ax.set_xlabel('Symmetry Index', labelpad=20)
-        ax.set_ylabel('$PoE$ (%)', labelpad=20)
+        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', labelpad=20, fontsize=53)
         ax.set_xlim([0, 0.82])
         xticks = [0, 0.2, 0.4, 0.6, 0.8]
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
         ax.invert_xaxis()
         ax.set_ylim([4, 18])
-        ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
-        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.set_title('$P()$ (in %) and Symmetry Index', fontsize=60, pad=40)
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=25)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         fig.savefig(filename)
 
@@ -582,8 +582,8 @@ class Plot:
                 if myinput.unitary_theta == theta:
                     table[key.format(method, output.start_seed)].append(output.symmetries)                     # [0] is symmetry
                     table[key.format(method, output.start_seed)].append((1 - np.array(output.scores)) * 100)   # [1] is poe
-        fig, ax = plt.subplots(figsize=(26, 16))
-        fig.subplots_adjust(left=0.13, right=0.98, top=0.9, bottom=0.14)
+        fig, ax = plt.subplots(figsize=(22, 16))
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.9, bottom=0.14)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
@@ -594,16 +594,16 @@ class Plot:
                     ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120)
         ax.legend(fontsize=40, facecolor='lightgray', markerscale=2)
         ax.set_xlabel('Symmetry Index', labelpad=20)
-        ax.set_ylabel('$PoE$ (%)', labelpad=20)
+        # ax.set_ylabel('$PoE$ (%)', labelpad=20)
         ax.set_xlim([0, 0.082])
         ax.set_ylim([4.34, 4.44])
         xticks = [0, 0.02, 0.04, 0.06, 0.08]
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
         ax.invert_xaxis()
-        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax.tick_params(axis='x', direction='in', length=10, width=3, pad=25)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax.set_title('$PoE$ (%) and Symmetry Index', fontsize=60, pad=40)
+        ax.set_title('$P()$ (in %) and Symmetry Index', fontsize=60, pad=40)
         fig.savefig(filename)
 
 
@@ -901,10 +901,10 @@ def symmetry():
     Plot.symmetry_varymethod(data, filename.format('method'))
     Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    # filename = 'result/5.22.2023/poe_symmetry.png'
-    # Plot.symmetry_poe_varymethod(data, filename)
-    # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
-    # Plot.symmetry_poe_varymethod_zoomin(data, filename)
+    filename = 'result/5.22.2023/poe_symmetry.png'
+    Plot.symmetry_poe_varymethod(data, filename)
+    filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
+    Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
 def unambiguous_vary_theta():
@@ -920,7 +920,10 @@ if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
-    # lemma3()
-    # conjecture()
-    symmetry()
+    conjecture()
+    # symmetry()
+
+
+    # not used #
     # unambiguous_vary_theta()
+    # lemma3()
