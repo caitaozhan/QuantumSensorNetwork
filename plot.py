@@ -470,7 +470,7 @@ class Plot:
                 if method == 'Hill climbing' and myinput.unitary_theta == theta:
                     table[output.start_seed] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(26, 16))
+        fig, ax = plt.subplots(figsize=(22, 16))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         seeds = [0, 1, 2, 3, 4]
         for seed in seeds:
@@ -496,7 +496,7 @@ class Plot:
                 if myinput.unitary_theta == theta and output.start_seed == seed:
                     table[method] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(26, 16))
+        fig, ax = plt.subplots(figsize=(22, 16))
         fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
         methods = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm']
         for method in methods:
@@ -521,15 +521,15 @@ class Plot:
                 if method == 'Hill climbing' and output.start_seed == 0:
                     table[myinput.unitary_theta] = output.symmetries
         print(table)
-        fig, ax = plt.subplots(figsize=(26, 16))
-        fig.subplots_adjust(left=0.13, right=0.96, top=0.9, bottom=0.15)
+        fig, ax = plt.subplots(figsize=(22, 16))
+        fig.subplots_adjust(left=0.11, right=0.96, top=0.9, bottom=0.15)
         thetas = [6, 26, 46, 66, 86]
         for theta in thetas:
             ax.plot(table[theta][:100], label=f'$\\theta$={theta}')
         ax.legend(fontsize=45, handlelength=3)
         ax.set_title('Hill Climbing with varying $\\theta$', pad=40, fontsize=60)
         ax.set_xlabel('Iteration', labelpad=20)
-        ax.set_ylabel('Symmetry Index', labelpad=20)
+        # ax.set_ylabel('Symmetry Index', labelpad=20)
         ax.set_ylim([-0.001, 1])
         ax.set_xlim([-0.1, 100])
         ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
@@ -901,10 +901,10 @@ def symmetry():
     Plot.symmetry_varymethod(data, filename.format('method'))
     Plot.symmetry_varytheta(data, filename.format('theta'))
 
-    filename = 'result/5.22.2023/poe_symmetry.png'
-    Plot.symmetry_poe_varymethod(data, filename)
-    filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
-    Plot.symmetry_poe_varymethod_zoomin(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry.png'
+    # Plot.symmetry_poe_varymethod(data, filename)
+    # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
+    # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
 
 def unambiguous_vary_theta():
@@ -920,8 +920,8 @@ if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
-    conjecture()
-    # symmetry()
+    # conjecture()
+    symmetry()
 
 
     # not used #
