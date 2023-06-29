@@ -320,7 +320,7 @@ class OptimizeInitialState(QuantumState):
         return symmetry_index
 
 
-    def generate_init_temperature(self, qstate, init_step, N: int, unitary_operator: Operator, priors: list, povm: Povm, eval_metric):
+    def generate_init_temperature(self, qstate, init_step, N: int, unitary_operator: Operator, priors: list, povm: Povm, eval_metric) -> float:
         scores = []
         for i in range(N):
             neighbor = self.find_SA_neighbor(qstate, i, init_step)

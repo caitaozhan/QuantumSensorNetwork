@@ -3,7 +3,7 @@
 
 import argparse
 from qiskit.quantum_info import random_unitary
-from optimize_initial_state_nonentangled import OptimizeInitialStateNonentangled
+from optimize_initial_state_custom import OptimizeInitialStateCustom
 from optimize_initial_state import OptimizeInitialState
 from povm import Povm
 from utility import Utility
@@ -105,6 +105,26 @@ if __name__ == '__main__':
         hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
                                            decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
         outputs.append(hillclimb_output)
+
+    if "Hill climbing C" in methods:
+        custom_basis = Utility.generate_custombasis(num_sensor, unitary_operator)
+        opt_initstate = OptimizeInitialStateCustom(num_sensor, custom_basis)
+        start_seed = args.start_seed[0]
+        epsilon = Default.EPSILON_OPT
+        step_size = [args.step_size[0]] * 2**num_sensor
+        decrease_rate = args.decrease_rate[0]
+        min_iteration = args.min_iteration[0]
+        start_time = time.time()
+        scores, symmetries = opt_initstate.hill_climbing(start_seed, unitary_operator, priors, epsilon, step_size, \
+                                                         decrease_rate, min_iteration, eval_metric)
+        runtime = round(time.time() - start_time, 2)
+        success = scores[-1]
+        error = round(1 - success, 7)
+        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
+        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
+                                           decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
+        outputs.append(hillclimb_output)
+
 
     if 'Simulated annealing' in methods:
         opt_initstate = OptimizeInitialState(num_sensor)
