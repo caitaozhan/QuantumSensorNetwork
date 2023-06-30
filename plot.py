@@ -523,7 +523,7 @@ class Plot:
         print(table)
         fig, ax = plt.subplots(figsize=(22, 16))
         fig.subplots_adjust(left=0.11, right=0.96, top=0.9, bottom=0.15)
-        thetas = [6, 26, 46, 66, 86]
+        thetas = [20, 40, 60, 80]
         for theta in thetas:
             ax.plot(table[theta][:100], label=f'$\\theta$={theta}')
         ax.legend(fontsize=45, handlelength=3)

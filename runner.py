@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # print('start working')
 
     command = ['python', 'main.py']
-    # base_args = ["-us", "2", "-m", "Guess", "Hill climbing",  "-mi", "100"]
+    base_args = ["-us", "2", "-m", "Hill climbing",  "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
@@ -69,16 +69,16 @@ if __name__ == '__main__':
     # base_args = ["-us", "2", "-m", "Theorem"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "-mi", "100", "-ps", "64"]
     # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
-    base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
+    # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
 
-    num_sensor  = 4
+    num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/12.26.2022'
-    output_file = 'compare_methods_4sensors'
+    output_dir  = 'result/5.22.2023'
+    output_file = 'symmetry_thetas2'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [i for i in range(46, 47)]
+    thetas      = [i for i in range(5, 90, 5)]
     # thetas      = [86]
     # start_seed  = list(range(5))
     start_seed  = [0]
