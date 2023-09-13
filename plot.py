@@ -935,6 +935,9 @@ def pra():
         d = 1/N * (1 - math.cos(2*theta)) ** 2
         return 1/N * (1 + a + b * math.sqrt(c + d))
 
+    def n_infinity(theta):
+        return 0.5 * (1 - math.cos(2*theta))
+
     filename = 'result/9.12.2023/pra.png'
 
     Theta = [i * math.pi / 180 for i in range(0, 46)]
@@ -948,15 +951,24 @@ def pra():
     N = 10
     N_10_dicke = [dicke_init_state(N, theta) for theta in Theta]
     N_10_sep   = [seperate_init_state(N, theta) for theta in Theta]
+    N = 1000000
+    N_1000000_dicke = [dicke_init_state(N, theta) for theta in Theta]
+    N_1000000_sep   = [seperate_init_state(N, theta) for theta in Theta]
+    N_infinity      = [n_infinity(theta) for theta in Theta]
 
+    plt.rc('text', usetex=True)
     fig, ax = plt.subplots(1, 1, figsize=(20, 20))
-    fig.subplots_adjust(left=0.15, right=0.97, top=0.8, bottom=0.13)
+    fig.subplots_adjust(left=0.15, right=0.97, top=0.8, bottom=0.113)
     ax.plot(X, N_2_dicke,  color='r', linestyle='-',  label='N=2,   Entangled State')
     ax.plot(X, N_5_dicke,  color='g', linestyle='-',  label='N=5,   Entangled State')
     ax.plot(X, N_10_dicke, color='b', linestyle='-',  label='N=10, Entangled State')
+    ax.plot(X, N_1000000_dicke, color='black', linestyle='-',  label='N=$10^6$, Entangled State')
     ax.plot(X, N_2_sep,    color='r', linestyle=':',  label='N=2,   Separable State')
     ax.plot(X, N_5_sep,    color='g', linestyle=':',  label='N=5,   Separable State')
     ax.plot(X, N_10_sep,   color='b', linestyle=':',  label='N=10, Separable State')
+    ax.plot(X, N_1000000_sep,   color='black', linestyle=':',  label='N=$10^6$, Separable State')
+    # ax.plot(X, N_infinity,      color='pink', linestyle=':')
+    
     ax.grid()
     ax.legend(fontsize=44, bbox_to_anchor=(1.02, 1.3), ncol=2)
     xticks = [i for i in range(0, 46, 5)]
@@ -970,7 +982,7 @@ def pra():
     ax.set_xlim([0, 45])
     ax.set_ylim([0, 1.005])
     ax.set_xlabel('Theta (degree)', labelpad=30)
-    ax.set_ylabel('Success Probability (%)')
+    ax.set_ylabel('Success Probability (\%)')
     fig.savefig(filename)
 
 
