@@ -916,14 +916,76 @@ def unambiguous_vary_theta():
     Plot.unambiguous_varytheta(data, filename)
 
 
+'''plotting Eqn. 26 and Eqn. 28 in PRA paper titled Discrete outcome quantum sensor networks
+https://caitaozhan.github.io/file/PhysRevA.QuantumSensor.pdf
+'''
+def pra():
+    import math
+    def dicke_init_state(N, theta):
+        '''Eqn. 26'''
+        a = 0.5 * (N - 2)*(1 - math.cos(2*theta))
+        b = math.sqrt(N - 1) * abs(math.sin(2*theta))
+        return 1/N * (1 + a + b)
+
+    def seperate_init_state(N, theta):
+        '''Eqn. 28'''
+        a = (N-1)*(N-2)/(2*N) * (1 - math.cos(2*theta))
+        b = (N-1) / math.sqrt(N)
+        c = math.sin(2*theta) ** 2
+        d = 1/N * (1 - math.cos(2*theta)) ** 2
+        return 1/N * (1 + a + b * math.sqrt(c + d))
+
+    filename = 'result/9.12.2023/pra.png'
+
+    Theta = [i * math.pi / 180 for i in range(0, 46)]
+    X = [i for i in range(0, 46)]
+    N = 2
+    N_2_dicke = [dicke_init_state(N, theta) for theta in Theta]
+    N_2_sep   = [seperate_init_state(N, theta) for theta in Theta]
+    N = 5
+    N_5_dicke = [dicke_init_state(N, theta) for theta in Theta]
+    N_5_sep   = [seperate_init_state(N, theta) for theta in Theta]
+    N = 10
+    N_10_dicke = [dicke_init_state(N, theta) for theta in Theta]
+    N_10_sep   = [seperate_init_state(N, theta) for theta in Theta]
+
+    fig, ax = plt.subplots(1, 1, figsize=(20, 20))
+    fig.subplots_adjust(left=0.15, right=0.97, top=0.8, bottom=0.13)
+    ax.plot(X, N_2_dicke,  color='r', linestyle='-',  label='N=2,   Entangled State')
+    ax.plot(X, N_5_dicke,  color='g', linestyle='-',  label='N=5,   Entangled State')
+    ax.plot(X, N_10_dicke, color='b', linestyle='-',  label='N=10, Entangled State')
+    ax.plot(X, N_2_sep,    color='r', linestyle=':',  label='N=2,   Non-entangled State')
+    ax.plot(X, N_5_sep,    color='g', linestyle=':',  label='N=5,   Non-entangled State')
+    ax.plot(X, N_10_sep,   color='b', linestyle=':',  label='N=10, Non-entangled State')
+    ax.grid()
+    ax.legend(fontsize=42, bbox_to_anchor=(1.045, 1.3), ncol=2)
+    xticks = [i for i in range(0, 46, 5)]
+    ax.set_xticks(xticks)
+    ax.set_xticklabels([f'{x}' for x in xticks])
+    yticks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+    ax.tick_params(axis='x', direction='in',  length=10, width=3, pad=15)
+    ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+    ax.set_xlim([0, 45])
+    ax.set_ylim([0, 1.005])
+    ax.set_xlabel('Theta (degree)', labelpad=30)
+    ax.set_ylabel('Success Probability (%)')
+    fig.savefig(filename)
+
+
 if __name__ == '__main__':
     # vary_theta()
     # methods_similar()
     # lemma2()
     # conjecture()
-    symmetry()
+    # symmetry()
 
+
+    pra()
 
     # not used #
     # unambiguous_vary_theta()
     # lemma3()
+
+
