@@ -6,7 +6,7 @@ python main.py -us 2 -m Hill\ climbing -mi 100 -rn True -ns 3 -p 0.3333333333333
 
 For understanding the parameters: python main.py -h
 
-# Paper
+## Paper 1
 
 Pysical Review A: https://caitaozhan.github.io/file/PhysRevA.QuantumSensor.pdf
 
@@ -27,5 +27,18 @@ Please cite using the following BibTeX, Thanks!!!
   url = {https://link.aps.org/doi/10.1103/PhysRevA.107.012435}
 }
 ```
+Presentation is on my [YouTube](https://www.youtube.com/watch?v=c3u9HJypLog)
 
-## Presentation is on my [YouTube](https://www.youtube.com/watch?v=c3u9HJypLog)
+## Paper 2
+
+https://arxiv.org/abs/2306.17401
+```
+@misc{zhan2023optimizing,
+      title={Optimizing Initial State of Detector Sensors in Quantum Sensor Networks}, 
+      author={Caitao Zhan and Himanshu Gupta and Mark Hillery},
+      year={2023},
+      eprint={2306.17401},
+      archivePrefix={arXiv},
+      primaryClass={quant-ph}
+}
+```
