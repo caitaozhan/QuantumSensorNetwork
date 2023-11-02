@@ -18,7 +18,9 @@ For understanding the parameters: python main.py -h
 
 Physical Review A: https://caitaozhan.github.io/file/PhysRevA.QuantumSensor.pdf
 
-Please cite using the following BibTeX, Thanks!!!
+Presentation: [YouTube](https://www.youtube.com/watch?v=c3u9HJypLog)
+
+Welcome to cite :)
 ```
 @article{PhysRevA.107.012435,
   title = {Discrete outcome quantum sensor networks},
@@ -35,7 +37,6 @@ Please cite using the following BibTeX, Thanks!!!
   url = {https://link.aps.org/doi/10.1103/PhysRevA.107.012435}
 }
 ```
-Presentation is on my [YouTube](https://www.youtube.com/watch?v=c3u9HJypLog)
 
 ## Paper 2
 
