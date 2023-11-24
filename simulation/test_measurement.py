@@ -1,6 +1,9 @@
 '''
 Putting things together
 '''
+import sys
+sys.path.append('.')
+sys.path.append('..')
 
 import copy
 import numpy as np
@@ -309,14 +312,14 @@ def test14():
 
 
 if __name__ == '__main__':
-    # test1()
+    test1()
     # test2()
     # test3()
     # test4()
     # test5()
     # test6()
     # test7()
-    test8()
+    # test8()  # ???
     # test9()
     # test10()
     # test11()
