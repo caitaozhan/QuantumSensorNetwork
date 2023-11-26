@@ -19,9 +19,10 @@ class Default:
     EPSILON_OPT          = 1e-7 # the epsilon for optimization termination
 
     # problem input related
-    num_sensor   = 2
-    unitary_seed = 2
-    method       = 'Theory'
+    num_sensor    = 2
+    unitary_seed  = 2
+    method        = 'Theory'
+    depolar_noise = 0
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
@@ -60,6 +61,7 @@ class ProblemInput:
     priors: List[float]   # prior probability for each sensors
     unitary_seed: int     # seed for generating the unitary operator
     unitary_theta: float  # the angle (theta) of the symmetric eigen values
+    depolar_noise: float = 0  # the probability of happening X, Y or Z Pauli error
 
     def __str__(self):
         return self.to_json_str()
@@ -74,7 +76,8 @@ class ProblemInput:
             'num_sensor': self.num_sensor,
             'priors': [round(p, 4) for p in self.priors],
             'unitary_seed': self.unitary_seed,
-            'unitary_theta': self.unitary_theta
+            'unitary_theta': self.unitary_theta,
+            'depolar_noise': self.depolar_noise
         }
         return json.dumps(inputdict)
 
@@ -87,15 +90,16 @@ class ProblemInput:
             Input
         '''
         indict = json.loads(json_str)
-        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'], indict['unitary_theta'])
+        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'], indict['unitary_theta'], indict.get('depolar_noise', 0))
 
 
 @dataclass
 class TheoremOutput:
     '''encapsulate the Theory (conjecture) method's output or Theorem's output
+       Also used for a guessing such as GHZ state, non-entangled uniform superposition state
     '''
     experiment_id: int
-    method: str
+    method: str       # 'Theorem', 'GHZ', 'Non-entangle'
     error: float
     success: float
     init_state: str   # the resulting initial state
