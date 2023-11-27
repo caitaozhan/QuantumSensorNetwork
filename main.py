@@ -5,6 +5,8 @@ import argparse
 from qiskit.quantum_info import random_unitary
 from optimize_initial_state_custom import OptimizeInitialStateCustom
 from optimize_initial_state import OptimizeInitialState
+from optimize_initial_state_nonpure import OptimizeInitialStateNonpure
+from depolarising_noise import DepolarisingNoise
 from povm import Povm
 from utility import Utility
 import time
@@ -24,6 +26,8 @@ if __name__ == '__main__':
     parser.add_argument('-m',  '--methods', type=str, nargs='+', default=[Default.method], help='the method for finding the initial state')
     parser.add_argument('-od', '--output_dir', type=str, nargs=1, default=[Default.output_dir], help='output directory')
     parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
+    parser.add_argument('-dnp', '--depolar_noise_prob', type=float, nargs=1, default=[Default.depolar_noise], help='depolarising noise probability, for X, Y, or Z')
+    parser.add_argument('-r',   '--repeat', type=int, nargs=1, default=[Default.repeat])
 
     # below are for hill climbing
     parser.add_argument('-ss', '--start_seed', type=int, nargs=1, default=[Default.start_seed], help='seed that affects the start point of hill climbing')
@@ -64,153 +68,149 @@ if __name__ == '__main__':
     unitary_theta = args.unitary_theta[0]
     methods       = args.methods
     eval_metric   = args.eval_metric[0]
+    depolar_noise_prob = args.depolar_noise_prob[0]
+    repeat        = args.repeat[0]
 
-    problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta)
+    problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta, depolar_noise_prob)
     if unitary_theta is not None:
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
         # when not specifying the theta, generate a random unitary that has some random thetas
         unitary_operator = random_unitary(dims=2, seed=unitary_seed)
-    povm = Povm()
     outputs = []
 
-    if "Theorem" in methods:
-        partition_i = args.partition[0]
-        opt_initstate = OptimizeInitialState(num_sensor)
-        opt_initstate.theorem(unitary_operator, unitary_theta, partition_i)
-        success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
-        # success = opt_initstate.evaluate_orthogonal(unitary_operator)
-        # innerprods = opt_initstate.get_innerproducts(unitary_operator)
-        # print(innerprods)
-        # symmetry_index = opt_initstate.get_symmetry_index(opt_initstate.state_vector, unitary_operator)
-        success = round(success, 7)
-        error = round(1-success, 7)
-        theorem_output = TheoremOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
-        outputs.append(theorem_output)  # Theorem and Guess share the same output format
-        
-    if "Hill climbing" in methods:
-        opt_initstate = OptimizeInitialState(num_sensor)
-        start_seed = args.start_seed[0]
-        epsilon = Default.EPSILON_OPT
-        step_size = [args.step_size[0]] * 2**num_sensor
-        decrease_rate = args.decrease_rate[0]
-        min_iteration = args.min_iteration[0]
-        start_time = time.time()
-        scores, symmetries = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, step_size, \
-                                                         decrease_rate, min_iteration, eval_metric)
-        runtime = round(time.time() - start_time, 2)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
-                                           decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
-        outputs.append(hillclimb_output)
 
-    if "Hill climbing C" in methods:
-        custom_basis = Utility.generate_custombasis(num_sensor, unitary_operator)
-        opt_initstate = OptimizeInitialStateCustom(num_sensor, custom_basis)
-        start_seed = args.start_seed[0]
-        epsilon = Default.EPSILON_OPT
-        step_size = [args.step_size[0]] * 2**num_sensor
-        decrease_rate = args.decrease_rate[0]
-        min_iteration = args.min_iteration[0]
-        start_time = time.time()
-        scores, symmetries = opt_initstate.hill_climbing(start_seed, unitary_operator, priors, epsilon, step_size, \
-                                                         decrease_rate, min_iteration, eval_metric)
-        runtime = round(time.time() - start_time, 2)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-        hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
-                                           decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
-        outputs.append(hillclimb_output)
+    if depolar_noise_prob < Default.EPSILON:
+        if "Theorem" in methods:
+            partition_i = args.partition[0]
+            opt_initstate = OptimizeInitialState(num_sensor)
+            opt_initstate.theorem(unitary_operator, unitary_theta, partition_i)
+            povm = Povm()
+            success = opt_initstate.evaluate(unitary_operator, priors, povm, eval_metric)
+            # success = opt_initstate.evaluate_orthogonal(unitary_operator)
+            # innerprods = opt_initstate.get_innerproducts(unitary_operator)
+            # print(innerprods)
+            # symmetry_index = opt_initstate.get_symmetry_index(opt_initstate.state_vector, unitary_operator)
+            success = round(success, 7)
+            error = round(1-success, 7)
+            theorem_output = TheoremOutput(partition_i, opt_initstate.optimize_method, error, success, str(opt_initstate))
+            outputs.append(theorem_output)  # Theorem and Guess share the same output format
+            
+        if "Hill climbing" in methods:
+            opt_initstate = OptimizeInitialState(num_sensor)
+            start_seed = args.start_seed[0]
+            epsilon = Default.EPSILON_OPT
+            step_size = [args.step_size[0]] * 2**num_sensor
+            decrease_rate = args.decrease_rate[0]
+            min_iteration = args.min_iteration[0]
+            start_time = time.time()
+            scores, symmetries = opt_initstate.hill_climbing(None, start_seed, unitary_operator, priors, epsilon, step_size, \
+                                                            decrease_rate, min_iteration, eval_metric)
+            runtime = round(time.time() - start_time, 2)
+            success = scores[-1]
+            error = round(1 - success, 7)
+            real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
+            hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
+                                            decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
+            outputs.append(hillclimb_output)
 
+        if "Hill climbing C" in methods:
+            custom_basis = Utility.generate_custombasis(num_sensor, unitary_operator)
+            opt_initstate = OptimizeInitialStateCustom(num_sensor, custom_basis)
+            start_seed = args.start_seed[0]
+            epsilon = Default.EPSILON_OPT
+            step_size = [args.step_size[0]] * 2**num_sensor
+            decrease_rate = args.decrease_rate[0]
+            min_iteration = args.min_iteration[0]
+            start_time = time.time()
+            scores, symmetries = opt_initstate.hill_climbing(start_seed, unitary_operator, priors, epsilon, step_size, \
+                                                            decrease_rate, min_iteration, eval_metric)
+            runtime = round(time.time() - start_time, 2)
+            success = scores[-1]
+            error = round(1 - success, 7)
+            real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
+            hillclimb_output = HillclimbOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, args.step_size[0], \
+                                            decrease_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
+            outputs.append(hillclimb_output)
 
-    if 'Simulated annealing' in methods:
-        opt_initstate = OptimizeInitialState(num_sensor)
-        start_seed   = args.start_seed[0]
-        init_step    = args.init_step[0]
-        stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
-        max_stuck    = args.max_stuck[0]
-        cooling_rate = args.cooling_rate[0]
-        min_iteration = args.min_iteration[0]
-        epsilon = Default.EPSILON_OPT
-        start_time   = time.time()
-        scores, symmetries = opt_initstate.simulated_annealing_new(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
-                                                               epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
-        runtime = round(time.time() - start_time, 2)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        real_iteration = len(scores) - 1
-        simulateanneal_output = SimulatedAnnealOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, init_step, stepsize_decreasing_rate,\
-                                                      max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
-        outputs.append(simulateanneal_output)
+        if 'Simulated annealing' in methods:
+            opt_initstate = OptimizeInitialState(num_sensor)
+            start_seed   = args.start_seed[0]
+            init_step    = args.init_step[0]
+            stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
+            max_stuck    = args.max_stuck[0]
+            cooling_rate = args.cooling_rate[0]
+            min_iteration = args.min_iteration[0]
+            epsilon = Default.EPSILON_OPT
+            start_time   = time.time()
+            scores, symmetries = opt_initstate.simulated_annealing_new(start_seed, unitary_operator, priors, init_step, stepsize_decreasing_rate, \
+                                                                epsilon, max_stuck, cooling_rate, min_iteration, eval_metric)
+            runtime = round(time.time() - start_time, 2)
+            success = scores[-1]
+            error = round(1 - success, 7)
+            real_iteration = len(scores) - 1
+            simulateanneal_output = SimulatedAnnealOutput(experiment_id, opt_initstate.optimize_method, error, success, start_seed, init_step, stepsize_decreasing_rate,\
+                                                        max_stuck, cooling_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
+            outputs.append(simulateanneal_output)
 
-    # if "Hill climbing (NE)" in methods:
-    #     parameter related to step_size changed
-    #     opt_initstate_ne = OptimizeInitialStateNonentangled(num_sensor)
-    #     start_seed = args.start_seed[0]
-    #     epsilon = Default.EPSILON_OPT
-    #     step_size = [args.mod_step[0]] * 2
-    #     amp_step = [args.amp_step[0]] * 2
-    #     decrease_rate = args.decrease_rate[0]
-    #     min_iteration = args.min_iteration[0]
-    #     random_neighbor = True    # args.random_neighbor[0], currently only support random_neighbor
-    #     realimag_neighbor = False # args.realimag_neighbor[0], currently not supported
-    #     start_time = time.time()
-    #     scores = opt_initstate_ne.hill_climbing(start_seed, unitary_operator, priors, epsilon, \
-    #                                             step_size, decrease_rate, min_iteration, eval_metric)
-    #     runtime = round(time.time() - start_time, 2)
-    #     success = scores[-1]
-    #     error = round(1 - success, 7)
-    #     real_iteration = len(scores) - 1   # minus the initial score, that is not an iteration
-    #     hillclimb_output = HillclimbOutput(experiment_id, opt_initstate_ne.optimize_method, error, success, start_seed, args.mod_step[0], \
-    #                                        args.amp_step[0], decrease_rate, min_iteration, real_iteration, str(opt_initstate_ne), scores, runtime, eval_metric, \
-    #                                        random_neighbor, realimag_neighbor)
-    #     outputs.append(hillclimb_output)
+        if "Genetic algorithm" in methods:
+            opt_initstate = OptimizeInitialState(num_sensor)
+            start_seed    = args.start_seed[0]
+            epsilon       = Default.EPSILON
+            min_iteration = args.min_iteration[0]
+            population_size = args.population_size[0]
+            crossover_rate  = args.crossover_rate[0]
+            mutation_rate   = args.mutation_rate[0]
+            init_step       = args.init_step[0]
+            stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
+            start_time = time.time()
+            scores, symmetries = opt_initstate.genetic_algorithm(start_seed, unitary_operator, priors, epsilon, population_size, mutation_rate, \
+                                                                crossover_rate, init_step, stepsize_decreasing_rate, min_iteration, eval_metric)
+            success = scores[-1]
+            error = round(1 - success, 7)
+            runtime = round(time.time() - start_time, 2)
+            real_iteration = len(scores) - 1
+            genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate, start_seed, \
+                                        init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
+            outputs.append(genetic_output)
 
-    if "Genetic algorithm" in methods:
-        opt_initstate = OptimizeInitialState(num_sensor)
-        start_seed    = args.start_seed[0]
-        epsilon       = Default.EPSILON
-        min_iteration = args.min_iteration[0]
-        population_size = args.population_size[0]
-        crossover_rate  = args.crossover_rate[0]
-        mutation_rate   = args.mutation_rate[0]
-        init_step       = args.init_step[0]
-        stepsize_decreasing_rate = args.stepsize_decreasing_rate[0]
-        start_time = time.time()
-        scores, symmetries = opt_initstate.genetic_algorithm(start_seed, unitary_operator, priors, epsilon, population_size, mutation_rate, \
-                                                             crossover_rate, init_step, stepsize_decreasing_rate, min_iteration, eval_metric)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        runtime = round(time.time() - start_time, 2)
-        real_iteration = len(scores) - 1
-        genetic_output = GeneticOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, crossover_rate, mutation_rate, start_seed, \
-                                       init_step, stepsize_decreasing_rate, min_iteration, real_iteration, str(opt_initstate), scores, symmetries, runtime, eval_metric)
-        outputs.append(genetic_output)
-
-    if "Particle swarm" in methods:
-        opt_initstate = OptimizeInitialState(num_sensor)
-        start_seed    = args.start_seed[0]
-        epsilon       = Default.EPSILON
-        min_iteration = args.min_iteration[0]
-        population_size = args.population_size[0]
-        w    = args.weight[0]
-        eta1 = args.eta1[0]
-        eta2 = args.eta2[0]
-        init_step = args.init_step[0]
-        start_time = time.time()
-        scores = opt_initstate.particle_swarm_optimization(start_seed, unitary_operator, priors, epsilon, population_size, w, \
-                                                           eta1, eta2, init_step, min_iteration, eval_metric)
-        success = scores[-1]
-        error = round(1 - success, 7)
-        runtime = round(time.time() - start_time, 2)
-        real_iteration = len(scores) - 1
-        particleswarm_output = ParticleSwarmOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, w, eta1, eta2, start_seed, \
-                                                   init_step, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
-        outputs.append(particleswarm_output)
-
+        if "Particle swarm" in methods:
+            opt_initstate = OptimizeInitialState(num_sensor)
+            start_seed    = args.start_seed[0]
+            epsilon       = Default.EPSILON
+            min_iteration = args.min_iteration[0]
+            population_size = args.population_size[0]
+            w    = args.weight[0]
+            eta1 = args.eta1[0]
+            eta2 = args.eta2[0]
+            init_step = args.init_step[0]
+            start_time = time.time()
+            scores = opt_initstate.particle_swarm_optimization(start_seed, unitary_operator, priors, epsilon, population_size, w, \
+                                                            eta1, eta2, init_step, min_iteration, eval_metric)
+            success = scores[-1]
+            error = round(1 - success, 7)
+            runtime = round(time.time() - start_time, 2)
+            real_iteration = len(scores) - 1
+            particleswarm_output = ParticleSwarmOutput(experiment_id, opt_initstate.optimize_method, error, success, population_size, w, eta1, eta2, start_seed, \
+                                                    init_step, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
+            outputs.append(particleswarm_output)
+    else:
+        # get the measurment operators POVM {E} using the initial state without noise, then use {E} on the noisy initial state
+        if 'Theorem' in methods:
+            # depolar_noise_prob = 0
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
+            povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
+            depolar_noise = DepolarisingNoise(depolar_noise_prob)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'Theorem', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
+        if 'GHZ' in methods:
+            pass
+        if 'Non-entangle':
+            pass
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

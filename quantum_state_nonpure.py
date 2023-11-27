@@ -22,13 +22,24 @@ class QuantumStateNonPure:
         self._num_sensor = num_sensor
         self._density_matrix = density_matrix
 
+    def __str__(self) -> str:
+        return str(self.density_matrix)
+
     @property
     def num_sensor(self):
         return self._num_sensor
+    
+    @num_sensor.setter
+    def num_sensor(self, num_sensor: int):
+        self._num_sensor = num_sensor
 
     @property
     def density_matrix(self):
         return self._density_matrix
+
+    @density_matrix.setter
+    def density_matrix(self, density_matrix: np.array):
+        self._density_matrix = density_matrix
 
     def set_dm_via_initstate_and_depolarising_noise(self, initstate: QuantumState, depolar_noise: DepolarisingNoise):
         '''set the density matrix by the initial state and passing through the depolarising noise
@@ -39,13 +50,14 @@ class QuantumStateNonPure:
         self._density_matrix = np.dot(initstate.density_matrix, depolar_noise.get_matrix(self.num_sensor))
 
     def evolve(self, operator: Operator):
-        '''the evolution of a quantum state
+        '''the evolution of a mixed quantum state
+           rho -> U rho U^{dagger}
         Args:
             operator: describe the interaction of the environment, essentily a matrix
         '''
         dim = self._density_matrix.shape[0]  # for N qubits, the dimension is 2**N
         operator_dim = np.product(operator.input_dims()) # for N qubits, the input_dims() return (2, 2, ..., 2), N twos.
         if dim == operator_dim:
-            self._density_matrix = np.dot(operator._data, self._density_matrix)
+            self._density_matrix = operator._data @ self._density_matrix @ np.transpose(np.conj(operator._data))
         else:
             raise Exception('density_matrix and operator dimension not equal')

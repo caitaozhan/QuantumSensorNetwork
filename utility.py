@@ -202,3 +202,21 @@ class Utility:
             j = '0' * (num_sensor-len(j)) + j
             custombasis.append(Utility.basis(v1, v2, j))
         return custombasis
+
+    @staticmethod
+    def eigenvector(v1: np.array, v2: np.array, ev: str) -> np.array:
+        '''generate the eigenvector
+        Args:
+            v1 -- u+
+            v2 -- u-
+            ev -- the eigenvector to generate in binary string, e.g., '0001'
+        Return:
+            eigenvector
+        '''
+        tensor = 1
+        for i in ev:
+            if i == '1':
+                tensor = np.kron(tensor, v1)
+            else:
+                tensor = np.kron(tensor, v2)
+        return tensor

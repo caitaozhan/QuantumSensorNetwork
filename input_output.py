@@ -51,6 +51,7 @@ class Default:
     eta1 = 1       # cognative constant
     eta2 = 1       # social constant
 
+    repeat = 1_000_000  # number of repetation for measurement simulation
 
 @dataclass
 class ProblemInput:

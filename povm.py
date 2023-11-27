@@ -67,7 +67,7 @@ class Povm:
         pick = random.random()
         return bisect_left(prefix, pick)
 
-    def simulate(self, quantum_states: list, priors: list, seed: int = 0, repeat: int = 10_000):
+    def simulate(self, quantum_states: list, priors: list, seed: int = 0, repeat: int = 10_000) -> float:
         '''repeat the single-shot measurement many times
         Return:
             float: the error probability
@@ -110,7 +110,6 @@ class Povm:
 
         return 1.*error_count / repeat
 
-
     def computational_basis(self, num_sensor: int, quantum_states: list, priors: list):
         '''using a fixed computational basis, get the success probability empirically through simulation
         '''
@@ -124,8 +123,7 @@ class Povm:
 
         self._theoretical_error = self.simulate(quantum_states, priors)
         self._theoretical_success = 1 - self._theoretical_error
-        self._method = 'computational'
-
+        self._method = 'Computational'
 
     def two_state_minerror(self, quantum_states: list, priors: list, debug: bool = True):
         '''for two state (single sensor) minimum error discrimination, the optimal POVM (projective or von Neumann) measurement is known.
@@ -181,7 +179,6 @@ class Povm:
             # for i in [0, 1]:
             #     print(gamma - priors[i]*quantum_states[i].density_matrix)
 
-
     def two_state_unambiguous(self, quantum_states: list, priors: list, debug=True):
         '''for two state discrimination (single sensor) and unambiguous, the optimal POVM measurement is known
            Implementing paper: https://iopscience.iop.org/article/10.1088/1742-6596/84/1/012001
@@ -228,7 +225,6 @@ class Povm:
             print('left', left)
             print('right', right)
 
-
     def pretty_good_measurement(self, quantum_states: list, priors: list, debug=True):
         '''For any given set of states, we can construct an associated measurement, the square root measurement
            Implementing paper: https://arxiv.org/pdf/0810.1970.pdf
@@ -267,16 +263,18 @@ class Povm:
             Utility.print_matrix(string, summ)
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
 
-
     def semidefinite_programming_minerror(self, quantum_states: list, priors: list, debug=True):
         '''A numerical method for solving the optimal min error POVM through semidefinite programming
            paper: https://arxiv.org/pdf/quant-ph/0205178.pdf
+        Args:
+            quantum_states -- a list of QuantumState or QuantumStateNonPure
+            priors         -- a list of probabilities, float
         '''
         if len(quantum_states) == 0:
             raise Exception('empty quantum_states')
         if len(quantum_states) != len(priors):
             raise Exception('length of quantum_states and priors are not equal')
-        n = len(quantum_states[0].state_vector)
+        n = 2 ** (quantum_states[0].num_sensor)
         PIs = []
         rhos = []
         constraints = []
@@ -290,7 +288,7 @@ class Povm:
         objective = cp.real(sum(cp.trace(rho @ PI) for rho, PI in zip(rhos, PIs)))  # the objective function
         prob = cp.Problem(cp.Maximize(objective), constraints)
         prob.solve(verbose=False)
-        self._method = 'Semidefinite programming'
+        self._method = 'Semidefinite programming (min error)'
         if prob.status == 'optimal':
             self._theoretical_success = prob.value
             self._theoretical_error = 1 - prob.value
@@ -313,7 +311,6 @@ class Povm:
             print(f'Number of contraints = {len(constraints)}')
             print(f'The theoretical error is {self._theoretical_error}')
             print(f'Check POVM optimality: {Utility.check_optimal(quantum_states, priors, self._operators)}')
-
 
     def semidefinite_programming_unambiguous(self, quantum_states: list, priors: list, debug=True):
         '''A numerical method for solving the optimal unambiguous POVM through semidefinite programming
@@ -345,7 +342,7 @@ class Povm:
         objective = cp.real(sum(q * cp.trace(M @ qs.density_matrix) for q, M, qs in zip(priors, Ms, quantum_states))) # MI list has one additional elements, but it doesn't affect the correctness of the program
         prob = cp.Problem(cp.Maximize(objective), constraints)
         prob.solve(verbose=debug)
-        self._method = 'Semidefinite programming'
+        self._method = 'Semidefinite programming (unambiguous)'
         if prob.status == 'optimal' or prob.status == 'optimal_inaccurate':
             if prob.status == 'optimal':
                 self.sdp_info.optimal += 1

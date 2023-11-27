@@ -79,23 +79,6 @@ class OptimizeInitialState(QuantumState):
         self._state_vector = random_state(nqubits=self.num_sensor)
         self._method = 'Random'
 
-    def eigenvector(self, v1: np.array, v2: np.array, ev: str) -> np.array:
-        '''generate the eigenvector
-        Args:
-            v1 -- u+
-            v2 -- u-
-            ev -- the eigenvector to generate in binary string, e.g., '0001'
-        Return:
-            eigenvector
-        '''
-        tensor = 1
-        for i in ev:
-            if i == '1':
-                tensor = np.kron(tensor, v1)
-            else:
-                tensor = np.kron(tensor, v2)
-        return tensor
-
     def theorem(self, unitary_operator: Operator, unitary_theta: float, partition_i: int):
         '''implementing the theorem (corollary + conjecture)
         '''
@@ -119,10 +102,10 @@ class OptimizeInitialState(QuantumState):
             coeff2 = np.sqrt(coeff2squared)
             states = []
             for ev in partition:
-                e_vector = self.eigenvector(v1, v2, ev)
+                e_vector = Utility.eigenvector(v1, v2, ev)
                 states.append(coeff1 * e_vector)
             for ev in ['0'*self.num_sensor]:
-                e_vector = self.eigenvector(v1, v2, ev)
+                e_vector = Utility.eigenvector(v1, v2, ev)
                 states.append(coeff2 * e_vector)
             self._state_vector = np.sum(states, axis=0)
         else:                                                                  # non mutual orthogonal situation (conjecture)
@@ -131,7 +114,7 @@ class OptimizeInitialState(QuantumState):
             coeff = np.sqrt(1/len(partition))
             states = []
             for ev in partition:
-                e_vector = self.eigenvector(v1, v2, ev)
+                e_vector = Utility.eigenvector(v1, v2, ev)
                 states.append(coeff * e_vector)
             self._state_vector = np.sum(states, axis=0)
 
@@ -139,7 +122,7 @@ class OptimizeInitialState(QuantumState):
             raise Exception(f'{self} is not a valid quantum state')
         self._optimze_method = 'Theorem'
 
-    def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
+    def evaluate(self, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str) -> float:
         '''evaluate the self.state_vector
         '''
         qstate = QuantumState(self.num_sensor, self.state_vector)
@@ -188,7 +171,7 @@ class OptimizeInitialState(QuantumState):
         print(f'conjuecture = {conjecture}')
         return innerprods
 
-    def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str):
+    def _evaluate(self, init_state: QuantumState, unitary_operator: Operator, priors: list, povm: Povm, eval_metric: str) -> float:
         '''evaluate the initial state
         Args:
             init_state -- initial state
