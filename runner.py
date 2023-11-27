@@ -129,7 +129,7 @@ def main_noise():
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/11.26.2023'
-    output_file = 'noise'
+    output_file = 'noise_affect'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
     thetas      = [25, 65]

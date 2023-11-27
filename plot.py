@@ -836,6 +836,14 @@ class Plot:
         fig.savefig(filename)
 
 
+    @staticmethod
+    def noise_affect_vary_noise(data, filename):
+        methods = ['Theorem']
+        table = defaultdict(list)
+        for myinput, output in data:
+            pass
+
+
 
 def vary_theta():
     logs = ['result/12.22.2022/varying_theta_2sensors', 'result/12.22.2022/varying_theta_3sensors', \
@@ -883,7 +891,6 @@ def lemma3():
 
 
 def conjecture():
-
     logs = ['result/12.31.2022/conjecture_2sensor', 'result/12.31.2022/conjecture_3sensor', 'result/12.31.2022/conjecture_4sensor', 'result/12.31.2022/conjecture_5sensor',
             'result/12.22.2022/varying_theta_2sensors', 'result/12.22.2022/varying_theta_3sensors', 'result/12.22.2022/varying_theta_4sensors', 'result/12.22.2022/varying_theta_5sensors']
     data = Logger.read_log(logs)
@@ -906,6 +913,12 @@ def symmetry():
     # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
     # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
+
+def noise_affect():
+    logs = ['result/11.26.2023/noise_affect']
+    data = Logger.read_log(logs)
+    filename = 'result/11.26.2023/noise_affect.png'
+    Plot.noise_affect_vary_noise(data, filename)
 
 def unambiguous_vary_theta():
     logs = ['result/6.16.2023/unambiguous_varytheta_2sen', 'result/6.16.2023/unambiguous_varytheta_3sen', 
@@ -992,9 +1005,11 @@ if __name__ == '__main__':
     # lemma2()
     # conjecture()
     # symmetry()
+    noise_affect()
 
 
-    pra()
+
+    # pra()
 
     # not used #
     # unambiguous_vary_theta()
