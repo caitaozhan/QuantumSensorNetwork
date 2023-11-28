@@ -3,6 +3,7 @@ import numpy as np
 
 class DepolarisingNoise:
     '''Time independent depolarising noise
+    https://pennylane.ai/qml/demos/tutorial_noisy_circuits/
     '''
     def __init__(self, p: float):
         self.p = p            # the probability of happening X, Y, or Z
@@ -16,7 +17,7 @@ class DepolarisingNoise:
         Args:
             num_sen: the number of sensors/qubits
         '''
-        rho = (1 - 3*self.p) * self.I + self.p * self.X + self.p * self.Y + self.p * self.Z
+        rho = (1 - 3*self.p) * self.I + self.p * self.X + self.p * self.Y + self.p * self.Z  # BUG?
         tensor = 1
         for _ in range(num_sen):
             tensor = np.kron(tensor, rho)
