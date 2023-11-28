@@ -22,7 +22,7 @@ class Default:
     num_sensor    = 2
     unitary_seed  = 2
     method        = 'Theory'
-    depolar_noise = 0
+    noise_probability = 0
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
@@ -52,6 +52,7 @@ class Default:
     eta2 = 1       # social constant
 
     repeat = 1_000_000  # number of repetation for measurement simulation
+
 
 @dataclass
 class ProblemInput:

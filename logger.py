@@ -36,6 +36,12 @@ class Logger:
                     if line.find('Theorem') != -1:
                         output = TheoremOutput.from_json_str(line)
                         output_by_method['Theorem'] = output
+                    if line.find('GHZ') != -1:                     # GHZ reuse the TheoremOutput
+                        output = TheoremOutput.from_json_str(line)
+                        output_by_method['GHZ'] = output
+                    if line.find('Non entangle') != -1:
+                        output = TheoremOutput.from_json_str(line) # Non entangle reuse the TheoremOutput
+                        output_by_method['Non entangle'] = output
                     if line.find('Hill climbing') != -1:
                         output = HillclimbOutput.from_json_str(line)
                         output_by_method['Hill climbing'] = output

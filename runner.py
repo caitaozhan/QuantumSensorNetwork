@@ -10,7 +10,7 @@ from utility import Utility
 
 def set_depolar_noise(args: list, p: float):
     args = args.copy()
-    args += ['-dnp', str(p)]
+    args += ['-dn', '-np', str(p)]
     return args
 
 def set_numsensor_prior(args: list, num_sensor: int, equal: bool):
@@ -123,19 +123,19 @@ def main():
 
 def main_noise():
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem"]
+    base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/11.26.2023'
+    output_dir  = 'result/11.27.2023'
     output_file = 'noise_affect'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [25, 65]
+    thetas      = [30, 70]
     start_seed  = 0
-    # depolar_noise_prob = list(np.linspace(0, 0.25, 26))
-    depolar_noise_prob = list(np.linspace(0.26, 0.34, 9))
+    depolar_noise_prob = list(np.linspace(0, 0.3, 31))
+    # depolar_noise_prob = list(np.linspace(0.26, 0.34, 9))
 
     ps = []
     tasks = []

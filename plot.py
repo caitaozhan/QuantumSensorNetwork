@@ -10,16 +10,16 @@ class Plot:
     plt.rcParams['font.size'] = 60
     plt.rcParams['lines.linewidth'] = 7
 
-    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
-    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1']
+    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle']
+    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1', 'GHZ',    'Non entangle']
     METHOD  = dict(zip(_METHOD, _LABEL))
 
-    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
-    _STYLE  = ['solid',         'dashed',              'dotted',            'dashed']
+    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle']
+    _STYLE  = ['solid',         'dashed',              'dotted',            'dashed',         'dotted', 'solid']
     LINE_STYLE = dict(zip(_METHOD, _STYLE))
 
-    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem']
-    _COLOR  = ['blue',          'orange',              'green',             'lime']
+    _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle']
+    _COLOR  = ['blue',          'orange',              'green',             'lime',           'gray',   'black']
     COLOR   = dict(zip(_METHOD, _COLOR))
 
 
@@ -164,7 +164,7 @@ class Plot:
         ax.set_title('Empirical Validation of Search Heuristics', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
-        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=60, labelpad=10)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=10)
         fig.savefig(filename)
 
 
@@ -200,7 +200,7 @@ class Plot:
         ax.set_title('Heuristic Algo. Searching Process when $\\theta$ = 46', fontsize=55, pad=50)
         ax.set_xlabel('Iteration Number', labelpad=30, fontsize=50)
         ax.set_xlim([-0.1, 100])
-        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=50, labelpad=30)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=50, labelpad=30)
         ax.set_ylim([0.05, 0.133])
         ax.annotate('Random Initial State', xy=(0.5, 0.189), xytext=(5, 0.189), arrowprops=arrowprops, fontsize=50, va='center')
         fig.savefig(filename)
@@ -230,7 +230,7 @@ class Plot:
             axes[i].tick_params(axis='y', direction='in', length=10, width=4)
             axes[i].tick_params(pad=10)
         
-        fig.supylabel('Optimal Objective Value $P()$ (in %)')
+        fig.supylabel('Optimal Objective Value $P()$ (%)')
         # fig.supxlabel('Theta (degree)')
         fig.suptitle('$Conjecture\ 2$: The Averaged Initial States Have Lower $PoE$', fontsize=75)
         fig.savefig(filename)
@@ -457,7 +457,7 @@ class Plot:
         ax.set_title('Empirical Validation of $Conjecture$ 1', fontsize=65, pad=40)
         ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
         ax.set_xlabel('$\\theta$ (degree)', labelpad=15)
-        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', fontsize=60)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60)
         fig.savefig(filename)
 
 
@@ -559,14 +559,14 @@ class Plot:
                     ax.scatter(table[key.format(method, seed)][0], table[key.format(method, seed)][1], color=Plot.COLOR[method], s=120)
         ax.legend(fontsize=40, facecolor='lightgray', markerscale=2)
         ax.set_xlabel('Symmetry Index', labelpad=20)
-        ax.set_ylabel('Optimal Objective Value $P()$ (in %)', labelpad=20, fontsize=53)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', labelpad=20, fontsize=53)
         ax.set_xlim([0, 0.82])
         xticks = [0, 0.2, 0.4, 0.6, 0.8]
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
         ax.invert_xaxis()
         ax.set_ylim([4, 18])
-        ax.set_title('$P()$ (in %) and Symmetry Index', fontsize=60, pad=40)
+        ax.set_title('$P()$ (%) and Symmetry Index', fontsize=60, pad=40)
         ax.tick_params(axis='x', direction='in', length=10, width=3, pad=25)
         ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         fig.savefig(filename)
@@ -838,11 +838,59 @@ class Plot:
 
     @staticmethod
     def noise_affect_vary_noise(data, filename):
-        methods = ['Theorem']
-        table = defaultdict(list)
-        for myinput, output in data:
-            pass
-
+        # process data
+        methods = ['Theorem', 'GHZ', 'Non entangle']
+        theta0 = 30
+        theta1 = 70
+        table0 = defaultdict(list)  # theta1 = 30
+        table1 = defaultdict(list)  # theta2 = 70
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta0 and method in methods:
+                    table0[method].append((round(myinput.depolar_noise, 2), output.error))
+                if myinput.unitary_theta == theta1 and method in methods:
+                    table1[method].append((round(myinput.depolar_noise, 2), output.error))
+        X = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
+        Y0 = defaultdict(list)
+        Y1 = defaultdict(list)
+        for method in methods:
+            table0[method].sort()
+            table1[method].sort()
+            Y0[method] = [y * 100 for _, y in table0[method]]  # to percentage
+            Y1[method] = [y * 100 for _, y in table1[method]]
+        
+        # plotting
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(35, 16))
+        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15)
+        for method in methods:
+            ax0.plot(X, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
+            label = '$Corollary$ 1' if method == 'Theorem' else Plot.METHOD[method]
+            ax1.plot(X, Y1[method], label=label, color=Plot.COLOR[method])
+        # ax0
+        ax0.grid()
+        ax0.set_xlim([-0.01, 30])
+        ax0.set_ylim([0, 100])
+        ax0.set_title('$\\theta$ = 30 degree')
+        ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        xticks = [0, 5, 10, 15, 20, 25, 30]
+        ax0.set_xticks(xticks)
+        ax0.set_xticklabels([f'{x}' for x in xticks])
+        ax0.set_xlabel('Probability (%) of X, Y, or Z Error', labelpad=30)
+        ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
+        ax0.legend()
+        # ax1
+        ax1.grid()
+        ax1.set_xlim([-0.01, 30])
+        ax1.set_ylim([0, 100])
+        ax1.set_title('$\\theta$ = 70 degree')
+        ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax1.set_xticks(xticks)
+        ax1.set_xticklabels([f'{x}' for x in xticks])
+        ax1.set_xlabel('Probability (%) of X, Y, or Z Error', labelpad=30)
+        ax1.legend()
+        fig.savefig(filename)
 
 
 def vary_theta():
@@ -915,9 +963,9 @@ def symmetry():
 
 
 def noise_affect():
-    logs = ['result/11.26.2023/noise_affect']
+    logs = ['result/11.27.2023/noise_affect']
     data = Logger.read_log(logs)
-    filename = 'result/11.26.2023/noise_affect.png'
+    filename = 'result/11.27.2023/noise_affect.png'
     Plot.noise_affect_vary_noise(data, filename)
 
 def unambiguous_vary_theta():

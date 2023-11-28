@@ -26,8 +26,9 @@ if __name__ == '__main__':
     parser.add_argument('-m',  '--methods', type=str, nargs='+', default=[Default.method], help='the method for finding the initial state')
     parser.add_argument('-od', '--output_dir', type=str, nargs=1, default=[Default.output_dir], help='output directory')
     parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
-    parser.add_argument('-dnp', '--depolar_noise_prob', type=float, nargs=1, default=[Default.depolar_noise], help='depolarising noise probability, for X, Y, or Z')
-    parser.add_argument('-r',   '--repeat', type=int, nargs=1, default=[Default.repeat])
+    parser.add_argument('-dn', '--depolar_noise', action='store_true', help='apply depolarising noise')
+    parser.add_argument('-np', '--noise_probability', type=float, nargs=1, default=[Default.noise_probability], help='depolarising noise probability, for X, Y, or Z')
+    parser.add_argument('-r',  '--repeat', type=int, nargs=1, default=[Default.repeat])
 
     # below are for hill climbing
     parser.add_argument('-ss', '--start_seed', type=int, nargs=1, default=[Default.start_seed], help='seed that affects the start point of hill climbing')
@@ -68,10 +69,11 @@ if __name__ == '__main__':
     unitary_theta = args.unitary_theta[0]
     methods       = args.methods
     eval_metric   = args.eval_metric[0]
-    depolar_noise_prob = args.depolar_noise_prob[0]
+    depolar_noise = args.depolar_noise
+    noise_prob    = args.noise_probability[0]
     repeat        = args.repeat[0]
 
-    problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta, depolar_noise_prob)
+    problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta, noise_prob)
     if unitary_theta is not None:
         unitary_operator = Utility.generate_unitary_operator(theta=unitary_theta, seed=unitary_seed)
     else:
@@ -80,7 +82,7 @@ if __name__ == '__main__':
     outputs = []
 
 
-    if depolar_noise_prob < Default.EPSILON:
+    if depolar_noise is False:
         if "Theorem" in methods:
             partition_i = args.partition[0]
             opt_initstate = OptimizeInitialState(num_sensor)
@@ -197,20 +199,35 @@ if __name__ == '__main__':
     else:
         # get the measurment operators POVM {E} using the initial state without noise, then use {E} on the noisy initial state
         if 'Theorem' in methods:
-            # depolar_noise_prob = 0
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
             povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
-            depolar_noise = DepolarisingNoise(depolar_noise_prob)
+            depolar_noise = DepolarisingNoise(noise_prob)
             error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Theorem', error, success, str(opt_initstate_nonpure))
             outputs.append(theorem_output)
         if 'GHZ' in methods:
-            pass
-        if 'Non-entangle':
-            pass
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.ghz(unitary_operator)
+            povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
+            depolar_noise = DepolarisingNoise(noise_prob)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'GHZ', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
+        if 'Non entangle':
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.non_entangle(unitary_operator)
+            povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
+            depolar_noise = DepolarisingNoise(noise_prob)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'Non entangle', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

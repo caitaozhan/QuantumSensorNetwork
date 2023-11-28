@@ -73,12 +73,12 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             self.density_matrix = np.outer(state_vector, np.conj(state_vector))
 
         if self.check_matrix() is False:
-            raise Exception(f'Oops! Not a valid quantum state')
+            raise Exception('Oops! Not a valid quantum state')
 
     def check_matrix(self) -> bool:
         '''check if the trace of the density matrix equals 1
         '''
-        return np.trace(self.density_matrix) - 1 < Default.EPSILON
+        return abs(np.trace(self.density_matrix) - 1) < Default.EPSILON
 
     def get_povm_nonoise(self, unitary_operator: Operator, priors: List[float], eval_metric: str) -> Povm:
         '''return the povm given the initial state and without noise
@@ -101,11 +101,55 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             raise Exception(f'unknown eval_metric: {eval_metric}')
         return povm
 
-    def ghz(self):
-        pass
+    def ghz(self, unitary_operator: Operator):
+        '''GHZ state in the basis composed of U's eigen vectors
+        '''
+        self._optimized_method = 'GHZ'
+        e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
+        theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
+        theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
+        v1 = e_vectors[:, 0]    # v1 is positive
+        v2 = e_vectors[:, 1]    # v2 is negative
+        if theta1 < theta2:
+            v1, v2, = v2, v1
 
-    def non_entangle(self):
-        pass
+        coeff = np.sqrt(1/2)
+        states = []
+        for ev in ['0'*self.num_sensor, '1'*self.num_sensor]:
+            e_vector = Utility.eigenvector(v1, v2, ev)
+            states.append(coeff * e_vector)
+        state_vector = np.sum(states, axis=0)
+        self.density_matrix = np.outer(state_vector, np.conj(state_vector))
+        
+        if self.check_matrix() is False:
+            raise Exception('Oops! Not a valid quantum state')
+
+    def non_entangle(self, unitary_operator: Operator):
+        '''Non entangled uniform superposition state in the basis composed of U's eigen vectors
+        '''
+        self._optimized_method = 'Non entangle'
+        e_vals, e_vectors = np.linalg.eig(unitary_operator._data)
+        theta1 = Utility.get_theta(e_vals[0].real, e_vals[0].imag)
+        theta2 = Utility.get_theta(e_vals[1].real, e_vals[1].imag)
+        v1 = e_vectors[:, 0]    # v1 is positive
+        v2 = e_vectors[:, 1]    # v2 is negative
+        if theta1 < theta2:
+            v1, v2, = v2, v1
+
+        N = 2 ** self.num_sensor
+        coeff = np.sqrt(1/N)
+        states = []
+        for i in range(N):
+            ev = bin(i)[2:]
+            if len(ev) < self.num_sensor:
+                ev = '0'*(self.num_sensor - len(ev)) + ev
+            e_vector = Utility.eigenvector(v1, v2, ev)
+            states.append(coeff * e_vector)
+        state_vector = np.sum(states, axis=0)
+        self.density_matrix = np.outer(state_vector, np.conj(state_vector))
+        
+        if self.check_matrix() is False:
+            raise Exception('Oops! Not a valid quantum state')
 
     def evaluate_noise(self, unitary_operator: Operator, priors: List[float], povm: Povm, depolarising_noise: DepolarisingNoise, repeat: int) -> float:
         '''do simulation by appling the (not-considering noise) POVM on the set of final states that considered noise

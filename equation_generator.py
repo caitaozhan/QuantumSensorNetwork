@@ -118,7 +118,6 @@ class EquationGenerator:
         print(f'n = {self.num_sensor}, total x = {c}, LHS = {int(a)}, RHS = {int(b)}, parition = {1}')
         return a, b, c, partition
 
-
     def optimal_solution_nomerge(self):
         '''return the coefficients for orthogonal situation
            This version do not do the merging comparing
@@ -168,7 +167,6 @@ class EquationGenerator:
         partition = self.get_partition(i)
         partition.sort()
         return partition
-
 
     def get_partition(self, ones: int) -> list:
         '''get the coefficients (binary format) that has ones number of 1
