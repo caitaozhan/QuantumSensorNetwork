@@ -123,13 +123,13 @@ def main():
 
 def main_noise():
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
+    base_args = ["-us", "2", "-m", "Theorem povm-noise", "GHZ povm-noise", "Non entangle povm-noise"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/11.27.2023'
-    output_file = 'noise_affect'
+    output_file = 'povm-noise'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
     thetas      = [30, 70]

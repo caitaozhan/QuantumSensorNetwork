@@ -197,7 +197,8 @@ if __name__ == '__main__':
                                                     init_step, min_iteration, real_iteration, str(opt_initstate), scores, runtime, eval_metric)
             outputs.append(particleswarm_output)
     else:
-        # get the measurment operators POVM {E} using the initial state without noise, then use {E} on the noisy initial state
+        # get the measurment operators POVM {E} with final states evolved from a initial state without noise, 
+        # then use {E} on the final states evolved from noisy initial state
         if 'Theorem' in methods:
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
@@ -218,7 +219,7 @@ if __name__ == '__main__':
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'GHZ', error, success, str(opt_initstate_nonpure))
             outputs.append(theorem_output)
-        if 'Non entangle':
+        if 'Non entangle' in methods:
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.non_entangle(unitary_operator)
             povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
@@ -228,6 +229,40 @@ if __name__ == '__main__':
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Non entangle', error, success, str(opt_initstate_nonpure))
             outputs.append(theorem_output)
+
+        # get the measurment operators POVM {E} with final states evolved from a noisy initial state, 
+        # then use {E} on the final states evolved from noisy initial state
+        if 'Theorem povm-noise' in methods:
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
+            depolar_noise = DepolarisingNoise(noise_prob)
+            povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, depolar_noise)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'Theorem povm-noise', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
+        if 'GHZ povm-noise' in methods:
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.ghz(unitary_operator)
+            depolar_noise = DepolarisingNoise(noise_prob)
+            povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, depolar_noise)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'GHZ povm-noise', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
+        if 'Non entangle povm-noise' in methods:
+            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
+            opt_initstate_nonpure.non_entangle(unitary_operator)
+            depolar_noise = DepolarisingNoise(noise_prob)
+            povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, depolar_noise)
+            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, depolar_noise, repeat)
+            error = round(error, 7)
+            success = round(1-error, 7)
+            theorem_output = TheoremOutput(experiment_id, 'Non entangle povm-noise', error, success, str(opt_initstate_nonpure))
+            outputs.append(theorem_output)
+
 
     log_dir = args.output_dir[0]
     log_file = args.output_file[0]

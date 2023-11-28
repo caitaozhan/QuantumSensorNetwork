@@ -101,6 +101,29 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             raise Exception(f'unknown eval_metric: {eval_metric}')
         return povm
 
+    def get_povm_noise(self, unitary_operator: Operator, priors: List[float], eval_metric: str, depolarising_noise: DepolarisingNoise) -> Povm:
+        '''return the povm computed on the final states evolved from the noisy initial state
+        Args:
+            unitary_operator -- unitary operator that describes the evolution
+            priors           -- prior probabilities
+            eval_metrix      -- 'min error'
+            depolarising_noise -- the noise
+        '''
+        init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
+        init_state.evolve(Operator(depolarising_noise.get_matrix(init_state.num_sensor)))  # first apply depolarsing noise
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+        povm = Povm()
+        if eval_metric == 'min error':
+            povm.semidefinite_programming_minerror(quantum_states, priors, debug=False)
+        else:
+            raise Exception(f'unknown eval_metric: {eval_metric}')
+        return povm
+
     def ghz(self, unitary_operator: Operator):
         '''GHZ state in the basis composed of U's eigen vectors
         '''

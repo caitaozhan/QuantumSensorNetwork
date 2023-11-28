@@ -876,9 +876,9 @@ class Plot:
         xticks = [0, 5, 10, 15, 20, 25, 30]
         ax0.set_xticks(xticks)
         ax0.set_xticklabels([f'{x}' for x in xticks])
-        ax0.set_xlabel('Probability (%) of X, Y, or Z Error', labelpad=30)
+        ax0.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
-        ax0.legend()
+        ax0.legend(fontsize=55)
         # ax1
         ax1.grid()
         ax1.set_xlim([-0.01, 30])
@@ -888,8 +888,66 @@ class Plot:
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax1.set_xticks(xticks)
         ax1.set_xticklabels([f'{x}' for x in xticks])
-        ax1.set_xlabel('Probability (%) of X, Y, or Z Error', labelpad=30)
-        ax1.legend()
+        ax1.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
+        ax1.legend(fontsize=55)
+        fig.savefig(filename)
+
+
+    @staticmethod
+    def povm_noise_vary_noise(data, filename):
+        # process data
+        methods = ['Theorem', 'GHZ', 'Non entangle']
+        theta0 = 30
+        theta1 = 70
+        table0 = defaultdict(list)  # theta1 = 30
+        table1 = defaultdict(list)  # theta2 = 70
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta0 and method in methods:
+                    table0[method].append((round(myinput.depolar_noise, 2), output.error))
+                if myinput.unitary_theta == theta1 and method in methods:
+                    table1[method].append((round(myinput.depolar_noise, 2), output.error))
+        X = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
+        Y0 = defaultdict(list)
+        Y1 = defaultdict(list)
+        for method in methods:
+            table0[method].sort()
+            table1[method].sort()
+            Y0[method] = [y * 100 for _, y in table0[method]]  # to percentage
+            Y1[method] = [y * 100 for _, y in table1[method]]
+        
+        # plotting
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(35, 16))
+        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15)
+        label_suffix = ' povm-noise'
+        for method in methods:
+            ax0.plot(X, Y0[method], label=Plot.METHOD[method] + label_suffix, color=Plot.COLOR[method])
+            label = '$Corollary$ 1' if method == 'Theorem' else Plot.METHOD[method]
+            ax1.plot(X, Y1[method], label=label + label_suffix, color=Plot.COLOR[method])
+        # ax0
+        ax0.grid()
+        ax0.set_xlim([-0.01, 30])
+        ax0.set_ylim([0, 100])
+        ax0.set_title('$\\theta$ = 30 degree')
+        ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        xticks = [0, 5, 10, 15, 20, 25, 30]
+        ax0.set_xticks(xticks)
+        ax0.set_xticklabels([f'{x}' for x in xticks])
+        ax0.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
+        ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
+        ax0.legend(fontsize=50)
+        # ax1
+        ax1.grid()
+        ax1.set_xlim([-0.01, 30])
+        ax1.set_ylim([0, 100])
+        ax1.set_title('$\\theta$ = 70 degree')
+        ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        ax1.set_xticks(xticks)
+        ax1.set_xticklabels([f'{x}' for x in xticks])
+        ax1.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
+        ax1.legend(fontsize=50)
         fig.savefig(filename)
 
 
@@ -961,13 +1019,6 @@ def symmetry():
     # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
     # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
-
-def noise_affect():
-    logs = ['result/11.27.2023/noise_affect']
-    data = Logger.read_log(logs)
-    filename = 'result/11.27.2023/noise_affect.png'
-    Plot.noise_affect_vary_noise(data, filename)
-
 def unambiguous_vary_theta():
     logs = ['result/6.16.2023/unambiguous_varytheta_2sen', 'result/6.16.2023/unambiguous_varytheta_3sen', 
             'result/6.16.2023/unambiguous_varytheta_4sen', 'result/6.16.2023/unambiguous_varytheta_5sen',
@@ -975,6 +1026,21 @@ def unambiguous_vary_theta():
     data = Logger.read_log(logs)
     filename = 'result/6.16.2023/unambiguous_varying_theta2.png'
     Plot.unambiguous_varytheta(data, filename)
+
+
+def noise_affect():
+    logs = ['result/11.27.2023/noise_affect']
+    data = Logger.read_log(logs)
+    filename = 'result/11.27.2023/noise_affect.png'
+    Plot.noise_affect_vary_noise(data, filename)
+
+
+def povm_noise():
+    logs = ['result/11.27.2023/povm-noise']
+    data = Logger.read_log(logs)
+    filename = 'result/11.27.2023/povm_noise.png'
+    Plot.povm_noise_vary_noise(data, filename)
+
 
 
 '''plotting Eqn. 26 and Eqn. 28 in PRA paper titled Discrete outcome quantum sensor networks
@@ -1053,8 +1119,9 @@ if __name__ == '__main__':
     # lemma2()
     # conjecture()
     # symmetry()
-    noise_affect()
 
+    noise_affect()
+    povm_noise()
 
 
     # pra()
