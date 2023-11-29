@@ -135,17 +135,14 @@ def main_noise():
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/11.28.2023'
-    output_file = 'noise_affect_phaseshift5'
+    # output_file = 'noise_affect_depolar'
+    output_file = 'noise_affect_phaseshift'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [30, 70]
+    thetas      = [70]
     start_seed  = 0
-    # depolar_noise_prob = list(np.linspace(0, 0.3, 31))
-    # phaseshift_theta = list(np.linspace(np.pi/6, np.pi/3, 31))
-    # phaseshift_theta = list(np.linspace(np.pi/3, np.pi/2, 31))
-    # phaseshift_theta = list(np.linspace(np.pi/2, 2*np.pi/3, 31))
-    # phaseshift_theta = list(np.linspace(2*np.pi/3, 5*np.pi/6, 31))
-    phaseshift_theta = list(np.linspace(5*np.pi/6, np.pi, 31))
+    # depolar_noise_prob = list(np.linspace(0, 0.33, 34))
+    phaseshift_theta = list(np.linspace(0, np.pi, 181))
 
     tasks = []
     # for x in thetas:
@@ -168,9 +165,9 @@ def main_noise():
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
 
-    print(f'total number of tasks = {len(tasks)}')
+    parallel = 6
+    print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
     
-    parallel = 1
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
