@@ -860,8 +860,8 @@ class Plot:
             Y1[method] = [y * 100 for _, y in table1[method]]
         
         # plotting
-        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(35, 16))
-        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15)
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(36, 16))
+        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15, wspace=0.15)
         for method in methods:
             ax0.plot(X, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
             label = '$Corollary$ 1' if method == 'Theorem' else Plot.METHOD[method]
@@ -870,7 +870,7 @@ class Plot:
         ax0.grid()
         ax0.set_xlim([-0.01, 30])
         ax0.set_ylim([0, 100])
-        ax0.set_title('$\\theta$ = 30 degree')
+        ax0.set_title('$\\theta$ = 30 (degree)', pad=20)
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         xticks = [0, 5, 10, 15, 20, 25, 30]
@@ -878,18 +878,18 @@ class Plot:
         ax0.set_xticklabels([f'{x}' for x in xticks])
         ax0.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
-        ax0.legend(fontsize=55)
+        ax0.legend(fontsize=50, loc='upper left')
         # ax1
         ax1.grid()
         ax1.set_xlim([-0.01, 30])
         ax1.set_ylim([0, 100])
-        ax1.set_title('$\\theta$ = 70 degree')
+        ax1.set_title('$\\theta$ = 70 (degree)', pad=20)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         ax1.set_xticks(xticks)
         ax1.set_xticklabels([f'{x}' for x in xticks])
         ax1.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
-        ax1.legend(fontsize=55)
+        ax1.legend(fontsize=50)
         fig.savefig(filename)
 
 
@@ -904,10 +904,10 @@ class Plot:
         for myinput, output_by_methods in data:
             for method, output in output_by_methods.items():
                 if myinput.unitary_theta == theta0 and method in methods:
-                    table0[method].append((round(myinput.noise_param, 2), output.error))
+                    table0[method].append((round(myinput.noise_param, 4), output.error))
                 if myinput.unitary_theta == theta1 and method in methods:
-                    table1[method].append((round(myinput.noise_param, 2), output.error))
-        X = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
+                    table1[method].append((round(myinput.noise_param, 4), output.error))
+        X = [x * 180 / np.pi for x, _ in table0[methods[0]]]           # to degree
         Y0 = defaultdict(list)
         Y1 = defaultdict(list)
         for method in methods:
@@ -917,36 +917,36 @@ class Plot:
             Y1[method] = [y * 100 for _, y in table1[method]]
         
         # plotting
-        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(35, 16))
-        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15)
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(36, 16))
+        fig.subplots_adjust(left=0.1, right=0.978, top=0.9, bottom=0.15, wspace=0.15)
         for method in methods:
             ax0.plot(X, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
             label = '$Corollary$ 1' if method == 'Theorem' else Plot.METHOD[method]
             ax1.plot(X, Y1[method], label=label, color=Plot.COLOR[method])
         # ax0
         ax0.grid()
-        # ax0.set_xlim([-0.01, 30])
+        ax0.set_xlim([-0.01, 180])
         ax0.set_ylim([0, 100])
-        ax0.set_title('$\\theta$ = 30 degree')
+        ax0.set_title('$\\theta$ = 30 degree', pad=20)
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        # xticks = [0, 5, 10, 15, 20, 25, 30]
-        # ax0.set_xticks(xticks)
-        # ax0.set_xticklabels([f'{x}' for x in xticks])
-        ax0.set_xlabel('Phase Shift $\\theta$', labelpad=30)
+        xticks = [0, 30, 60, 90, 120, 150, 180]
+        ax0.set_xticks(xticks)
+        ax0.set_xticklabels([f'{x}' for x in xticks])
+        ax0.set_xlabel('Phase Shift $\\epsilon$ (degree)', labelpad=30)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
-        ax0.legend(fontsize=55)
+        ax0.legend(fontsize=50, loc='upper left')
         # ax1
         ax1.grid()
-        # ax1.set_xlim([-0.01, 30])
+        ax1.set_xlim([-0.01, 180])
         ax1.set_ylim([0, 100])
-        ax1.set_title('$\\theta$ = 70 degree')
+        ax1.set_title('$\\theta$ = 70 degree', pad=20)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        # ax1.set_xticks(xticks)
-        # ax1.set_xticklabels([f'{x}' for x in xticks])
-        ax1.set_xlabel('Phase Shift $\\theta$', labelpad=30)
-        ax1.legend(fontsize=55)
+        ax1.set_xticks(xticks)
+        ax1.set_xticklabels([f'{x}' for x in xticks])
+        ax1.set_xlabel('Phase Shift $\\epsilon$ (degree)', labelpad=30)
+        ax1.legend(fontsize=50)
         fig.savefig(filename)
 
 
@@ -1087,10 +1087,10 @@ def unambiguous_vary_theta():
 
 def noise_affect():
     # depolar noise
-    # logs = ['result/11.28.2023/noise_affect']
-    # data = Logger.read_log(logs)
-    # filename = 'result/11.28.2023/noise_affect.png'
-    # Plot.noise_affect_vary_depolar_noise(data, filename)
+    logs = ['result/11.28.2023/noise_affect_depolar']
+    data = Logger.read_log(logs)
+    filename = 'result/11.28.2023/noise_affect_depolar.png'
+    Plot.noise_affect_vary_depolar_noise(data, filename)
 
     # phase shift noise
     logs = ['result/11.28.2023/noise_affect_phaseshift']
