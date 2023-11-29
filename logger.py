@@ -33,6 +33,11 @@ class Logger:
                 output_by_method = {}
                 line = f.readline()
                 while line != '' and line != '\n':
+                    if line.find('Theorem povm-noise') != -1:
+                        output = TheoremOutput.from_json_str(line)
+                        output_by_method['Theorem povm-noise'] = output
+                        line = f.readline()
+                        continue
                     if line.find('Theorem') != -1:
                         output = TheoremOutput.from_json_str(line)
                         output_by_method['Theorem'] = output

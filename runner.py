@@ -128,23 +128,27 @@ def main():
 
 def main_noise():
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
+    # base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
+    base_args = ["-us", "2", "-m", "Theorem povm-noise"]
     # base_args = ["-us", "2", "-m", "Theorem povm-noise", "GHZ povm-noise", "Non entangle povm-noise"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/11.28.2023'
+    output_dir  = 'result/11.29.2023'
     # output_file = 'noise_affect_depolar'
-    output_file = 'noise_affect_phaseshift'
+    # output_file = 'noise_affect_phaseshift'
+    # output_file = 'povmnoise_depolar'
+    output_file = 'povmnoise_phaseshift'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [70]
+    thetas      = [45]
     start_seed  = 0
     # depolar_noise_prob = list(np.linspace(0, 0.33, 34))
     phaseshift_theta = list(np.linspace(0, np.pi, 181))
 
     tasks = []
+
     # for x in thetas:
     #     for p in depolar_noise_prob:
     #         args = set_depolar_noise(base_args, p)
