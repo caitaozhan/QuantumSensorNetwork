@@ -5,7 +5,7 @@ from qiskit.quantum_info.operators.operator import Operator
 from typing import List
 from quantum_state_nonpure import QuantumStateNonPure
 from povm import Povm
-from depolarising_noise import DepolarisingNoise
+from quantum_noise import QuantumNoise
 from utility import Utility
 from input_output import Default
 from equation_generator import EquationGenerator
@@ -75,11 +75,6 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
         if self.check_matrix() is False:
             raise Exception('Oops! Not a valid quantum state')
 
-    def check_matrix(self) -> bool:
-        '''check if the trace of the density matrix equals 1
-        '''
-        return abs(np.trace(self.density_matrix) - 1) < Default.EPSILON
-
     def get_povm_nonoise(self, unitary_operator: Operator, priors: List[float], eval_metric: str) -> Povm:
         '''return the povm given the initial state and without noise
         Args:
@@ -101,7 +96,7 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             raise Exception(f'unknown eval_metric: {eval_metric}')
         return povm
 
-    def get_povm_noise(self, unitary_operator: Operator, priors: List[float], eval_metric: str, depolarising_noise: DepolarisingNoise) -> Povm:
+    def get_povm_noise(self, unitary_operator: Operator, priors: List[float], eval_metric: str, quantum_noise: QuantumNoise) -> Povm:
         '''return the povm computed on the final states evolved from the noisy initial state
         Args:
             unitary_operator -- unitary operator that describes the evolution
@@ -110,7 +105,7 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             depolarising_noise -- the noise
         '''
         init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
-        init_state.evolve(Operator(depolarising_noise.get_matrix(init_state.num_sensor)))  # first apply depolarsing noise
+        init_state.apply_quantum_noise(quantum_noise)  # first apply quantum noise
         quantum_states = []
         for i in range(self.num_sensor):
             evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
@@ -174,20 +169,20 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
         if self.check_matrix() is False:
             raise Exception('Oops! Not a valid quantum state')
 
-    def evaluate_noise(self, unitary_operator: Operator, priors: List[float], povm: Povm, depolarising_noise: DepolarisingNoise, repeat: int) -> float:
+    def evaluate_noise(self, unitary_operator: Operator, priors: List[float], povm: Povm, quantum_noise: QuantumNoise, repeat: int) -> float:
         '''do simulation by appling the (not-considering noise) POVM on the set of final states that considered noise
         Args:
             unitary_operator   -- unitary operator that describes the evolution
             priors             -- prior probabilities
             eval_metrix        -- 'min error'
             povm               -- the povm
-            depolarising_noise -- the depolarising noise
+            quantum_noise      -- the quantum noise
             repeat             -- # of repetation of single shot measurement
         Return:
             probability of error
         '''
         init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
-        init_state.evolve(Operator(depolarising_noise.get_matrix(init_state.num_sensor)))  # first apply depolarising noise
+        init_state.apply_quantum_noise(quantum_noise)   # first apply quantum noise
         quantum_states = []
         for i in range(self.num_sensor):
             evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
@@ -195,5 +190,4 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             init_state_copy.evolve(evolve_operator)
             quantum_states.append(init_state_copy)
         return povm.simulate(quantum_states, priors, repeat=repeat)
-
 

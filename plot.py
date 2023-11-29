@@ -837,7 +837,7 @@ class Plot:
 
 
     @staticmethod
-    def noise_affect_vary_noise(data, filename):
+    def noise_affect_vary_depolar_noise(data, filename):
         # process data
         methods = ['Theorem', 'GHZ', 'Non entangle']
         theta0 = 30
@@ -847,9 +847,9 @@ class Plot:
         for myinput, output_by_methods in data:
             for method, output in output_by_methods.items():
                 if myinput.unitary_theta == theta0 and method in methods:
-                    table0[method].append((round(myinput.depolar_noise, 2), output.error))
+                    table0[method].append((round(myinput.noise_param, 2), output.error))
                 if myinput.unitary_theta == theta1 and method in methods:
-                    table1[method].append((round(myinput.depolar_noise, 2), output.error))
+                    table1[method].append((round(myinput.noise_param, 2), output.error))
         X = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
         Y0 = defaultdict(list)
         Y1 = defaultdict(list)
@@ -894,6 +894,63 @@ class Plot:
 
 
     @staticmethod
+    def noise_affect_vary_phaseshift_noise(data, filename):
+        # process data
+        methods = ['Theorem', 'GHZ', 'Non entangle']
+        theta0 = 30
+        theta1 = 70
+        table0 = defaultdict(list)  # theta1 = 30
+        table1 = defaultdict(list)  # theta2 = 70
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.unitary_theta == theta0 and method in methods:
+                    table0[method].append((round(myinput.noise_param, 2), output.error))
+                if myinput.unitary_theta == theta1 and method in methods:
+                    table1[method].append((round(myinput.noise_param, 2), output.error))
+        X = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
+        Y0 = defaultdict(list)
+        Y1 = defaultdict(list)
+        for method in methods:
+            table0[method].sort()
+            table1[method].sort()
+            Y0[method] = [y * 100 for _, y in table0[method]]  # to percentage
+            Y1[method] = [y * 100 for _, y in table1[method]]
+        
+        # plotting
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(35, 16))
+        fig.subplots_adjust(left=0.1, right=0.98, top=0.9, bottom=0.15)
+        for method in methods:
+            ax0.plot(X, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
+            label = '$Corollary$ 1' if method == 'Theorem' else Plot.METHOD[method]
+            ax1.plot(X, Y1[method], label=label, color=Plot.COLOR[method])
+        # ax0
+        ax0.grid()
+        # ax0.set_xlim([-0.01, 30])
+        ax0.set_ylim([0, 100])
+        ax0.set_title('$\\theta$ = 30 degree')
+        ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        # xticks = [0, 5, 10, 15, 20, 25, 30]
+        # ax0.set_xticks(xticks)
+        # ax0.set_xticklabels([f'{x}' for x in xticks])
+        ax0.set_xlabel('Phase Shift $\\theta$', labelpad=30)
+        ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
+        ax0.legend(fontsize=55)
+        # ax1
+        ax1.grid()
+        # ax1.set_xlim([-0.01, 30])
+        ax1.set_ylim([0, 100])
+        ax1.set_title('$\\theta$ = 70 degree')
+        ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        # ax1.set_xticks(xticks)
+        # ax1.set_xticklabels([f'{x}' for x in xticks])
+        ax1.set_xlabel('Phase Shift $\\theta$', labelpad=30)
+        ax1.legend(fontsize=55)
+        fig.savefig(filename)
+
+
+    @staticmethod
     def povm_noise_vary_noise(data, filename):
         # process data
         methods = ['Theorem', 'GHZ', 'Non entangle']
@@ -931,9 +988,9 @@ class Plot:
         ax0.set_title('$\\theta$ = 30 degree')
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        xticks = [0, 5, 10, 15, 20, 25, 30]
-        ax0.set_xticks(xticks)
-        ax0.set_xticklabels([f'{x}' for x in xticks])
+        # xticks = [0, 5, 10, 15, 20, 25, 30]
+        # ax0.set_xticks(xticks)
+        # ax0.set_xticklabels([f'{x}' for x in xticks])
         ax0.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
         ax0.legend(fontsize=50)
@@ -944,8 +1001,8 @@ class Plot:
         ax1.set_title('$\\theta$ = 70 degree')
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        ax1.set_xticks(xticks)
-        ax1.set_xticklabels([f'{x}' for x in xticks])
+        # ax1.set_xticks(xticks)
+        # ax1.set_xticklabels([f'{x}' for x in xticks])
         ax1.set_xlabel('Probability (%) of X, Y, Z Error', labelpad=30)
         ax1.legend(fontsize=50)
         fig.savefig(filename)
@@ -1029,10 +1086,17 @@ def unambiguous_vary_theta():
 
 
 def noise_affect():
-    logs = ['result/11.27.2023/noise_affect']
+    # depolar noise
+    # logs = ['result/11.28.2023/noise_affect']
+    # data = Logger.read_log(logs)
+    # filename = 'result/11.28.2023/noise_affect.png'
+    # Plot.noise_affect_vary_depolar_noise(data, filename)
+
+    # phase shift noise
+    logs = ['result/11.28.2023/noise_affect_phaseshift']
     data = Logger.read_log(logs)
-    filename = 'result/11.27.2023/noise_affect.png'
-    Plot.noise_affect_vary_noise(data, filename)
+    filename = 'result/11.28.2023/noise_affect_phaseshift.png'
+    Plot.noise_affect_vary_phaseshift_noise(data, filename)
 
 
 def povm_noise():
@@ -1121,7 +1185,7 @@ if __name__ == '__main__':
     # symmetry()
 
     noise_affect()
-    povm_noise()
+    # povm_noise()
 
 
     # pra()

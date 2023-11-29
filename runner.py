@@ -13,6 +13,11 @@ def set_depolar_noise(args: list, p: float):
     args += ['-dn', '-np', str(p)]
     return args
 
+def set_phaseshift_noise(args: list, t: float):
+    args = args.copy()
+    args += ['-pn', '-nt', str(t)]
+    return args
+
 def set_numsensor_prior(args: list, num_sensor: int, equal: bool):
     args = args.copy()
     args += ['-ns', str(num_sensor)]
@@ -123,32 +128,46 @@ def main():
 
 def main_noise():
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem povm-noise", "GHZ povm-noise", "Non entangle povm-noise"]
+    base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
+    # base_args = ["-us", "2", "-m", "Theorem povm-noise", "GHZ povm-noise", "Non entangle povm-noise"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/11.27.2023'
-    output_file = 'povm-noise'
+    output_dir  = 'result/11.28.2023'
+    output_file = 'noise_affect_phaseshift5'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
     thetas      = [30, 70]
     start_seed  = 0
-    depolar_noise_prob = list(np.linspace(0, 0.3, 31))
-    # depolar_noise_prob = list(np.linspace(0.26, 0.34, 9))
+    # depolar_noise_prob = list(np.linspace(0, 0.3, 31))
+    # phaseshift_theta = list(np.linspace(np.pi/6, np.pi/3, 31))
+    # phaseshift_theta = list(np.linspace(np.pi/3, np.pi/2, 31))
+    # phaseshift_theta = list(np.linspace(np.pi/2, 2*np.pi/3, 31))
+    # phaseshift_theta = list(np.linspace(2*np.pi/3, 5*np.pi/6, 31))
+    phaseshift_theta = list(np.linspace(5*np.pi/6, np.pi, 31))
 
-    ps = []
     tasks = []
+    # for x in thetas:
+    #     for p in depolar_noise_prob:
+    #         args = set_depolar_noise(base_args, p)
+    #         args = set_numsensor_prior(args, num_sensor, equal)
+    #         args = set_eval_metric(args, eval_metric)
+    #         args = set_unitary_theta(args, x)
+    #         args = set_startseed(args, start_seed)
+    #         args = set_log(args, output_dir, output_file)
+    #         tasks.append(command + args)
+    
     for x in thetas:
-        for p in depolar_noise_prob:
-            args = set_depolar_noise(base_args, p)
+        for t in phaseshift_theta:
+            args = set_phaseshift_noise(base_args, t)
             args = set_numsensor_prior(args, num_sensor, equal)
             args = set_eval_metric(args, eval_metric)
             args = set_unitary_theta(args, x)
             args = set_startseed(args, start_seed)
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
-    
+
     print(f'total number of tasks = {len(tasks)}')
     
     parallel = 1

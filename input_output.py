@@ -23,6 +23,7 @@ class Default:
     unitary_seed  = 2
     method        = 'Theory'
     noise_probability = 0
+    noise_theta   = 0
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
@@ -59,11 +60,12 @@ class ProblemInput:
     '''encapsulate the problem's input
     '''
     experiment_id: int
-    num_sensor: int       # number of sensors
-    priors: List[float]   # prior probability for each sensors
-    unitary_seed: int     # seed for generating the unitary operator
-    unitary_theta: float  # the angle (theta) of the symmetric eigen values
-    depolar_noise: float = 0  # the probability of happening X, Y or Z Pauli error
+    num_sensor: int        # number of sensors
+    priors: List[float]    # prior probability for each sensors
+    unitary_seed: int      # seed for generating the unitary operator
+    unitary_theta: float   # the angle (theta) of the symmetric eigen values
+    noise_type: str = ''   # {'', depolar, phaseshift}
+    noise_param: float = 0  # if depolar, then the probability of X, Y or Z; if phaseshfit, then theta
 
     def __str__(self):
         return self.to_json_str()
@@ -79,7 +81,8 @@ class ProblemInput:
             'priors': [round(p, 4) for p in self.priors],
             'unitary_seed': self.unitary_seed,
             'unitary_theta': self.unitary_theta,
-            'depolar_noise': self.depolar_noise
+            'noise_type': self.noise_type,
+            'noise_param': self.noise_param
         }
         return json.dumps(inputdict)
 
@@ -92,7 +95,8 @@ class ProblemInput:
             Input
         '''
         indict = json.loads(json_str)
-        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'], indict['unitary_theta'], indict.get('depolar_noise', 0))
+        return cls(indict['experiment_id'], indict['num_sensor'], indict['priors'], indict['unitary_seed'], \
+                   indict['unitary_theta'], indict.get('noise_type', ''), indict.get('noise_param', 0))
 
 
 @dataclass
