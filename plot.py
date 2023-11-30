@@ -11,7 +11,7 @@ class Plot:
     plt.rcParams['lines.linewidth'] = 7
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle', 'Theorem povm-noise']
-    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1', 'GHZ',    'Non-entangle', '$Conjecture$ 1 (povm-noise)']
+    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1', 'GHZ',    'Uniform-all', '$Conjecture$ 1 (povm-noise)']
     METHOD  = dict(zip(_METHOD, _LABEL))
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle']
@@ -1230,8 +1230,8 @@ if __name__ == '__main__':
     # conjecture()
     # symmetry()
 
-    # noise_affect()
-    povm_noise()
+    noise_affect()
+    # povm_noise()
 
 
     # pra()
