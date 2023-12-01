@@ -72,10 +72,10 @@ class DepolarisingChannel(QuantumNoise):
 class PhaseShiftNoise(QuantumNoise):
     '''Coherent noise: applying a phase shift noise on each of the n qubits
     '''
-    def __init__(self, n: int, theta: float):
+    def __init__(self, n: int, epsilon: float):
         super().__init__(n)
-        assert 0 <= theta < 2*np.pi
-        phaseshift = np.array([[1, 0], [0, np.exp(complex(0, theta))]])
+        assert 0 <= epsilon < 2*np.pi
+        phaseshift = np.array([[1, 0], [0, np.exp(complex(0, epsilon))]])
         self.kraus = []
         tensor = 1
         for _ in range(self.n):

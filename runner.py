@@ -81,14 +81,14 @@ def main():
     # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
 
-    num_sensor  = 3
+    num_sensor  = 4
     equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/11.25.2023'
-    output_file = 'nonequal-prior'
+    output_dir  = 'result/12.1.2023'
+    output_file = 'nonequal-prior_4sensor'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [i for i in range(70, 90)]
+    thetas      = [i for i in range(2, 10, 2)]
     # thetas      = [86]
     # start_seed  = list(range(5))
     start_seed  = [0]
@@ -192,7 +192,7 @@ def main_noise():
 
 
 if __name__ == '__main__':
-    # main()
-    main_noise()
+    main()
+    # main_noise()
 
 

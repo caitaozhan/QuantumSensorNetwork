@@ -876,21 +876,21 @@ class Plot:
             ax2.plot(X, Y2[method], label=label, color=Plot.COLOR[method])
         # ax0
         ax0.grid()
-        ax0.set_xlim([-0.01, 33])
+        ax0.set_xlim([-0.01, 75])
         ax0.set_ylim([0, 100])
         ax0.set_title('$\\theta$ = 20 (degree)', pad=20)
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        xticks = [0, 5, 10, 15, 20, 25, 30, 33]
+        xticks = [0, 10, 20, 30, 40, 50, 60, 70]
         ax0.set_xticks(xticks)
         ax0.set_xticklabels([f'{x}' for x in xticks])
         ax0.set_xlabel('Probability $p$ (%)', labelpad=30)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
         ax0.legend(fontsize=50, loc='upper left')
-        ax0.text(15, -24.5, '(a)')
+        ax0.text(32, -24.5, '(a)')
         # ax1
         ax1.grid()
-        ax1.set_xlim([-0.01, 33])
+        ax1.set_xlim([-0.01, 75])
         ax1.set_ylim([0, 100])
         ax1.set_title('$\\theta$ = 45 (degree)', pad=20)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
@@ -899,10 +899,10 @@ class Plot:
         ax1.set_xticklabels([f'{x}' for x in xticks])
         ax1.set_xlabel('Probability $p$ (%)', labelpad=30)
         ax1.legend(fontsize=50, loc='upper left')
-        ax1.text(15, -24.5, '(b)')
+        ax1.text(32, -24.5, '(b)')
         # ax2
         ax2.grid()
-        ax2.set_xlim([-0.01, 33])
+        ax2.set_xlim([-0.01, 75])
         ax2.set_ylim([0, 100])
         ax2.set_title('$\\theta$ = 70 (degree)', pad=20)
         ax2.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
@@ -911,7 +911,7 @@ class Plot:
         ax2.set_xticklabels([f'{x}' for x in xticks])
         ax2.set_xlabel('Probability $p$ (%)', labelpad=30)
         ax2.legend(fontsize=50, loc='upper left')
-        ax2.text(15, -24.5, '(c)')
+        ax2.text(32, -24.5, '(c)')
         fig.savefig(filename)
 
 
@@ -1014,7 +1014,7 @@ class Plot:
             table1[method].sort()
             Y0[method] = [y * 100 for _, y in table0[method]]   # to percentage
             Y1[method] = [y * 100 for _, y in table1[method]]   # to percentage
-        X0 = [x * 100 for x, _ in table0[methods[0]]]           # to percentage
+        X0 = [x * 180 / np.pi for x, _ in table0[methods[0]]]   # to degree
         X1 = [x * 100 for x, _ in table1[methods[0]]]           # to percentage
         
         # plotting
@@ -1023,7 +1023,7 @@ class Plot:
         for method in methods:
             ax0.plot(X0, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
             ax1.plot(X1, Y1[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
-        # ax0
+        # ax0: phase shift error
         ax0.grid()
         ax0.set_xlim([-0.01, 180])
         ax0.set_ylim([0, 100])
@@ -1037,14 +1037,14 @@ class Plot:
         ax0.legend(fontsize=50)
         ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
         ax0.text(85, -24, '(a)')
-        # ax1
+        # ax1: depolarising error
         ax1.grid()
         ax1.set_xlim([-0.01, 33])
         ax1.set_ylim([0, 100])
         ax1.set_title('$\\theta$ = 45 degree', pad=20)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        xticks = [0, 5, 10, 15, 20, 25, 30, 33]        
+        # xticks = [0, 5, 10, 15, 20, 25, 30, 33]        
         ax1.set_xticks(xticks)
         ax1.set_xticklabels([f'{x}' for x in xticks])
         ax1.set_xlabel('Probability $p$ (%)', labelpad=30)
@@ -1132,16 +1132,16 @@ def unambiguous_vary_theta():
 
 def noise_affect():
     # depolar noise
-    logs = ['result/11.28.2023/noise_affect_depolar']
+    logs = ['result/12.1.2023/noise_affect_depolar']
     data = Logger.read_log(logs)
-    filename = 'result/11.28.2023/noise_affect_depolar.png'
+    filename = 'result/12.1.2023/noise_affect_depolar.png'
     Plot.noise_affect_vary_depolar_noise(data, filename)
 
     # phase shift noise
-    logs = ['result/11.28.2023/noise_affect_phaseshift']
-    data = Logger.read_log(logs)
-    filename = 'result/11.28.2023/noise_affect_phaseshift.png'
-    Plot.noise_affect_vary_phaseshift_noise(data, filename)
+    # logs = ['result/11.28.2023/noise_affect_phaseshift']
+    # data = Logger.read_log(logs)
+    # filename = 'result/11.28.2023/noise_affect_phaseshift.png'
+    # Plot.noise_affect_vary_phaseshift_noise(data, filename)
 
 
 def povm_noise():
@@ -1230,8 +1230,8 @@ if __name__ == '__main__':
     # conjecture()
     # symmetry()
 
-    # noise_affect()
-    povm_noise()
+    noise_affect()
+    # povm_noise()
 
 
     # pra()
