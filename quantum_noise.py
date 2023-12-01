@@ -42,15 +42,16 @@ class DepolarisingChannel(QuantumNoise):
     '''
     def __init__(self, n: int, p: float):
         super().__init__(n)
-        assert 0 <= p <= 1/3
+        assert 0 <= p <= 1
         I = np.eye(2, dtype=np.complex128)
         X = np.array([[0, 1], [1, 0]], dtype=np.complex128)
         Y = np.array([[0, -complex(0, 1)], [complex(0, 1), 0]], dtype=np.complex128)
         Z = np.array([[1, 0], [0, -1]], dtype=np.complex128)
-        single_qubit = [(1-3*p, I), (p, X), (p, Y), (p, Z)]   # kraus for a single qubit
+        single_qubit = [(1-p, I), (p/3, X), (p/3, Y), (p/3, Z)]   # kraus for a single qubit
+        # single_qubit = [(1-3*p, I), (p, X), (p, Y), (p, Z)]   # kraus for a single qubit
         self._combinations = []
         self._generate_combinations(0, [])
-        self.kraus = []                                       # kraus for n qubits
+        self.kraus = []                                           # kraus for n qubits
         for combination in self._combinations:
             tensor = 1
             prob   = 1
