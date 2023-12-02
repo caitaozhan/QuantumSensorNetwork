@@ -23,7 +23,8 @@ class Default:
     unitary_seed  = 2
     method        = 'Theory'
     noise_probability = 0
-    noise_theta   = 0
+    noise_epsilon = 0
+    noise_std     = 0
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
@@ -65,7 +66,7 @@ class ProblemInput:
     unitary_seed: int      # seed for generating the unitary operator
     unitary_theta: float   # the angle (theta) of the symmetric eigen values
     noise_type: str = ''   # {'', depolar, phaseshift}
-    noise_param: float = 0  # if depolar, then the probability of X, Y or Z; if phaseshfit, then theta
+    noise_param: tuple = 0 # if depolar, then (p); if phaseshfit, then (epsilon, std)
 
     def __str__(self):
         return self.to_json_str()

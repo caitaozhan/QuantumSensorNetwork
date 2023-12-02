@@ -2,7 +2,6 @@
 https://pennylane.ai/qml/demos/tutorial_noisy_circuits/
 '''
 import numpy as np
-from typing import List
 
 
 class QuantumNoise:
@@ -43,6 +42,7 @@ class DepolarisingChannel(QuantumNoise):
     def __init__(self, n: int, p: float):
         super().__init__(n)
         assert 0 <= p <= 1
+        self.p = p
         I = np.eye(2, dtype=np.complex128)
         X = np.array([[0, 1], [1, 0]], dtype=np.complex128)
         Y = np.array([[0, -complex(0, 1)], [complex(0, 1), 0]], dtype=np.complex128)
@@ -72,9 +72,34 @@ class DepolarisingChannel(QuantumNoise):
 class PhaseShiftNoise(QuantumNoise):
     '''Coherent noise: applying a phase shift noise on each of the n qubits
     '''
-    def __init__(self, n: int, epsilon: float):
+    def __init__(self, n: int, epsilon: float, std: float):
+        '''
+        Args:
+            n -- number of sensors/qubits
+            epsilon -- mean value of phase shift error epsilon
+            std     -- the standard deviation of epsilon
+        '''
         super().__init__(n)
         assert 0 <= epsilon < 2*np.pi
+        self.epsilon = epsilon
+        self.std = std
+        self.kraus_mean()
+
+    def kraus_mean(self):
+        '''compute the kraus operators using only the mean value of epsilon
+        '''
+        phaseshift = np.array([[1, 0], [0, np.exp(complex(0, self.epsilon))]])
+        self.kraus = []
+        tensor = 1
+        for _ in range(self.n):
+            tensor = np.kron(tensor, phaseshift)  # phase shift on all qubit/sensors
+        self.kraus.append(tensor)
+        assert self.check_kraus() is True
+
+    def kruas_mean_std(self):
+        '''compute the kruas operators using both the mean value and standard deviation of epsilon
+        '''
+        epsilon = np.random.normal(self.epsilon, self.std, 1)[0]
         phaseshift = np.array([[1, 0], [0, np.exp(complex(0, epsilon))]])
         self.kraus = []
         tensor = 1

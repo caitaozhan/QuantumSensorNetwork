@@ -839,7 +839,7 @@ class Plot:
     @staticmethod
     def noise_affect_vary_depolar_noise(data, filename):
         # process data
-        methods = ['Theorem', 'GHZ', 'Non entangle']
+        methods = ['Theorem', 'Non entangle']
         theta0 = 20
         theta1 = 45
         theta2 = 70
@@ -918,7 +918,7 @@ class Plot:
     @staticmethod
     def noise_affect_vary_phaseshift_noise(data, filename):
         # process data
-        methods = ['Theorem', 'GHZ', 'Non entangle']
+        methods = ['Theorem', 'Non entangle']
         theta0 = 20
         theta1 = 45
         theta2 = 70
@@ -929,10 +929,13 @@ class Plot:
             for method, output in output_by_methods.items():
                 if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta0 and method in methods:
                     table0[method].append((round(myinput.noise_param, 4), output.error))
+                    # table0[method].append((round(myinput.noise_param[0], 4), output.error))
                 if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta1 and method in methods:
                     table1[method].append((round(myinput.noise_param, 4), output.error))
+                    # table1[method].append((round(myinput.noise_param[0], 4), output.error))
                 if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta2 and method in methods:
                     table2[method].append((round(myinput.noise_param, 4), output.error))
+                    # table2[method].append((round(myinput.noise_param[0], 4), output.error))
         Y0 = defaultdict(list)
         Y1 = defaultdict(list)
         Y2 = defaultdict(list)
@@ -1121,6 +1124,7 @@ def symmetry():
     # filename = 'result/5.22.2023/poe_symmetry_zoomin.png'
     # Plot.symmetry_poe_varymethod_zoomin(data, filename)
 
+
 def unambiguous_vary_theta():
     logs = ['result/6.16.2023/unambiguous_varytheta_2sen', 'result/6.16.2023/unambiguous_varytheta_3sen', 
             'result/6.16.2023/unambiguous_varytheta_4sen', 'result/6.16.2023/unambiguous_varytheta_5sen',
@@ -1138,10 +1142,10 @@ def noise_affect():
     Plot.noise_affect_vary_depolar_noise(data, filename)
 
     # phase shift noise
-    # logs = ['result/11.28.2023/noise_affect_phaseshift']
-    # data = Logger.read_log(logs)
-    # filename = 'result/11.28.2023/noise_affect_phaseshift.png'
-    # Plot.noise_affect_vary_phaseshift_noise(data, filename)
+    logs = ['result/11.28.2023/noise_affect_phaseshift']
+    data = Logger.read_log(logs)
+    filename = 'result/11.28.2023/noise_affect_phaseshift.png'
+    Plot.noise_affect_vary_phaseshift_noise(data, filename)
 
 
 def povm_noise():

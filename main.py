@@ -29,7 +29,8 @@ if __name__ == '__main__':
     parser.add_argument('-dn', '--depolar_noise', action='store_true', help='apply depolarising noise')
     parser.add_argument('-np', '--noise_probability', type=float, nargs=1, default=[Default.noise_probability], help='depolarising noise probability, for single qubit X, Y, or Z')
     parser.add_argument('-pn', '--phaseshift_noise', action='store_true', help='apply phase shift noise')
-    parser.add_argument('-nt', '--noise_theta', type=float, nargs=1, default=[Default.noise_theta], help='phase shift theta')
+    parser.add_argument('-ne', '--noise_epsilon', type=float, nargs=1, default=[Default.noise_epsilon], help='phase shift epsilon')
+    parser.add_argument('-nst', '--noise_std', type=float, nargs=1, default=[Default.noise_std], help='phase shift std')
     parser.add_argument('-r',  '--repeat', type=int, nargs=1, default=[Default.repeat])
 
     # below are for hill climbing
@@ -73,7 +74,8 @@ if __name__ == '__main__':
     depolar_noise = args.depolar_noise
     noise_prob    = args.noise_probability[0]
     phaseshift_noise = args.phaseshift_noise
-    noise_theta   = args.noise_theta[0]
+    noise_epsilon = args.noise_epsilon[0]
+    noise_std     = args.noise_std[0]
     repeat        = args.repeat[0]
 
     problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta)
@@ -205,9 +207,9 @@ if __name__ == '__main__':
             problem_input.noise_type = 'depolar'
             problem_input.noise_param = noise_prob
         else:
-            quantum_noise = PhaseShiftNoise(num_sensor, noise_theta)
+            quantum_noise = PhaseShiftNoise(num_sensor, noise_epsilon, noise_std)
             problem_input.noise_type = 'phaseshift'
-            problem_input.noise_param = noise_theta
+            problem_input.noise_param = (noise_epsilon, noise_std)
         # get the measurment operators POVM {E} with final states evolved from a initial state without noise, 
         # then use {E} on the final states evolved from noisy initial state
         if 'Theorem' in methods:

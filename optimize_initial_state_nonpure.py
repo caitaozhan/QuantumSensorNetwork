@@ -5,7 +5,7 @@ from qiskit.quantum_info.operators.operator import Operator
 from typing import List
 from quantum_state_nonpure import QuantumStateNonPure
 from povm import Povm
-from quantum_noise import QuantumNoise
+from quantum_noise import QuantumNoise, PhaseShiftNoise
 from utility import Utility
 from input_output import Default
 from equation_generator import EquationGenerator
@@ -182,6 +182,8 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             probability of error
         '''
         init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
+        if isinstance(quantum_noise, PhaseShiftNoise):
+            quantum_noise.kruas_mean_std()
         init_state.apply_quantum_noise(quantum_noise)   # first apply quantum noise
         quantum_states = []
         for i in range(self.num_sensor):
