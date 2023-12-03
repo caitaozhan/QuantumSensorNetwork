@@ -1,4 +1,5 @@
 import numpy as np
+import tabulate
 from collections import defaultdict
 import matplotlib.pyplot as plt
 from logger import Logger
@@ -22,6 +23,10 @@ class Plot:
     _COLOR  = ['blue',          'orange',              'green',             'lime',           'gray',   'black',        'green']
     COLOR   = dict(zip(_METHOD, _COLOR))
 
+    @staticmethod
+    def reduce_avg(vals: list):
+        vals = [val for val in vals if (val is not None and np.isnan(val) == False)]
+        return round(np.mean(vals), 4)
 
     @staticmethod
     def vary_theta(data, filename):
@@ -1002,8 +1007,8 @@ class Plot:
         # process data
         methods = ['Theorem', 'Theorem povm-noise']
         theta = 45
-        table0 = defaultdict(list)  # depolar noise
-        table1 = defaultdict(list)  # phase shift noise
+        table0 = defaultdict(list)  # phase shift noise
+        table1 = defaultdict(list)  # depolar noise
         for myinput, output_by_methods in data:
             for method, output in output_by_methods.items():
                 if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta and method in methods:
@@ -1054,6 +1059,56 @@ class Plot:
         ax1.legend(fontsize=50)
         ax1.text(15, -24, '(b)')
         fig.savefig(filename)
+
+
+    @staticmethod
+    def povm_noise_vary_std(data, filename, theta, epsilon):
+        rad_to_degree = 180 / np.pi
+        reduce_f = Plot.reduce_avg
+        # process data
+        methods = ['Theorem povm-noise']
+        # theta = 45
+        # epsilon = 30 * 1/rad_to_degree
+        table0 = defaultdict(list)  # epsilon = 30
+        for myinput, output_by_methods in data:
+            for method, output in output_by_methods.items():
+                if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta and method in methods:
+                    if np.isclose(myinput.noise_param[0], epsilon):  # noise_param[0] is epsilon, noise_param[1] is std
+                        std = myinput.noise_param[1]
+                        table0[std].append({method: output.error})
+        Y0 = defaultdict(list)
+        print_table = []
+        for x, list_of_method2y in sorted(table0.items()):
+            tmp_list = [reduce_f([method2y.get(method, None) for method2y in list_of_method2y]) for method in methods]
+            print_table.append([x * rad_to_degree] + tmp_list)
+        print(tabulate.tabulate(print_table, headers=['std'] + methods))
+        arr = np.array(print_table)
+        X = arr[:, 0]
+        y = defaultdict(list)
+        y['Theorem povm-noise'] = arr[:, 1] * 100  # to percentage
+        # plotting
+        fig, ax = plt.subplots(1, figsize=(36, 18))
+        fig.subplots_adjust(left=0.15, right=0.975, top=0.93, bottom=0.15, wspace=0.15)
+        for method in methods:
+            ax.plot(X, y[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
+        # ax0: phase shift error
+        # ax.grid()
+        # ax.set_xlim([-0.01, 180])
+        ax.set_ylim([5, 6.5])
+        # ax.set_title('$\\theta$ = 45 degree', pad=20)
+        # ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        # ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        # xticks = [0, 30, 60, 90, 120, 150, 180]
+        # ax.set_xticks(xticks)
+        # ax.set_xticklabels([f'{x}' for x in xticks])
+        ax.set_xlabel('$\\epsilon$ Std (degree)', labelpad=30)
+        # ax.legend(fontsize=50)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
+        ax.set_title(f'unitary $\\theta$={theta}, phase shift $\\epsilon$ mean={int(round(epsilon * rad_to_degree, 1))}')
+        # ax.text(85, -24, '(a)')
+        # ax1: depolarising error
+        
+        fig.savefig(filename.format(theta, int(round(epsilon * rad_to_degree, 2))))
 
 
 def vary_theta():
@@ -1156,6 +1211,15 @@ def povm_noise():
     Plot.povm_noise_vary_noise(data, filename)
 
 
+def povm_noise_varystd():
+    logs = ['result/12.2.2023/povmnoise_phaseshift_varystd'] #'result/11.28.2023/noise_affect_phaseshift']
+    data = Logger.read_log(logs)
+    filename = 'result/12.2.2023/povmnoise_theta{}_epsilon{}.png'
+    theta = 45
+    Plot.povm_noise_vary_std(data, filename, theta, 10 * np.pi / 180)
+    Plot.povm_noise_vary_std(data, filename, theta, 20 * np.pi / 180)
+    Plot.povm_noise_vary_std(data, filename, theta, 30 * np.pi / 180)
+
 
 '''plotting Eqn. 26 and Eqn. 28 in PRA paper titled Discrete outcome quantum sensor networks
 https://caitaozhan.github.io/file/PhysRevA.QuantumSensor.pdf
@@ -1234,8 +1298,9 @@ if __name__ == '__main__':
     # conjecture()
     # symmetry()
 
-    noise_affect()
+    # noise_affect()
     # povm_noise()
+    povm_noise_varystd()
 
 
     # pra()
