@@ -69,7 +69,7 @@ class DepolarisingChannel(QuantumNoise):
             self._generate_combinations(i + 1, stack + [j])
 
 
-class PhaseShiftNoise(QuantumNoise):
+class RZNoise(QuantumNoise):
     '''Coherent noise: applying a phase shift noise on each of the n qubits
     '''
     def __init__(self, n: int, epsilon: float, std: float):
@@ -88,11 +88,11 @@ class PhaseShiftNoise(QuantumNoise):
     def kraus_mean(self):
         '''compute the kraus operators using only the mean value of epsilon
         '''
-        phaseshift = np.array([[1, 0], [0, np.exp(complex(0, self.epsilon))]])
+        rz = np.array([[np.exp(-complex(0, self.epsilon/2)), 0], [0, np.exp(complex(0, self.epsilon/2))]])
         self.kraus = []
         tensor = 1
         for _ in range(self.n):
-            tensor = np.kron(tensor, phaseshift)  # phase shift on all qubit/sensors
+            tensor = np.kron(tensor, rz)  # phase shift on all qubit/sensors
         self.kraus.append(tensor)
         assert self.check_kraus() is True
 
@@ -100,11 +100,11 @@ class PhaseShiftNoise(QuantumNoise):
         '''compute the kruas operators using both the mean value and standard deviation of epsilon
         '''
         epsilon = np.random.normal(self.epsilon, self.std, 1)[0]
-        phaseshift = np.array([[1, 0], [0, np.exp(complex(0, epsilon))]])
+        rz = np.array([[np.exp(-complex(0, epsilon/2)), 0], [0, np.exp(complex(0, epsilon/2))]])
         self.kraus = []
         tensor = 1
         for _ in range(self.n):
-            tensor = np.kron(tensor, phaseshift)  # phase shift on all qubit/sensors
+            tensor = np.kron(tensor, rz)  # phase shift on all qubit/sensors
         self.kraus.append(tensor)
         assert self.check_kraus() is True
 
@@ -115,5 +115,5 @@ if __name__ == '__main__':
     depolar = DepolarisingChannel(num_sensor, 0.01)
     print(depolar)
 
-    phaseshift = PhaseShiftNoise(num_sensor, np.pi/8)
-    print(phaseshift)
+    rz = RZNoise(num_sensor, np.pi/8, 0)
+    print(rz)

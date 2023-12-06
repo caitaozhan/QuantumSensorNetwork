@@ -128,18 +128,18 @@ def main():
 
 def main_noise():
     command = ['python', 'main.py']
-    # base_args = ["-us", "2", "-m", "Theorem", "GHZ", "Non entangle"]
+    base_args = ["-us", "2", "-m", "Theorem", "Non entangle"]
     # base_args = ["-us", "2", "-m", "Theorem povm-noise"]
-    base_args = ["-us", "2", "-m", "Theorem povm-noise", "GHZ povm-noise", "Non entangle povm-noise"]
+    # base_args = ["-us", "2", "-m", "Theorem povm-noise", "Non entangle povm-noise"]
 
     num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/12.2.2023'
+    output_dir  = 'result/12.6.2023'
     # output_file = 'noise_affect_depolar'
-    # output_file = 'noise_affect_phaseshift_std_max=2'
+    output_file = 'noise_affect_rz'
     # output_file = 'povmnoise_depolar'
-    output_file = 'povmnoise_phaseshift_varyepsilon'
+    # output_file = 'povmnoise_phaseshift_varyepsilon'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
     thetas      = [45]
@@ -160,10 +160,12 @@ def main_noise():
     
     # experiment: varying epsilon mean, std is a function of mean
     phaseshift_epsilon = list(np.linspace(0, np.pi, 181))
+    repeat = 1
     for x in thetas:
         for e in phaseshift_epsilon:
-            std = min(e/10, 2*np.pi/180)
-            for _ in range(20):                 # for each (epsilon, std), repeate some number of experiments
+            # std = min(e/10, 2*np.pi/180)  maxstd = 2
+            std = 0
+            for _ in range(repeat):                 # for each (epsilon, std), repeate some number of experiments
                 args = set_phaseshift_noise(base_args, e, std)
                 args = set_numsensor_prior(args, num_sensor, equal)
                 args = set_eval_metric(args, eval_metric)
@@ -188,9 +190,9 @@ def main_noise():
     #                 args = set_log(args, output_dir, output_file)
     #                 tasks.append(command + args)
 
-    parallel = 6
+    parallel = 5
     print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
-    time.sleep(3600 * 3)
+    # time.sleep(3600 * 3)
     
     ps = []
     while len(tasks) > 0 or len(ps) > 0:

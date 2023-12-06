@@ -6,7 +6,7 @@ from qiskit.quantum_info import random_unitary
 from optimize_initial_state_custom import OptimizeInitialStateCustom
 from optimize_initial_state import OptimizeInitialState
 from optimize_initial_state_nonpure import OptimizeInitialStateNonpure
-from quantum_noise import DepolarisingChannel, PhaseShiftNoise
+from quantum_noise import DepolarisingChannel, RZNoise
 from povm import Povm
 from utility import Utility
 import time
@@ -207,8 +207,8 @@ if __name__ == '__main__':
             problem_input.noise_type = 'depolar'
             problem_input.noise_param = noise_prob
         else:
-            quantum_noise = PhaseShiftNoise(num_sensor, noise_epsilon, noise_std)
-            problem_input.noise_type = 'phaseshift'
+            quantum_noise = RZNoise(num_sensor, noise_epsilon, noise_std)
+            problem_input.noise_type = 'rz'
             problem_input.noise_param = (noise_epsilon, noise_std)
         # get the measurment operators POVM {E} with final states evolved from a initial state without noise, 
         # then use {E} on the final states evolved from noisy initial state
@@ -220,15 +220,6 @@ if __name__ == '__main__':
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Theorem', error, success, str(opt_initstate_nonpure))
-            outputs.append(theorem_output)
-        if 'GHZ' in methods:
-            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
-            opt_initstate_nonpure.ghz(unitary_operator)
-            povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
-            error = round(error, 7)
-            success = round(1-error, 7)
-            theorem_output = TheoremOutput(experiment_id, 'GHZ', error, success, str(opt_initstate_nonpure))
             outputs.append(theorem_output)
         if 'Non entangle' in methods:
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
@@ -249,15 +240,6 @@ if __name__ == '__main__':
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Theorem povm-noise', error, success, str(opt_initstate_nonpure))
-            outputs.append(theorem_output)
-        if 'GHZ povm-noise' in methods:
-            opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
-            opt_initstate_nonpure.ghz(unitary_operator)
-            povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, quantum_noise)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
-            error = round(error, 7)
-            success = round(1-error, 7)
-            theorem_output = TheoremOutput(experiment_id, 'GHZ povm-noise', error, success, str(opt_initstate_nonpure))
             outputs.append(theorem_output)
         if 'Non entangle povm-noise' in methods:
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
