@@ -18,10 +18,10 @@ def set_phaseshift_noise(args: list, e: float, std: float):
     args += ['-pn', '-ne', str(e), '-nst', str(std)]
     return args
 
-def set_numsensor_prior(args: list, num_sensor: int, equal: bool):
+def set_numsensor_prior(args: list, num_sensor: int, equal: bool, seed: int):
     args = args.copy()
     args += ['-ns', str(num_sensor)]
-    priors = Utility.generate_priors(num_sensor, equal)
+    priors = Utility.generate_priors(num_sensor, equal, seed)
     args += ['-p']
     args += [str(p) for p in priors]
     return args
@@ -69,7 +69,7 @@ def main():
     # print('start working')
 
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem", "Hill climbing",  "-mi", "100"]
+    # base_args = ["-us", "2", "-m", "Theorem", "Hill climbing",  "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Hill climbing (NE)", "Guess", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "Guess", "-mi", "100", "-ps", "32"]
@@ -78,18 +78,17 @@ def main():
     # base_args = ["-us", "2", "-m", "Hill climbing C", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Theorem"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "-mi", "100", "-ps", "64"]
-    # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
 
-    num_sensor  = 4
+    num_sensor  = 3
     equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/12.1.2023'
-    output_file = 'nonequal-prior_4sensor'
+    output_dir  = 'result/11.25.2023'
+    output_file = 'nonequal-prior_3sensor'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = [i for i in range(2, 10, 2)]
-    # thetas      = [86]
+    thetas      = list(range(1, 90))
     # start_seed  = list(range(5))
     start_seed  = [0]
 
@@ -97,7 +96,7 @@ def main():
     tasks = []
     for x in thetas:
         for y in start_seed:
-            args = set_numsensor_prior(base_args, num_sensor, equal)
+            args = set_numsensor_prior(base_args, num_sensor, equal, seed=0)
             args = set_eval_metric(args, eval_metric)
             args = set_unitary_theta(args, x)
             args = set_startseed(args, y)
@@ -132,7 +131,7 @@ def main_noise():
     # base_args = ["-us", "2", "-m", "Theorem povm-noise"]
     # base_args = ["-us", "2", "-m", "Theorem povm-noise", "Non entangle povm-noise"]
 
-    num_sensor  = 3
+    num_sensor  = 4
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.6.2023'
@@ -214,7 +213,7 @@ def main_noise():
 
 
 if __name__ == '__main__':
-    # main()
-    main_noise()
+    main()
+    # main_noise()
 
 

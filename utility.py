@@ -114,7 +114,7 @@ class Utility:
         return Operator(tensor)
 
     @staticmethod
-    def generate_priors(num_sensor: int, equal: bool):
+    def generate_priors(num_sensor: int, equal: bool, seed: int):
         '''if equal, then generate equal priors for num_sensor number of sensors
         Return:
             array-like object
@@ -122,7 +122,7 @@ class Utility:
         if equal:
             return [1./num_sensor]*num_sensor
         else:
-            np.random.seed(num_sensor)
+            np.random.seed(seed)
             p = []
             for _ in range(num_sensor):
                 p.append(np.random.rand()**2)

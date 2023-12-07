@@ -285,7 +285,7 @@ class OptimizeInitialState(QuantumState):
                 terminate = True
             else:
                 terminate = False
-        print(f'POVM stats: {povm.sdp_info}')
+        # print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Hill climbing'
         return scores, symmetries
@@ -411,7 +411,7 @@ class OptimizeInitialState(QuantumState):
             std_ratio *= cooling_rate
             temperature = min(temperature*cooling_rate, std*std_ratio)
             stepsize *= stepsize_decreasing_rate
-        print(f'POVM stats: {povm.sdp_info}')
+        # print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
         return scores, symmetries
@@ -501,7 +501,7 @@ class OptimizeInitialState(QuantumState):
             std_ratio *= cooling_rate
             temperature = min(temperature*cooling_rate, std*std_ratio)
             stepsize *= stepsize_decreasing_rate
-        print(f'POVM stats: {povm.sdp_info}')
+        # print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
         return scores, symmetries
@@ -600,7 +600,7 @@ class OptimizeInitialState(QuantumState):
             std_ratio *= cooling_rate
             temperature = min(temperature*cooling_rate, std*std_ratio)
             stepsize *= stepsize_decreasing_rate
-        print(f'POVM stats: {povm.sdp_info}')
+        # print(f'POVM stats: {povm.sdp_info}')
         self._state_vector = qstate.state_vector
         self._optimze_method = 'Simulated annealing'
         return scores, symmetries
