@@ -78,14 +78,14 @@ def main():
     # base_args = ["-us", "2", "-m", "Hill climbing C", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Theorem"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "-mi", "100", "-ps", "64"]
-    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "-mi", "50"]
     # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
 
-    num_sensor  = 3
+    num_sensor  = 5
     equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/11.25.2023'
-    output_file = 'nonequal-prior_3sensor'
+    output_file = 'nonequal-prior_5sensor'
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
     thetas      = list(range(1, 90))
