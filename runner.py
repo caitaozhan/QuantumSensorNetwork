@@ -75,16 +75,14 @@ def main():
     # base_args = ["-us", "2", "-m", "Hill climbing C", "-mi", "100"]
     # base_args = ["-us", "2", "-m", "Theorem"]
     # base_args = ["-us", "2", "-m", "Genetic algorithm", "-mi", "100", "-ps", "64"]
-    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "100", "-ps", "32"]
-    # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
-    # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "-mi", "50"]
-    # base_args = ["-us", "2", "-m", "Simulated annealing", "-mi", "100"]
+    # base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "Genetic algorithm", "-mi", "50", "-ps", "64"]
+    base_args = ["-us", "2", "-m", "Hill climbing", "Simulated annealing", "-mi", "50"]
 
-    num_sensor  = 3
+    num_sensor  = 5
     equal       = False
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.7.2023'
-    output_file = 'nonequal-prior_3sensor'
+    output_file = 'nonequal-prior_5sensor'
 
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
@@ -95,19 +93,19 @@ def main():
     tasks = []
     for x in thetas:
         for y in start_seed:
+            args = set_unitary_theta(base_args[:], x)
             if equal:
-                args = set_numsensor_prior(base_args, num_sensor, True, seed=y)
+                args = set_numsensor_prior(args, num_sensor, True, seed=y)
             else:
-                args = set_numsensor_non_uniform_prior(base_args, num_sensor, seed=y)
+                args = set_numsensor_non_uniform_prior(args, num_sensor, seed=y)
             args = set_eval_metric(args, eval_metric)
-            args = set_unitary_theta(args, x)
             args = set_startseed(args, y)
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
     
     print(f'total number of tasks = {len(tasks)}')
     
-    parallel = 6
+    parallel = 1
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
         if len(ps) < parallel and len(tasks) > 0:
