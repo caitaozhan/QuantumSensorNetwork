@@ -130,6 +130,24 @@ class Utility:
             return p / np.sum(p)
 
     @staticmethod
+    def generate_non_uniform_priors(num_sensor: int, seed: int) -> dict:
+        '''return a dict {int: list} that contains the prior probabilty for 3, 4, 5 sensors
+        '''
+        assert isinstance(num_sensor, int) and 3 <= num_sensor <= 5
+        np.random.seed(seed=seed)
+        n3 = np.random.uniform(0, 1, 3)
+        n3 = n3**2
+        n3 = n3 / np.sum(n3)
+        priors = {3: list(n3)}
+        n4 = n3 * 3 / 4
+        n4 = np.append(n4, 0.25)
+        priors[4] = list(n4)
+        n5 = n4 * 4 / 5
+        n5 = np.append(n5, 0.2)
+        priors[5] = list(n5)
+        return priors[num_sensor]
+
+    @staticmethod
     def generate_unitary_operator(theta: float, seed: int):
         '''
         Args:
