@@ -86,7 +86,7 @@ def main():
 
     # output_dir  = 'result-tmp2'
     # output_file = 'foo'
-    thetas      = list(range(1, 91))
+    thetas      = list(range(65, 66))
     start_seed  = [0]
 
     ps = []

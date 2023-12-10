@@ -174,6 +174,226 @@ class Plot:
 
 
     @staticmethod
+    def vary_theta_nonequal_prior(data, filename):
+        '''vary theta, hill climbing, n-sensors (n=3,4,5)
+        '''
+        methods = ['Hill climbing', 'Simulated annealing']
+        table_3sensor = defaultdict(list)
+        table_4sensor = defaultdict(list)
+        table_5sensor = defaultdict(list)
+
+        for myinput, output_by_methods in data:
+            if myinput.num_sensor == 3:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_3sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 4:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_4sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 5:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_5sensor[method].append({myinput.unitary_theta: output.error})
+
+        Y3 = defaultdict(list)
+        X3 = [i for i in range(1, 180)]
+        for method, mylist in table_3sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X3:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: n=3 theta={theta}')
+            Y3[method] = y2
+
+        Y4 = defaultdict(list)
+        X4 = [i for i in range(1, 180)]
+        for method, mylist in table_4sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X4:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: n=4 theta={theta}')
+            Y4[method] = y2
+
+        Y5 = defaultdict(list)
+        X5 = [i for i in range(1, 180)]
+        for method, mylist in table_5sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X5:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: n=5 theta={theta}')
+            Y5[method] = y2
+        
+        # step 2: plotting
+
+        fig, ax = plt.subplots(figsize=(30, 18))
+        fig.subplots_adjust(left=0.1, right=0.97, top=0.91, bottom=0.12)
+
+        ax.plot(X3, Y3[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11, label=Plot.METHOD[methods[0]])
+        ax.plot(X3, Y3[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9, label=Plot.METHOD[methods[1]])
+        ax.plot(X4, Y4[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        ax.plot(X4, Y4[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        ax.plot(X5, Y5[methods[0]], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        ax.plot(X5, Y5[methods[1]], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        arrowprops = dict(facecolor='black', width=5, headwidth=20)
+        ax.annotate('3 Sensor', xy=(164, 0.4), xytext=(128, 0.4), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('4 Sensor', xy=(164.5, 0.5), xytext=(128, 0.5), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('5 Sensor', xy=(167, 0.6), xytext=(128, 0.6), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax.annotate('Prior of 3 Sensor: []', xy=(164, 0.4), xytext=(30, 0.7), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax.annotate('Prior of 4 Sensor: []', xy=(164.5, 0.5),  xytext=(30, 0.8), arrowprops=arrowprops, fontsize=50, va='center')
+        # ax.annotate('Prior of 5 Sensor: []', xy=(166, 0.6), xytext=(30, 0.9), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.text(30, 0.81, 'Prior of 3 Sensor: [0.256, 0.435, 0.309]', fontsize=50)
+        ax.text(30, 0.75, 'Prior of 4 Sensor: [0.192, 0.326, 0.232, 0.25]', fontsize=50)
+        ax.text(30, 0.69, 'Prior of 5 Sensor: [0.154, 0.261, 0.185, 0.20, 0.20]', fontsize=50)
+
+        xticks = [i for i in range(0, 181, 15)]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([f'{x}' for x in xticks])
+        yticks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        ax.set_xlim([0, 180])
+        ax.set_ylim([-0.002, 1])
+        ax.tick_params(axis='x', direction='out', length=10, width=3, pad=15)
+        ax.tick_params(axis='y', direction='out', length=10, width=3, pad=15)
+        ax.set_title('Empirical Validation of Search Heuristics for Non-uniform Prior', fontsize=63, pad=40)
+        ax.legend(ncol=2, loc='upper right',  fontsize=55, handlelength=3.5, edgecolor='black')
+        ax.set_xlabel('$\\theta$ (degree)', labelpad=10)
+        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=10)
+        fig.savefig(filename)
+
+    @staticmethod
+    def vary_theta_nonequal_prior_zoom(data, filename):
+        '''vary theta, hill climbing, n-sensors (n=3,4,5)
+        '''
+        methods = ['Hill climbing', 'Simulated annealing']
+        table_3sensor = defaultdict(list)
+        table_4sensor = defaultdict(list)
+        table_5sensor = defaultdict(list)
+
+        for myinput, output_by_methods in data:
+            if myinput.num_sensor == 3:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_3sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 4:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_4sensor[method].append({myinput.unitary_theta: output.error})
+            if myinput.num_sensor == 5:
+                for method, output in output_by_methods.items():
+                    if method in methods:
+                        table_5sensor[method].append({myinput.unitary_theta: output.error})
+
+        Y3 = defaultdict(list)
+        X3 = [i for i in range(1, 180)]
+        for method, mylist in table_3sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X3:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: n=3 theta={theta}')
+            Y3[method] = y2
+
+        Y4 = defaultdict(list)
+        X4 = [i for i in range(1, 180)]
+        for method, mylist in table_4sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X4:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    raise Exception(f'data missing: n=4 theta={theta}')
+            Y4[method] = y2
+
+        Y5 = defaultdict(list)
+        X5 = [i for i in range(1, 180)]
+        for method, mylist in table_5sensor.items():
+            y = defaultdict(list)
+            for key_val in mylist: # each theta only one experiment
+                for theta, error in key_val.items():
+                    y[theta] = error
+            y2 = []
+            for theta in X5:
+                if theta in y:
+                    y2.append(y[theta])
+                elif 180 - theta in y:
+                    y2.append(y[180-theta])
+                else:
+                    print(f'data missing: n=5 theta={theta}')
+                    # raise Exception(f'data missing: n=5 theta={theta}')
+            Y5[method] = y2
+        
+        # step 2: plotting
+
+        fig, ax = plt.subplots(figsize=(15, 9))
+        fig.subplots_adjust(left=0.07, right=0.96, top=0.95, bottom=0.11)
+
+        ax.plot(X3[54:70], Y3[methods[0]][54:70], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11, label=Plot.METHOD[methods[0]])
+        ax.plot(X3[54:70], Y3[methods[1]][54:70], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9, label=Plot.METHOD[methods[1]])
+        ax.plot(X4[54:70], Y4[methods[0]][54:70], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        ax.plot(X4[54:70], Y4[methods[1]][54:70], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        ax.plot(X5[54:70], Y5[methods[0]][54:70], linestyle=Plot.LINE_STYLE[methods[0]], color=Plot.COLOR[methods[0]], linewidth=11)
+        ax.plot(X5[54:70], Y5[methods[1]][54:70], linestyle=Plot.LINE_STYLE[methods[1]], color=Plot.COLOR[methods[1]], linewidth=9)
+        arrowprops = dict(facecolor='black', width=5, headwidth=20)
+        ax.annotate('3 Sensor', xy=(162.5, 0.4),   xytext=(128, 0.4), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('4 Sensor', xy=(164, 0.5),  xytext=(128, 0.5), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.annotate('5 Sensor', xy=(166, 0.6), xytext=(128, 0.6), arrowprops=arrowprops, fontsize=50, va='center')
+        ax.vlines(x=60,   ymin=-0.002, ymax=0.02, linestyles='solid', colors='grey', zorder=10)
+        ax.vlines(x=65.9, ymin=-0.002, ymax=0.02, linestyles='solid', colors='grey', zorder=10)
+        ax.text(59, 0.021, '$T$: 60')
+        ax.text(64.9, 0.021, '$T$: 65.9')
+
+        xticks = [i for i in range(55, 71, 5)]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([f'{x}' for x in xticks])
+        yticks = [0, 0.01, 0.02, 0.03]
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f'{int(y * 100)}' for y in yticks])
+        ax.set_xlim([55, 70])
+        ax.set_ylim([-0.0001, 0.03])
+        ax.tick_params(axis='y', direction='out', length=12, width=6, pad=20)
+        ax.tick_params(axis='x', direction='out', length=12, width=6, pad=10)
+        fig.savefig(filename)
+
+
+    @staticmethod
     def methods_similar(data: list, filename: str):
         # data2: varying iteration, 4 sensors, theta = 40 case
         theta = 46
@@ -1121,6 +1341,15 @@ def vary_theta():
     Plot.vary_theta(data, filename)
 
 
+def vary_theta_nonequal_prior():
+    logs = ['result/12.7.2023/nonequal-prior_3sensor', 'result/12.7.2023/nonequal-prior_4sensor',  'result/12.7.2023/nonequal-prior_5sensor']
+    data = Logger.read_log(logs)
+    filename = 'result/12.7.2023/varying_theta_nonequal_prior.png'
+    Plot.vary_theta_nonequal_prior(data, filename)
+    filename = 'result/12.7.2023/varying_theta_nonequal_prior_zoom.png'
+    Plot.vary_theta_nonequal_prior_zoom(data, filename)
+
+
 def methods_similar():
     # logs1 = ['result/12.22.2022/varying_theta_4sensors', 'result/12.26.2022/compare_methods_4sensors']
     logs2 = ['result/12.26.2022/compare_methods_4sensors']
@@ -1298,7 +1527,8 @@ if __name__ == '__main__':
     # conjecture()
     # symmetry()
 
-    noise_affect()
+    vary_theta_nonequal_prior()
+    # noise_affect()
     # povm_noise()
     # povm_noise_varystd()
 
