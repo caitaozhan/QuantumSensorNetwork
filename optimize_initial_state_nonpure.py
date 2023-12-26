@@ -182,8 +182,8 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             probability of error
         '''
         init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
-        if isinstance(quantum_noise, RZNoise):
-            quantum_noise.kruas_mean_std()
+        # if isinstance(quantum_noise, RZNoise):
+        #     quantum_noise.kruas_mean_std()
         init_state.apply_quantum_noise(quantum_noise)   # first apply quantum noise
         quantum_states = []
         for i in range(self.num_sensor):
@@ -192,4 +192,28 @@ class OptimizeInitialStateNonpure(QuantumStateNonPure):
             init_state_copy.evolve(evolve_operator)
             quantum_states.append(init_state_copy)
         return povm.simulate(quantum_states, priors, repeat=repeat)
+    
+    def evaluate_noise_shortcut(self, unitary_operator: Operator, priors: List[float], povm: Povm, quantum_noise: QuantumNoise) -> float:
+        '''do simulation by appling the (not-considering noise) POVM on the set of final states that considered noise
+        Args:
+            unitary_operator   -- unitary operator that describes the evolution
+            priors             -- prior probabilities
+            eval_metrix        -- 'min error'
+            povm               -- the povm
+            quantum_noise      -- the quantum noise
+            repeat             -- # of repetation of single shot measurement
+        Return:
+            probability of error
+        '''
+        init_state = QuantumStateNonPure(self.num_sensor, self.density_matrix)
+        # if isinstance(quantum_noise, RZNoise):
+        #     quantum_noise.kruas_mean_std()
+        init_state.apply_quantum_noise(quantum_noise)   # first apply quantum noise
+        quantum_states = []
+        for i in range(self.num_sensor):
+            evolve_operator = Utility.evolve_operator(unitary_operator, self.num_sensor, i)
+            init_state_copy = copy.deepcopy(init_state)
+            init_state_copy.evolve(evolve_operator)
+            quantum_states.append(init_state_copy)
+        return povm.simulate_shortcut(quantum_states, priors)
 

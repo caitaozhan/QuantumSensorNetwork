@@ -12,8 +12,12 @@ def set_depolar_noise(args: list, p: float):
     args += ['-dn', '-np', str(p)]
     return args
 
-def set_phaseshift_noise(args: list, e: float, std: float):
-    args += ['-pn', '-ne', str(e), '-nst', str(std)]
+def set_amplitude_damping_noise(args: list, gamma: float):
+    args += ['-an', '-ga', str(gamma)]
+    return args
+
+def set_phase_damping_noise(args: list, gamma: float):
+    args += ['-pn', '-ga', str(gamma)]
     return args
 
 def set_numsensor_prior(args: list, num_sensor: int, equal: bool, seed: int):
@@ -125,73 +129,127 @@ def main():
             ps = new_ps
 
 
-def main_noise():
+def main_amplitude_damping_noise():
     command = ['python', 'main.py']
-    base_args = ["-us", "2", "-m", "Theorem", "Non entangle"]
-    # base_args = ["-us", "2", "-m", "Theorem povm-noise"]
-    # base_args = ["-us", "2", "-m", "Theorem povm-noise", "Non entangle povm-noise"]
+    base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
 
-    num_sensor  = 4
+    num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
-    output_dir  = 'result/12.6.2023'
-    # output_file = 'noise_affect_depolar'
-    output_file = 'noise_affect_rz'
-    # output_file = 'povmnoise_depolar'
-    # output_file = 'povmnoise_phaseshift_varyepsilon'
-    # output_dir  = 'result-tmp2'
-    # output_file = 'foo'
+    output_dir  = 'result/12.25.2023'
+    output_file = 'amplitude_damping'
     thetas      = [45]
     start_seed  = 0
 
+    # experiment: varying gamma
     tasks = []
-
-    # depolar_noise_prob = list(np.linspace(0, 0.75, 76))
-    # for x in thetas:
-    #     for p in depolar_noise_prob:
-    #         args = set_depolar_noise(base_args, p)
-    #         args = set_numsensor_prior(args, num_sensor, equal)
-    #         args = set_eval_metric(args, eval_metric)
-    #         args = set_unitary_theta(args, x)
-    #         args = set_startseed(args, start_seed)
-    #         args = set_log(args, output_dir, output_file)
-    #         tasks.append(command + args)
-    
-    # experiment: varying epsilon mean, std is a function of mean
-    phaseshift_epsilon = list(np.linspace(0, np.pi, 181))
-    repeat = 1
+    gamma = list(np.linspace(0, 1, 101))
     for x in thetas:
-        for e in phaseshift_epsilon:
-            # std = min(e/10, 2*np.pi/180)  maxstd = 2
-            std = 0
-            for _ in range(repeat):                 # for each (epsilon, std), repeate some number of experiments
-                args = set_phaseshift_noise(base_args, e, std)
-                args = set_numsensor_prior(args, num_sensor, equal)
-                args = set_eval_metric(args, eval_metric)
-                args = set_unitary_theta(args, x)
-                args = set_startseed(args, start_seed)
-                args = set_log(args, output_dir, output_file)
-                tasks.append(command + args)
+        for ga in gamma:
+            args = set_amplitude_damping_noise(base_args.copy(), ga)
+            args = set_numsensor_prior(args, num_sensor, equal, start_seed)
+            args = set_eval_metric(args, eval_metric)
+            args = set_unitary_theta(args, x)
+            args = set_startseed(args, start_seed)
+            args = set_log(args, output_dir, output_file)
+            tasks.append(command + args)
 
-    # experiment: varying std
-    # phaseshift_epsilon = list(np.linspace(0, np.pi/6, 4))
-    # phaseshift_epsilon.pop(0)
-    # for x in thetas:
-    #     for e in phaseshift_epsilon:
-    #         for i in range(21):
-    #             std = 0.2*np.pi/180 * i
-    #             for _ in range(20):  # for each (epsilon, std), repeate some number of experiments
-    #                 args = set_phaseshift_noise(base_args, e, std)
-    #                 args = set_numsensor_prior(args, num_sensor, equal)
-    #                 args = set_eval_metric(args, eval_metric)
-    #                 args = set_unitary_theta(args, x)
-    #                 args = set_startseed(args, start_seed)
-    #                 args = set_log(args, output_dir, output_file)
-    #                 tasks.append(command + args)
-
-    parallel = 5
+    parallel = 2
     print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
-    # time.sleep(3600 * 3)
+    
+    ps = []
+    while len(tasks) > 0 or len(ps) > 0:
+        if len(ps) < parallel and len(tasks) > 0:
+            task = tasks.pop(0)
+            print(task, f'{len(tasks)} tasks still in queue')
+            ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+            # ps.append(Popen(task))
+        else:
+            time.sleep(0.05)
+            new_ps = []
+            for p in ps:
+                if p.poll() is None:
+                    new_ps.append(p)
+                else:
+                    # pass
+                    get_output(p)
+            ps = new_ps
+
+
+def main_phase_damping_noise():
+    command = ['python', 'main.py']
+    base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
+
+    num_sensor  = 3
+    equal       = True
+    eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
+    output_dir  = 'result/12.25.2023'
+    output_file = 'phase_damping_noise'
+    thetas      = [45]
+    start_seed  = 0
+
+    # experiment: varying gamma
+    tasks = []
+    gamma = list(np.linspace(0, 1, 101))
+    for x in thetas:
+        for ga in gamma:
+            args = set_phase_damping_noise(base_args.copy(), ga)
+            args = set_numsensor_prior(args, num_sensor, equal, start_seed)
+            args = set_eval_metric(args, eval_metric)
+            args = set_unitary_theta(args, x)
+            args = set_startseed(args, start_seed)
+            args = set_log(args, output_dir, output_file)
+            tasks.append(command + args)
+
+    parallel = 2
+    print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
+    
+    ps = []
+    while len(tasks) > 0 or len(ps) > 0:
+        if len(ps) < parallel and len(tasks) > 0:
+            task = tasks.pop(0)
+            print(task, f'{len(tasks)} tasks still in queue')
+            ps.append(Popen(task, stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+            # ps.append(Popen(task))
+        else:
+            time.sleep(0.05)
+            new_ps = []
+            for p in ps:
+                if p.poll() is None:
+                    new_ps.append(p)
+                else:
+                    # pass
+                    get_output(p)
+            ps = new_ps
+
+
+def main_depolar_noise():
+    command = ['python', 'main.py']
+    base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
+
+    num_sensor  = 3
+    equal       = True
+    eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
+    output_dir  = 'result/12.25.2023'
+    output_file = 'depolar_noise'
+    thetas      = [45]
+    start_seed  = 0
+
+    # experiment: varying the noise probability
+    tasks = []
+    depolar_noise_prob = list(np.linspace(0, 0.75, 76))
+    for x in thetas:
+        for p in depolar_noise_prob:
+            args = set_depolar_noise(base_args.copy(), p)
+            args = set_numsensor_prior(args, num_sensor, equal, start_seed)
+            args = set_eval_metric(args, eval_metric)
+            args = set_unitary_theta(args, x)
+            args = set_startseed(args, start_seed)
+            args = set_log(args, output_dir, output_file)
+            tasks.append(command + args)
+
+    parallel = 2
+    print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
     
     ps = []
     while len(tasks) > 0 or len(ps) > 0:
@@ -213,7 +271,9 @@ def main_noise():
 
 
 if __name__ == '__main__':
-    main()
-    # main_noise()
+    # main()
+    main_amplitude_damping_noise()
+    main_phase_damping_noise()
+    main_depolar_noise()
 
 

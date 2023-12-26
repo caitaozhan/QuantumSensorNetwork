@@ -110,6 +110,18 @@ class Povm:
 
         return 1.*error_count / repeat
 
+    def simulate_shortcut(self, quantum_states: list, priors: list) -> float:
+        '''do not actually do the simulation,
+           just return the objective function of the objective function, 
+           useful when the POVM is computed for another set of quantum_states
+        '''
+        assert len(quantum_states) == len(self._operators) == len(priors)
+        prob_success = 0
+        for qstate, operator, prior in zip(quantum_states, self._operators, priors):
+            prob_success += np.trace((prior*qstate.density_matrix) @ operator.data)
+            # prob_success += prior * np.trace(operator.data @ qstate.density_matrix)    # both are correct
+        return 1 - np.real(prob_success)
+
     def computational_basis(self, num_sensor: int, quantum_states: list, priors: list):
         '''using a fixed computational basis, get the success probability empirically through simulation
         '''

@@ -6,7 +6,7 @@ from qiskit.quantum_info import random_unitary
 from optimize_initial_state_custom import OptimizeInitialStateCustom
 from optimize_initial_state import OptimizeInitialState
 from optimize_initial_state_nonpure import OptimizeInitialStateNonpure
-from quantum_noise import DepolarisingChannel, RZNoise
+from quantum_noise import DepolarisingChannel, AmplitudeDamping, PhaseDamping
 from povm import Povm
 from utility import Utility
 import time
@@ -28,9 +28,9 @@ if __name__ == '__main__':
     parser.add_argument('-of', '--output_file', type=str, nargs=1, default=[Default.output_file], help='output file')
     parser.add_argument('-dn', '--depolar_noise', action='store_true', help='apply depolarising noise')
     parser.add_argument('-np', '--noise_probability', type=float, nargs=1, default=[Default.noise_probability], help='depolarising noise probability, for single qubit X, Y, or Z')
-    parser.add_argument('-pn', '--phaseshift_noise', action='store_true', help='apply phase shift noise')
-    parser.add_argument('-ne', '--noise_epsilon', type=float, nargs=1, default=[Default.noise_epsilon], help='phase shift epsilon')
-    parser.add_argument('-nst', '--noise_std', type=float, nargs=1, default=[Default.noise_std], help='phase shift std')
+    parser.add_argument('-an', '--amplitude_noise', action='store_true', help='apply amplitude damping noise')
+    parser.add_argument('-pn', '--phase_noise', action='store_true', help='apply phase damping noise')
+    parser.add_argument('-ga', '--gamma', type=float, nargs=1, default=[Default.gamma], help='gamma for amplitude damping or phase damping')
     parser.add_argument('-r',  '--repeat', type=int, nargs=1, default=[Default.repeat])
 
     # below are for hill climbing
@@ -72,10 +72,8 @@ if __name__ == '__main__':
     methods       = args.methods
     eval_metric   = args.eval_metric[0]
     depolar_noise = args.depolar_noise
-    noise_prob    = args.noise_probability[0]
-    phaseshift_noise = args.phaseshift_noise
-    noise_epsilon = args.noise_epsilon[0]
-    noise_std     = args.noise_std[0]
+    amplitude_noise = args.amplitude_noise
+    phase_noise   = args.phase_noise
     repeat        = args.repeat[0]
 
     problem_input = ProblemInput(experiment_id, num_sensor, priors, unitary_seed, unitary_theta)
@@ -87,7 +85,7 @@ if __name__ == '__main__':
     outputs = []
 
 
-    if depolar_noise is False and phaseshift_noise is False:
+    if depolar_noise is False and amplitude_noise is False and phase_noise is False:
         if "Theorem" in methods:
             partition_i = args.partition[0]
             opt_initstate = OptimizeInitialState(num_sensor)
@@ -203,20 +201,30 @@ if __name__ == '__main__':
             outputs.append(particleswarm_output)
     else:
         if depolar_noise:
+            noise_prob = args.noise_probability[0]
             quantum_noise = DepolarisingChannel(num_sensor, noise_prob)
             problem_input.noise_type = 'depolar'
             problem_input.noise_param = noise_prob
+        elif amplitude_noise:
+            gamma = args.gamma[0]
+            quantum_noise = AmplitudeDamping(num_sensor, gamma)
+            problem_input.noise_type = 'amplitude_damping'
+            problem_input.noise_param = gamma
+        elif phase_noise:
+            gamma = args.gamma[0]
+            quantum_noise = PhaseDamping(num_sensor, gamma)
+            problem_input.noise_type = 'phase_damping'
+            problem_input.noise_param = gamma
         else:
-            quantum_noise = RZNoise(num_sensor, noise_epsilon, noise_std)
-            problem_input.noise_type = 'rz'
-            problem_input.noise_param = (noise_epsilon, noise_std)
+            raise Exception('Unknown quantum noise')
         # get the measurment operators POVM {E} with final states evolved from a initial state without noise, 
         # then use {E} on the final states evolved from noisy initial state
         if 'Theorem' in methods:
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
             povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            # error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            error = opt_initstate_nonpure.evaluate_noise_shortcut(unitary_operator, priors, povm, quantum_noise)
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Theorem', error, success, str(opt_initstate_nonpure))
@@ -225,7 +233,8 @@ if __name__ == '__main__':
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.non_entangle(unitary_operator)
             povm = opt_initstate_nonpure.get_povm_nonoise(unitary_operator, priors, eval_metric)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            # error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            error = opt_initstate_nonpure.evaluate_noise_shortcut(unitary_operator, priors, povm, quantum_noise)
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Non entangle', error, success, str(opt_initstate_nonpure))
@@ -236,7 +245,8 @@ if __name__ == '__main__':
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.theorem(unitary_operator, unitary_theta)
             povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, quantum_noise)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            # error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            error = opt_initstate_nonpure.evaluate_noise_shortcut(unitary_operator, priors, povm, quantum_noise)
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Theorem povm-noise', error, success, str(opt_initstate_nonpure))
@@ -245,7 +255,8 @@ if __name__ == '__main__':
             opt_initstate_nonpure = OptimizeInitialStateNonpure(num_sensor)
             opt_initstate_nonpure.non_entangle(unitary_operator)
             povm = opt_initstate_nonpure.get_povm_noise(unitary_operator, priors, eval_metric, quantum_noise)
-            error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            # error = opt_initstate_nonpure.evaluate_noise(unitary_operator, priors, povm, quantum_noise, repeat)
+            error = opt_initstate_nonpure.evaluate_noise_shortcut(unitary_operator, priors, povm, quantum_noise)
             error = round(error, 7)
             success = round(1-error, 7)
             theorem_output = TheoremOutput(experiment_id, 'Non entangle povm-noise', error, success, str(opt_initstate_nonpure))

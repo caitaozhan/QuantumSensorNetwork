@@ -23,8 +23,7 @@ class Default:
     unitary_seed  = 2
     method        = 'Theory'
     noise_probability = 0
-    noise_epsilon = 0
-    noise_std     = 0
+    gamma         = 0
 
     # below are for Hill climbing method
     start_seed = 0            # seed that affect the starting point of the hill climbing
