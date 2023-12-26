@@ -14,6 +14,8 @@ class QuantumNoise:
         '''
         self.n = n
         self.kraus = []
+        self._single_qubit = []
+        self._combinations = []
 
     def __str__(self):
         s = ''
@@ -35,6 +37,15 @@ class QuantumNoise:
         else:
             return False
 
+    def _generate_combinations(self, stack: list):
+        '''length = len(single_qubit)
+        '''
+        if len(stack) == self.n:
+            self._combinations.append(stack.copy())
+            return
+        for j in range(len(self._single_qubit)):
+            self._generate_combinations(stack + [j])
+
 
 class DepolarisingChannel(QuantumNoise):
     '''Incoherent noise: time independent depolarising channel for n qubits
@@ -47,26 +58,55 @@ class DepolarisingChannel(QuantumNoise):
         X = np.array([[0, 1], [1, 0]], dtype=np.complex128)
         Y = np.array([[0, -complex(0, 1)], [complex(0, 1), 0]], dtype=np.complex128)
         Z = np.array([[1, 0], [0, -1]], dtype=np.complex128)
-        single_qubit = [(1-p, I), (p/3, X), (p/3, Y), (p/3, Z)]   # kraus for a single qubit
-        # single_qubit = [(1-3*p, I), (p, X), (p, Y), (p, Z)]   # kraus for a single qubit
-        self._combinations = []
-        self._generate_combinations(0, [])
+        self._single_qubit = [(1-p, I), (p/3, X), (p/3, Y), (p/3, Z)]   # kraus for a single qubit
+        self._generate_combinations([])
         self.kraus = []                                           # kraus for n qubits
         for combination in self._combinations:
             tensor = 1
             prob   = 1
             for i in combination:
-                prob *= single_qubit[i][0]
-                tensor = np.kron(tensor, single_qubit[i][1])
+                prob *= self._single_qubit[i][0]
+                tensor = np.kron(tensor, self._single_qubit[i][1])
             self.kraus.append(np.sqrt(prob) * tensor)
         assert self.check_kraus() is True
 
-    def _generate_combinations(self, i: int, stack: list):
-        if len(stack) == self.n:
-            self._combinations.append(stack.copy())
-            return
-        for j in range(4):   # {I, X, Y, Z}
-            self._generate_combinations(i + 1, stack + [j])
+
+class AmplitudeDamping(QuantumNoise):
+    '''Amplitude damping noise
+    '''
+    def __init__(self, n: int, gamma: float):
+        super().__init__(n)
+        assert 0 <= gamma <= 1
+        self.gamma = gamma
+        E0 = np.array([[1, 0], [0, np.sqrt(1 - self.gamma)]])
+        E1 = np.array([[0, np.sqrt(self.gamma)], [0, 0]])
+        self._single_qubit = [E0, E1]
+        self._generate_combinations([])
+        for combination in self._combinations:
+            tensor = 1
+            for i in combination:
+                tensor = np.kron(tensor, self._single_qubit[i])
+            self.kraus.append(tensor)
+        assert self.check_kraus() is True
+
+
+class PhaseDamping(QuantumNoise):
+    '''Phase damping noise
+    '''
+    def __init__(self, n: int, gamma: float):
+        super().__init__(n)
+        assert 0 <= gamma <= 1
+        self.gamma = gamma
+        E0 = np.array([[1, 0], [0, np.sqrt(1 - self.gamma)]])
+        E1 = np.array([[0, 0], [0, np.sqrt(self.gamma)]])
+        self._single_qubit = [E0, E1]
+        self._generate_combinations([])
+        for combination in self._combinations:
+            tensor = 1
+            for i in combination:
+                tensor = np.kron(tensor, self._single_qubit[i])
+            self.kraus.append(tensor)
+        assert self.check_kraus() is True
 
 
 class RZNoise(QuantumNoise):
@@ -112,8 +152,14 @@ class RZNoise(QuantumNoise):
 
 if __name__ == '__main__':
     num_sensor = 2
-    depolar = DepolarisingChannel(num_sensor, 0.01)
-    print(depolar)
+    # depolar = DepolarisingChannel(num_sensor, p=0.01)
+    # print(depolar)
 
-    rz = RZNoise(num_sensor, np.pi/8, 0)
-    print(rz)
+    amplitude_damp = AmplitudeDamping(num_sensor, gamma=0.01)
+    print(amplitude_damp)
+
+    phase_damp = PhaseDamping(num_sensor, gamma=0.01)
+    print(phase_damp)
+
+    # rz = RZNoise(num_sensor, np.pi/8, 0)
+    # print(rz)
