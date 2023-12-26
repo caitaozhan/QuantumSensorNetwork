@@ -1228,108 +1228,94 @@ class Plot:
         # process data
         methods = ['Theorem', 'Theorem povm-noise']
         theta = 45
-        table0 = defaultdict(list)  # phase shift noise
-        table1 = defaultdict(list)  # depolar noise
+        num_sensor = 4
+        table0 = defaultdict(list)  # amplitude damping noise
+        table1 = defaultdict(list)  # phase damping noise
+        table2 = defaultdict(list)  # depolar noise
         for myinput, output_by_methods in data:
+            if myinput.num_sensor != num_sensor:
+                continue
             for method, output in output_by_methods.items():
-                if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta and method in methods:
+                if myinput.noise_type == 'amplitude_damping' and myinput.unitary_theta == theta and method in methods:
                     table0[method].append((round(myinput.noise_param, 4), output.error))
+                if myinput.noise_type == 'phase_damping' and myinput.unitary_theta == theta and method in methods:
+                    table1[method].append((round(myinput.noise_param, 4), output.error))
                 if myinput.noise_type == 'depolar' and myinput.unitary_theta == theta and method in methods:
-                    table1[method].append((round(myinput.noise_param, 2), output.error))
+                    table2[method].append((round(myinput.noise_param, 2), output.error))
         Y0 = defaultdict(list)
         Y1 = defaultdict(list)
+        Y2 = defaultdict(list)
         for method in methods:
             table0[method].sort()
             table1[method].sort()
+            table2[method].sort()
             Y0[method] = [y * 100 for _, y in table0[method]]   # to percentage
             Y1[method] = [y * 100 for _, y in table1[method]]   # to percentage
-        X0 = [x * 180 / np.pi for x, _ in table0[methods[0]]]   # to degree
-        X1 = [x * 100 for x, _ in table1[methods[0]]]           # to percentage
+            Y2[method] = [y * 100 for _, y in table2[method]]   # to percentage
+        X0 = [x for x, _ in table0[methods[0]]]
+        X1 = [x for x, _ in table1[methods[0]]]
+        X2 = [x for x, _ in table2[methods[0]]]
         
         # plotting
-        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(36, 18))
-        fig.subplots_adjust(left=0.1, right=0.975, top=0.93, bottom=0.19, wspace=0.15)
+        fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(54, 18))
+        fig.subplots_adjust(left=0.07, right=0.98, top=0.93, bottom=0.18, wspace=0.15)
         for method in methods:
             ax0.plot(X0, Y0[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
             ax1.plot(X1, Y1[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
+            ax2.plot(X2, Y2[method], label=Plot.METHOD[method], color=Plot.COLOR[method])
         # ax0: phase shift error
         ax0.grid()
-        ax0.set_xlim([-0.01, 180])
+        ax0.set_xlim([-0.001, 1])
         ax0.set_ylim([0, 100])
-        ax0.set_title('$\\theta$ = 45 degree', pad=20)
+        ax0.set_title('Amplitude Damping Noise', pad=20, fontsize=60)
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        xticks = [0, 30, 60, 90, 120, 150, 180]
+        xticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
         ax0.set_xticks(xticks)
         ax0.set_xticklabels([f'{x}' for x in xticks])
-        ax0.set_xlabel('Phase Shift $\\epsilon$ (degree)', labelpad=30)
+        yticks = list(range(0, 110, 10))
+        ax0.set_yticks(yticks)
+        ax0.set_yticklabels([f'{y}' for y in yticks])
+        ax0.set_xlabel('$\\gamma$', labelpad=10)
         ax0.legend(fontsize=50)
-        ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
-        ax0.text(85, -24, '(a)')
-        # ax1: depolarising error
+        ax0.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=65, labelpad=20)
+        ax0.text(0.46, -23, '(a)')
+
         ax1.grid()
-        ax1.set_xlim([-0.01, 33])
+        ax1.set_xlim([-0.001, 1])
         ax1.set_ylim([0, 100])
-        ax1.set_title('$\\theta$ = 45 degree', pad=20)
+        ax1.set_title('Phase Damping Noise', pad=20, fontsize=60)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        # xticks = [0, 5, 10, 15, 20, 25, 30, 33]        
+        xticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
         ax1.set_xticks(xticks)
         ax1.set_xticklabels([f'{x}' for x in xticks])
-        ax1.set_xlabel('Probability $p$ (%)', labelpad=30)
+        yticks = list(range(0, 110, 10))
+        ax1.set_yticks(yticks)
+        ax1.set_yticklabels([f'{y}' for y in yticks])
+        ax1.set_xlabel('$\\gamma$', labelpad=10)
         ax1.legend(fontsize=50)
-        ax1.text(15, -24, '(b)')
+        ax1.text(0.46, -23, '(b)')
+    
+        # ax1: depolarising error
+        ax2.grid()
+        ax2.set_xlim([-0.001, 0.75])
+        ax2.set_ylim([0, 100])
+        ax2.set_title('Depolarizing Noise', pad=20, fontsize=60)
+        ax2.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
+        ax2.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
+        xticks = [0, 0.15, 0.3, 0.45, 0.6, 0.75]        
+        ax2.set_xticks(xticks)
+        ax2.set_xticklabels([f'{x}' for x in xticks])
+        yticks = list(range(0, 110, 10))
+        ax2.set_yticks(yticks)
+        ax2.set_yticklabels([f'{y}' for y in yticks])
+        ax2.set_xlabel('$p$', labelpad=10)
+        ax2.legend(fontsize=50)
+        ax2.text(0.35, -23, '(c)')
         fig.savefig(filename)
 
 
-    @staticmethod
-    def povm_noise_vary_std(data, filename, theta, epsilon):
-        rad_to_degree = 180 / np.pi
-        reduce_f = Plot.reduce_avg
-        # process data
-        methods = ['Theorem povm-noise']
-        # theta = 45
-        # epsilon = 30 * 1/rad_to_degree
-        table0 = defaultdict(list)  # epsilon = 30
-        for myinput, output_by_methods in data:
-            for method, output in output_by_methods.items():
-                if myinput.noise_type == 'phaseshift' and myinput.unitary_theta == theta and method in methods:
-                    if np.isclose(myinput.noise_param[0], epsilon):  # noise_param[0] is epsilon, noise_param[1] is std
-                        std = myinput.noise_param[1]
-                        table0[std].append({method: output.error})
-        Y0 = defaultdict(list)
-        print_table = []
-        for x, list_of_method2y in sorted(table0.items()):
-            tmp_list = [reduce_f([method2y.get(method, None) for method2y in list_of_method2y]) for method in methods]
-            print_table.append([x * rad_to_degree] + tmp_list)
-        print(tabulate.tabulate(print_table, headers=['std'] + methods))
-        arr = np.array(print_table)
-        X = arr[:, 0]
-        y = defaultdict(list)
-        y['Theorem povm-noise'] = arr[:, 1] * 100  # to percentage
-        # plotting
-        fig, ax = plt.subplots(1, figsize=(36, 18))
-        fig.subplots_adjust(left=0.15, right=0.975, top=0.93, bottom=0.15, wspace=0.15)
-        for method in methods:
-            ax.plot(X, y[method], label=Plot.METHOD[method], color=Plot.COLOR[method], marker='o', markersize=20)
-        # ax0: phase shift error
-        ax.grid()
-        ax.set_xlim([-0.005, 4])
-        ax.set_ylim([5, 6.5])
-        # ax.set_title('$\\theta$ = 45 degree', pad=20)
-        # ax.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
-        # ax.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        # xticks = [0, 30, 60, 90, 120, 150, 180]
-        # ax.set_xticks(xticks)
-        # ax.set_xticklabels([f'{x}' for x in xticks])
-        ax.set_xlabel('$\\epsilon$ Std (degree)', labelpad=30)
-        # ax.legend(fontsize=50)
-        ax.set_ylabel('Optimal Objective Value $P()$ (%)', fontsize=60, labelpad=20)
-        ax.set_title(f'unitary $\\theta$={theta}, phase shift $\\epsilon$ mean={int(round(epsilon * rad_to_degree, 1))}')
-        # ax.text(85, -24, '(a)')
-        # ax1: depolarising error
-        
-        fig.savefig(filename.format(theta, int(round(epsilon * rad_to_degree, 2))))
 
 
 def vary_theta():
@@ -1434,21 +1420,18 @@ def noise_affect():
 
 
 def povm_noise():
-    logs = ['result/11.28.2023/povmnoise_depolar', 'result/11.28.2023/povmnoise_phaseshift',
-            'result/11.28.2023/noise_affect_depolar', 'result/11.28.2023/noise_affect_phaseshift']
+    # logs = ['result/11.28.2023/povmnoise_depolar', 'result/11.28.2023/povmnoise_phaseshift',
+    #         'result/11.28.2023/noise_affect_depolar', 'result/11.28.2023/noise_affect_phaseshift']
+    # data = Logger.read_log(logs)
+    # filename = 'result/11.28.2023/povmnoise.png'
+    # Plot.povm_noise_vary_noise(data, filename)
+
+    logs = ['result/12.25.2023/amplitude_damping_noise', 'result/12.25.2023/phase_damping_noise',
+            'result/12.25.2023/depolar_noise']
     data = Logger.read_log(logs)
-    filename = 'result/11.28.2023/povmnoise.png'
+    filename = 'result/12.25.2023/povmnoise.png'
     Plot.povm_noise_vary_noise(data, filename)
 
-
-def povm_noise_varystd():
-    logs = ['result/12.2.2023/povmnoise_phaseshift_varystd'] #'result/11.28.2023/noise_affect_phaseshift']
-    data = Logger.read_log(logs)
-    filename = 'result/12.2.2023/povmnoise_theta{}_epsilon{}.png'
-    theta = 45
-    Plot.povm_noise_vary_std(data, filename, theta, 10 * np.pi / 180)
-    Plot.povm_noise_vary_std(data, filename, theta, 20 * np.pi / 180)
-    Plot.povm_noise_vary_std(data, filename, theta, 30 * np.pi / 180)
 
 
 '''plotting Eqn. 26 and Eqn. 28 in PRA paper titled Discrete outcome quantum sensor networks
@@ -1522,16 +1505,15 @@ def pra():
 
 
 if __name__ == '__main__':
-    vary_theta()
+    # vary_theta()
     # methods_similar()
     # lemma2()
     # conjecture()
     # symmetry()
 
-    vary_theta_nonequal_prior()
+    # vary_theta_nonequal_prior()
     # noise_affect()
-    # povm_noise()
-    # povm_noise_varystd()
+    povm_noise()
 
 
     # pra()

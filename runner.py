@@ -133,7 +133,7 @@ def main_amplitude_damping_noise():
     command = ['python', 'main.py']
     base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
 
-    num_sensor  = 3
+    num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.25.2023'
@@ -154,7 +154,7 @@ def main_amplitude_damping_noise():
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
 
-    parallel = 2
+    parallel = 1
     print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
     
     ps = []
@@ -180,7 +180,7 @@ def main_phase_damping_noise():
     command = ['python', 'main.py']
     base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
 
-    num_sensor  = 3
+    num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.25.2023'
@@ -201,7 +201,7 @@ def main_phase_damping_noise():
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
 
-    parallel = 2
+    parallel = 1
     print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
     
     ps = []
@@ -227,7 +227,7 @@ def main_depolar_noise():
     command = ['python', 'main.py']
     base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
 
-    num_sensor  = 3
+    num_sensor  = 5
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.25.2023'
@@ -248,7 +248,7 @@ def main_depolar_noise():
             args = set_log(args, output_dir, output_file)
             tasks.append(command + args)
 
-    parallel = 2
+    parallel = 1
     print(f'total number of tasks = {len(tasks)}, parallel cores = {parallel}')
     
     ps = []
