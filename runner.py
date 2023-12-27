@@ -227,7 +227,7 @@ def main_depolar_noise():
     command = ['python', 'main.py']
     base_args = ["-us", "2", "-m", "Theorem", "Theorem povm-noise"]
 
-    num_sensor  = 5
+    num_sensor  = 3
     equal       = True
     eval_metric = 'min error'  # 'min error' or 'unambiguous' or 'computational'
     output_dir  = 'result/12.25.2023'
@@ -237,7 +237,7 @@ def main_depolar_noise():
 
     # experiment: varying the noise probability
     tasks = []
-    depolar_noise_prob = list(np.linspace(0, 0.75, 76))
+    depolar_noise_prob = list(np.linspace(0, 1, 101))
     for x in thetas:
         for p in depolar_noise_prob:
             args = set_depolar_noise(base_args.copy(), p)
@@ -272,8 +272,8 @@ def main_depolar_noise():
 
 if __name__ == '__main__':
     # main()
-    main_amplitude_damping_noise()
-    main_phase_damping_noise()
+    # main_amplitude_damping_noise()
+    # main_phase_damping_noise()
     main_depolar_noise()
 
 

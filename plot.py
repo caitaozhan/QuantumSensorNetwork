@@ -12,7 +12,7 @@ class Plot:
     plt.rcParams['lines.linewidth'] = 7
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle', 'Theorem povm-noise']
-    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1', 'GHZ',    'Uniform-all', '$Conjecture$ 1 (povm-noise)']
+    _LABEL  = ['Hill Climbing', 'Simulated Annealing', 'Genetic Algorithm', '$Conjecture$ 1', 'GHZ',    'Uniform-all', '$Conjecture$ 1 (accounting noise)']
     METHOD  = dict(zip(_METHOD, _LABEL))
 
     _METHOD = ['Hill climbing', 'Simulated annealing', 'Genetic algorithm', 'Theorem',        'GHZ',    'Non entangle']
@@ -1267,7 +1267,7 @@ class Plot:
         ax0.grid()
         ax0.set_xlim([-0.001, 1])
         ax0.set_ylim([0, 100])
-        ax0.set_title('Amplitude Damping Noise', pad=20, fontsize=60)
+        ax0.set_title('Amplitude Damping', pad=20, fontsize=60)
         ax0.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax0.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         xticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
@@ -1284,7 +1284,7 @@ class Plot:
         ax1.grid()
         ax1.set_xlim([-0.001, 1])
         ax1.set_ylim([0, 100])
-        ax1.set_title('Phase Damping Noise', pad=20, fontsize=60)
+        ax1.set_title('Phase Damping', pad=20, fontsize=60)
         ax1.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax1.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
         xticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
@@ -1299,12 +1299,12 @@ class Plot:
     
         # ax1: depolarising error
         ax2.grid()
-        ax2.set_xlim([-0.001, 0.75])
+        ax2.set_xlim([-0.001, 1])
         ax2.set_ylim([0, 100])
-        ax2.set_title('Depolarizing Noise', pad=20, fontsize=60)
+        ax2.set_title('Depolarizing Channel', pad=20, fontsize=60)
         ax2.tick_params(axis='x', direction='in', length=10, width=3, pad=15)
         ax2.tick_params(axis='y', direction='in', length=10, width=3, pad=15)
-        xticks = [0, 0.15, 0.3, 0.45, 0.6, 0.75]        
+        xticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
         ax2.set_xticks(xticks)
         ax2.set_xticklabels([f'{x}' for x in xticks])
         yticks = list(range(0, 110, 10))
@@ -1312,7 +1312,7 @@ class Plot:
         ax2.set_yticklabels([f'{y}' for y in yticks])
         ax2.set_xlabel('$p$', labelpad=10)
         ax2.legend(fontsize=50)
-        ax2.text(0.35, -23, '(c)')
+        ax2.text(0.46, -23, '(c)')
         fig.savefig(filename)
 
 
