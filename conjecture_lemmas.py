@@ -481,15 +481,16 @@ def validate_lemma2():
     file_perm = 'result/5.25.2023/lemma2.n{}-t{}.perm.npy'
     file_avg  = 'result/5.25.2023/lemma2.n{}-t{}.avg.npy'
     
-    # for num_sen in [3,4,5]:
-    #     for unitary_theta in [6, 26, 46, 66, 86]:
-    #         errors_perm, errors_avg = lemma2(num_sen, debug, seed, unitary_theta)
-    #         np.save(file_perm.format(num_sen, unitary_theta), np.array(errors_perm))
-    #         np.save(file_avg.format(num_sen, unitary_theta), np.array(errors_avg))
+    for num_sen in [3,4,5]:
+        # for unitary_theta in [26, 46, 66, 86]:
+        for unitary_theta in [6]:
+            errors_perm, errors_avg = lemma2(num_sen, debug, seed, unitary_theta)
+            np.save(file_perm.format(num_sen, unitary_theta), np.array(errors_perm))
+            np.save(file_avg.format(num_sen, unitary_theta), np.array(errors_avg))
 
-    for num_sen in [3]:
-        for unitary_theta in [46]:
-            lemma_tmp(num_sen, debug, seed, unitary_theta)
+    # for num_sen in [3]:
+    #     for unitary_theta in [46]:
+    #         lemma_tmp(num_sen, debug, seed, unitary_theta)
 
 
 
